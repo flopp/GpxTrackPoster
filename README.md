@@ -1,5 +1,5 @@
 # GpxTrackPoster
-Create a visually appealing poster from your GPX tracks.
+Create a visually appealing poster from your GPX tracks - heavily inspired by https://www.madewithsisu.com/
 
 ![Example Poster](https://github.com/flopp/GpxTrackPoster/blob/master/example.png)
 
@@ -31,7 +31,6 @@ optional arguments:
 Example: `create_poster.py --gpx-dir "my-tracks" --year 2015 --title "Running" --athlete "Florian Pigorsch"` creates a nice poster (`poster.svg`) of the GPX tracks in the directory `my-tracks` (see above).
 
 
-
 ## Setup
 1. Clone the repository: `git clone https://github.com/flopp/GpxTrackPoster.git`
 2. `cd GpxTrackPoster`
@@ -40,6 +39,7 @@ Example: `create_poster.py --gpx-dir "my-tracks" --year 2015 --title "Running" -
 5. Install requirements: `pip install -r /path/to/requirements.txt`
 6. Run `./create_poster.py` (see above)
 7. Deactive virtualenv: `deactivate`
+
 
 ## License
 [MIT](https://github.com/flopp/GpxTrackPoster/blob/master/LICENSE) &copy; 2016 florian Pigorsch
