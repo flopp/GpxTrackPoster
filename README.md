@@ -1,6 +1,9 @@
 # GpxTrackPoster
 Create a visually appealing poster from your GPX tracks.
 
+![Example Poster](https://github.com/flopp/GpxTrackPoster/blob/master/example.png)
+
+
 ## Usage
 First of all, you need directory with a bunch of GPX files (e.g. you can export all your tracks from Garmin Connect with the excellent tool [garmin-connect-export](https://github.com/kjkjava/garmin-connect-export)).
 
@@ -25,7 +28,7 @@ optional arguments:
   --output FILE         Name of generated SVG image file (default: "poster.svg").
 ```
 
-Example: `create_poster.py --gpx-dir "my-tracks" --year 2015 --title "Running" --athlete "Florian Pigorsch"` creates a nice poster (`poster.svg`) of the GPX tracks in the directory `my-tracks`:
+Example: `create_poster.py --gpx-dir "my-tracks" --year 2015 --title "Running" --athlete "Florian Pigorsch"` creates a nice poster (`poster.svg`) of the GPX tracks in the directory `my-tracks` (see above).
 
 
 

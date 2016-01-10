@@ -51,15 +51,15 @@ def load_tracks(base_dir, year, min_length):
             t.load_gpx(file_name)
             t.gpx.simplify()
             if t.length == 0:
-                print("{}: skipping empty track", file_name)
+                print("{}: skipping empty track".format(file_name))
             elif not t.start_time:
-                print("{}: skipping track without start time", file_name)
+                print("{}: skipping track without start time".format(file_name))
             elif t.start_time.year != year:
-                print("{}: skipping track with wrong year {}", file_name, t.start_time.year)
+                print("{}: skipping track with wrong year {}".format(file_name, t.start_time.year))
             else:
                 tracks.append(t)
         except Exception as e:
-            print("{}: error while parsing GPX file; {}", file_name, e)
+            print("{}: error while parsing GPX file; {}".format(file_name, e))
 
     # sort tracks by start time
     sorted_tracks = sorted(tracks, key=lambda t: t.start_time)
@@ -178,6 +178,7 @@ def poster(tracks, title, year, athlete_name, output, colors):
         draw_track(track, d, tracks_x+(0.05 + x)*size, tracks_y+(0.05+y)*size+y*spacing_y, 0.9 * size, 0.9 * size, colors['track'])
 
     d.save()
+    print("Wrote poster to {}".format(output))
 
 
 def main():
