@@ -83,34 +83,64 @@ def load_tracks(base_dir, year, min_length):
     return [t for t in merged_tracks if t.length >= min_length]
 
 
+# mercator projection
+def latlng2xy(lat, lng):
+    return lng/180+1, 0.5-math.log(math.tan(math.pi/4*(1+lat/90)))/math.pi
+
+
+def compute_bounds(polylines):
+    min_x = None
+    max_x = None
+    min_y = None
+    max_y = None
+    for line in polylines:
+        for (x, y) in line:
+            if min_x is None:
+                min_x = x
+                max_x = x
+                min_y = y
+                max_y = y
+            else:
+                min_x = min(x, min_x)
+                max_x = max(x, max_x)
+                min_y = min(y, min_y)
+                max_y = max(y, max_y)
+    return min_x, min_y, max_x, max_y
+
+
 def draw_track(track, drawing, x_offset, y_offset, width, height, color):
-    b = track.gpx.get_bounds()
-
-    min_lat = b.min_latitude
-    cos_lat = math.cos(0.5 * (b.min_latitude + b.max_latitude) * math.pi/180)
-    min_lng = cos_lat * b.min_longitude
-    d_lat = b.max_latitude - b.min_latitude
-    d_lng = cos_lat * (b.max_longitude - b.min_longitude)
-
-    scale = width/d_lng
-    if width/height > d_lng/d_lat:
-        scale = height/d_lat
-
-    x_offset += 0.5 * width - 0.5 * scale * d_lng
-    y_offset += 0.5 * height + 0.5 * scale * d_lat
-
+    # compute mercator projection of track segments
     lines = []
     for t in track.gpx.tracks:
         for s in t.segments:
-            polyline = []
-            for p in s.points:
-                x = x_offset + scale * (cos_lat*p.longitude - min_lng)
-                y = y_offset - scale * (p.latitude - min_lat)
-                polyline.append((x, y))
-            lines.append(polyline)
+            line = [latlng2xy(p.latitude, p.longitude) for p in s.points]
+            lines.append(line)
 
-    for polyline in lines:
-        drawing.add(drawing.polyline(points=polyline, stroke=color, fill='none', stroke_width=0.5, stroke_linejoin='round', stroke_linecap='round'))
+    # compute bounds
+    (min_x, min_y, max_x, max_y) = compute_bounds(lines)
+    d_x = max_x - min_x
+    d_y = max_y - min_y
+
+    # compute scale
+    scale = width/d_x
+    if width/height > d_x/d_y:
+        scale = height/d_y
+
+    # compute offsets such that projected track is centered in its rect
+    x_offset += 0.5 * width - 0.5 * scale * d_x
+    y_offset += 0.5 * height - 0.5 * scale * d_y
+
+    scaled_lines = []
+    for line in lines:
+        scaled_line = []
+        for (x, y) in line:
+            scaled_x = x_offset + scale * (x - min_x)
+            scaled_y = y_offset + scale * (y - min_y)
+            scaled_line.append((scaled_x, scaled_y))
+        scaled_lines.append(scaled_line)
+
+    for line in scaled_lines:
+        drawing.add(drawing.polyline(points=line, stroke=color, fill='none', stroke_width=0.5, stroke_linejoin='round', stroke_linecap='round'))
 
 
 def compute_lengths(tracks):
