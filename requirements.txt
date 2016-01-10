@@ -1,0 +1,3 @@
+gpxpy==1.0.0
+pyparsing==2.0.7
+svgwrite==1.1.6
