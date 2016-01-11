@@ -79,9 +79,9 @@ class Track:
                 self.polylines.append([(float(d["lat"]), float(d["lng"])) for d in data_line])
 
     def store_cache(self, cache_file_name):
-        dir = os.path.dirname(cache_file_name)
-        if not os.path.isdir(dir):
-            os.makedirs(dir)
+        dir_name = os.path.dirname(cache_file_name)
+        if not os.path.isdir(dir_name):
+            os.makedirs(dir_name)
         with open(cache_file_name, 'w') as json_file:
             lines_data = []
             for line in self.polylines:
@@ -234,23 +234,24 @@ def compute_lengths(tracks):
 
 
 def compute_grid(count, width, height):
+    # this is somehow suboptimal O(count^2). I guess it's possible in O(count)
     min_waste = -1
-    best_size = -1
-    for x in range(1, width):
-        s = width/x
-        waste = width*height - count*s*s
-        if waste < 0:
-            continue
-        if min_waste < 0 or waste < min_waste:
-            min_waste = waste
-            best_size = s
-    count_x = width/best_size
-    count_y = count // count_x
-    if count % count_x > 0:
-        count_y += 1
-    spacing_y = (height - count_y * best_size) / count_y
-
-    return best_size, count_x, count_y, spacing_y
+    best_counts = None
+    best_size = None
+    for count_x in range(1, count+1):
+        size_x = width/count_x
+        for count_y in range(1, count+1):
+            if count_x * count_y >= count:
+                size_y = height/count_y
+                size = min(size_x, size_y)
+                waste = width*height - count*size*size
+                if waste < 0:
+                    continue
+                elif best_size is None or waste < min_waste:
+                    best_size = size
+                    best_counts = count_x, count_y
+                    min_waste = waste
+    return best_size, best_counts
 
 
 def poster(tracks, title, year, athlete_name, output, colors):
@@ -280,12 +281,16 @@ def poster(tracks, title, year, athlete_name, output, colors):
     tracks_x = 10
     tracks_y = 30
 
-    (size, count_x, count_y, spacing_y) = compute_grid(len(tracks), tracks_w, tracks_h)
+    size, (count_x, count_y) = compute_grid(len(tracks), tracks_w, tracks_h)
+    spacing_x = 0 if count_x <= 1 else (tracks_w-size*count_x)/(count_x - 1)
+    spacing_y = 0 if count_y <= 1 else (tracks_h-size*count_y)/(count_y - 1)
+    offset_x = (tracks_w - count_x*size - (count_x - 1)*spacing_x)/2
+    offset_y = (tracks_h - count_y*size - (count_y - 1)*spacing_y)/2
     for (index, track) in enumerate(tracks):
         x = index % count_x
         y = index // count_x
         color = colors['highlight'] if track.highlight else colors['track']
-        draw_track(track, d, tracks_x+(0.05 + x)*size, tracks_y+(0.05+y)*size+y*spacing_y, 0.9 * size, 0.9 * size, color)
+        draw_track(track, d, tracks_x+offset_x+(0.05 + x)*size+x*spacing_x, tracks_y+offset_y+(0.05+y)*size+y*spacing_y, 0.9 * size, 0.9 * size, color)
 
     d.save()
     print("Wrote poster to {}".format(output))
