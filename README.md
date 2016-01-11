@@ -37,6 +37,17 @@ optional arguments:
 Example: `create_poster.py --gpx-dir "my-tracks" --year 2015 --title "Running" --athlete "Florian Pigorsch" --highlight race1.gpx --highlight race2.gpx --highlight race3.gpx` creates a nice poster (`poster.svg`) of the GPX tracks in the directory `my-tracks` (see above).
 
 
+### Selection of Tracks
+
+`create_poster.py` tries to load all GPX files in the specified directory (option `--gpx-dir`).
+To speed up subsequent executions of the script, successfully loaded GPX tracks are cached in an intermediate format that allows for fast loading; use the option `--clear-cache` to delete these files.
+Tracks without time stamps and tracks recorded in the wrong year (option `--year`) are discarded.
+Tracks shorter than 1km are discarded, too
+If multiple tracks have been recorded within one hour, they are merged to a single track.
+
+The tracks are then sorted by their respective start times and are printed in a grid in row first order.
+
+
 ## Setup
 1. Clone the repository: `git clone https://github.com/flopp/GpxTrackPoster.git`
 2. `cd GpxTrackPoster`
