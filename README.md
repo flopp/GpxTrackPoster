@@ -13,7 +13,8 @@ You will need a little experience running things from the command line to use th
 usage: create_poster.py [-h] [--gpx-dir DIR] [--year YEAR] [--title TITLE]
                         [--athlete NAME] [--background-color COLOR]
                         [--track-color COLOR] [--text-color COLOR]
-                        [--output FILE]
+                        [--highlight FILE] [--highlight-color COLOR]
+                        [--output FILE] [--clear-cache]
 
 optional arguments:
   -h, --help            show this help message and exit
@@ -25,10 +26,15 @@ optional arguments:
                         Background color of poster (default: "#222222").
   --track-color COLOR   Color of tracks (default: "#4DD2FF").
   --text-color COLOR    Color of text (default: "#FFFFFF").
+  --highlight FILE      Highlight specified track file from the GPX directory; use multiple times to highlight multiple tracks.
+  --highlight-color COLOR
+                        Track highlighting color (default: "#FFFF00").
   --output FILE         Name of generated SVG image file (default: "poster.svg").
+  --clear-cache         Clear the track cache.
+
 ```
 
-Example: `create_poster.py --gpx-dir "my-tracks" --year 2015 --title "Running" --athlete "Florian Pigorsch"` creates a nice poster (`poster.svg`) of the GPX tracks in the directory `my-tracks` (see above).
+Example: `create_poster.py --gpx-dir "my-tracks" --year 2015 --title "Running" --athlete "Florian Pigorsch" --highlight race1.gpx --highlight race2.gpx --highlight race3.gpx` creates a nice poster (`poster.svg`) of the GPX tracks in the directory `my-tracks` (see above).
 
 
 ## Setup
