@@ -68,7 +68,7 @@ The *Heatmap Poster* displays all tracks within one "map". The more often a loca
 2. `cd GpxTrackPoster`
 3. Create virtualenv: `virtualenv -p /usr/bin/python3 venv`
 4. Activate virtualenv: `source venv/bin/activate`
-5. Install requirements: `pip install -r /path/to/requirements.txt`
+5. Install requirements: `pip install -r requirements.txt`
 6. Run `./create_poster.py` (see above)
 7. Deactive virtualenv: `deactivate`
 
