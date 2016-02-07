@@ -1,13 +1,9 @@
-import appdirs
+
 import hashlib
 import os
 import shutil
 import concurrent.futures
 from . import track
-
-__app_name__ = "create_poster"
-__app_author__ = "flopp.net"
-__cache_dir = os.path.join(appdirs.user_cache_dir(__app_name__, __app_author__), "tracks")
 
 
 def load_gpx_file(file_name):
@@ -17,9 +13,9 @@ def load_gpx_file(file_name):
     return t
 
 
-def load_cached_track_file(file_name):
+def load_cached_track_file(file_name, cache_dir):
     checksum = hashlib.sha256(open(file_name, 'rb').read()).hexdigest()
-    cache_file = os.path.join(__cache_dir, checksum + ".json")
+    cache_file = os.path.join(cache_dir, checksum + ".json")
     t = track.Track()
     t.load_cache(cache_file)
     t.file_names = [os.path.basename(file_name)]
@@ -31,13 +27,13 @@ class TrackLoader:
         self.min_length = 1000
         self.special_file_names = []
         self.year = None
+        self.cache_dir = None
 
-    @staticmethod
-    def clear_cache():
-        if os.path.isdir(__cache_dir):
-            print("Removing cache dir: {}".format(__cache_dir))
+    def clear_cache(self):
+        if os.path.isdir(self.cache_dir):
+            print("Removing cache dir: {}".format(self.cache_dir))
             try:
-                shutil.rmtree(__cache_dir)
+                shutil.rmtree(self.cache_dir)
             except OSError as e:
                 print("Failed: {}".format(e))
 
@@ -45,10 +41,15 @@ class TrackLoader:
         file_names = [x for x in self.__list_gpx_files(base_dir)]
         print("GPX files: {}".format(len(file_names)))
 
+        tracks = []
+
         # load track from cache
-        print("Trying to load {} track(s) from cache...".format(len(file_names)))
-        cached_tracks = self.__load_tracks_from_cache(file_names)
-        print("Loaded tracks from cache:", len(cached_tracks))
+        cached_tracks = []
+        if self.cache_dir:
+            print("Trying to load {} track(s) from cache...".format(len(file_names)))
+            cached_tracks = self.__load_tracks_from_cache(file_names, self.cache_dir)
+            print("Loaded tracks from cache:", len(cached_tracks))
+            tracks = list(cached_tracks.values())
 
         # load remaining gpx files
         remaining_file_names = [f for f in file_names if f not in cached_tracks]
@@ -58,15 +59,14 @@ class TrackLoader:
             print("Conventionally loaded tracks:", len(loaded_tracks))
 
             # store non-cached tracks in cache
-            if loaded_tracks:
+            if loaded_tracks and self.cache_dir:
                 print("Storing {} track(s) in cache...".format(len(loaded_tracks)))
                 for (file_name, track) in loaded_tracks.items():
                     checksum = hashlib.sha256(open(file_name, 'rb').read()).hexdigest()
-                    cache_file = os.path.join(__cache_dir, checksum + ".json")
+                    cache_file = os.path.join(self.cache_dir, checksum + ".json")
                     track.store_cache(cache_file)
+            tracks.extend(loaded_tracks.values())
 
-        tracks = list(cached_tracks.values())
-        tracks.extend(loaded_tracks.values())
         filtered_tracks = []
         for t in tracks:
             file_name = t.file_names[0]
@@ -118,11 +118,11 @@ class TrackLoader:
         return tracks
 
     @staticmethod
-    def __load_tracks_from_cache(file_names):
+    def __load_tracks_from_cache(file_names, cache_dir):
         tracks = {}
         failed_loads = []
         with concurrent.futures.ProcessPoolExecutor() as executor:
-            future_to_file_name = {executor.submit(load_cached_track_file, file_name): file_name for file_name in file_names}
+            future_to_file_name = {executor.submit(load_cached_track_file, file_name, cache_dir): file_name for file_name in file_names}
         for future in concurrent.futures.as_completed(future_to_file_name):
             file_name = future_to_file_name[future]
             try:

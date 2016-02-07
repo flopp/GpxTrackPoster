@@ -10,7 +10,7 @@ class TracksDrawer:
         self.poster = poster
 
         count_x = 31
-        for month in range(1, 12):
+        for month in range(1, 13):
             date = datetime.date(self.poster.year, month, 1)
             (first_day, last_day) = calendar.monthrange(self.poster.year, month)
             count_x = max(count_x, date.weekday() + last_day)
@@ -28,7 +28,7 @@ class TracksDrawer:
                 tracks_by_date[text_date] = [track]
 
         dow = ["M", "T", "W", "T", "F", "S", "S"]
-        for month in range(1, 12):
+        for month in range(1, 13):
             date = datetime.date(self.poster.year, month, 1)
             y = month-1
             y_pos = offset_y + (y*3 + 1)*size + y*spacing_y

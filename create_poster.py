@@ -2,11 +2,17 @@
 
 import argparse
 import datetime
+import appdirs
+import os
 from src import track_loader
 from src import poster
 from src import grid_drawer
 from src import calendar_drawer
 from src import heatmap_drawer
+
+
+__app_name__ = "create_poster"
+__app_author__ = "flopp.net"
 
 
 def main():
@@ -41,6 +47,7 @@ def main():
     args = args_parser.parse_args()
 
     loader = track_loader.TrackLoader()
+    loader.cache_dir = os.path.join(appdirs.user_cache_dir(__app_name__, __app_author__), "tracks")
     loader.year = args.year
     loader.special_file_names = args.special
     if args.clear_cache:
