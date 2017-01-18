@@ -1,4 +1,3 @@
-
 import hashlib
 import os
 import shutil
@@ -142,5 +141,3 @@ class TrackLoader:
             path_name = os.path.join(base_dir, name)
             if name.endswith(".gpx") and os.path.isfile(path_name):
                 yield path_name
-
-
