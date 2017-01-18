@@ -21,7 +21,7 @@ optional arguments:
   --title TITLE             Title to display (default: "My Tracks").
   --athlete NAME            Athlete name to display (default: "John Doe").
   --special FILE            Mark track file from the GPX directory as special; use multiple times to mark multiple tracks.
-  --type TYPE               Type of poster to create (default: "grid", available: "calendar", "grid", "heatmap").
+  --type TYPE               Type of poster to create (default: "grid", available: "calendar", "circular", "grid", "heatmap").
   --background-color COLOR  Background color of poster (default: "#222222").
   --track-color COLOR       Color of tracks (default: "#4DD2FF").
   --text-color COLOR        Color of text (default: "#FFFFFF").
@@ -56,6 +56,12 @@ The *Calendar Poster* draws one square for each day, each row of squares corresp
 
 ![Example Grid Poster](https://github.com/flopp/GpxTrackPoster/blob/master/examples/example_calendar.png)
 [svg](https://github.com/flopp/GpxTrackPoster/blob/master/examples/example_calendar.svg)
+
+### Circular Poster (`--type circular`)
+The *Circular Poster* the year in a circle; each day corresponds to a circle segment. The length of each segment corresponds to the total track distance of that day.
+
+![Example Circular Poster](https://github.com/flopp/GpxTrackPoster/blob/master/examples/example_circular.png)
+[svg](https://github.com/flopp/GpxTrackPoster/blob/master/examples/example_circular.svg)
 
 ### Heatmap Poster (`--type heatmap`)
 The *Heatmap Poster* displays all tracks within one "map". The more often a location has been "visited" on a track, the more colorful the corresponding location is on the map. *Special tracks* are drawn with the *special color*.
