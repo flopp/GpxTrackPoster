@@ -17,7 +17,7 @@ class TracksDrawer:
         count_x = 31
         for month in range(1, 13):
             date = datetime.date(self.poster.year, month, 1)
-            (first_day, last_day) = calendar.monthrange(self.poster.year, month)
+            (_, last_day) = calendar.monthrange(self.poster.year, month)
             count_x = max(count_x, date.weekday() + last_day)
 
         size = min(w / count_x, h / 36)

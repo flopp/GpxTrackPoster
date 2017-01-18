@@ -65,10 +65,10 @@ class TrackLoader:
             # store non-cached tracks in cache
             if loaded_tracks and self.cache_dir:
                 print("Storing {} track(s) in cache...".format(len(loaded_tracks)))
-                for (file_name, track) in loaded_tracks.items():
+                for (file_name, t) in loaded_tracks.items():
                     checksum = hashlib.sha256(open(file_name, 'rb').read()).hexdigest()
                     cache_file = os.path.join(self.cache_dir, checksum + ".json")
-                    track.store_cache(cache_file)
+                    t.store_cache(cache_file)
             tracks.extend(loaded_tracks.values())
 
         tracks = self.__filter_tracks(tracks)

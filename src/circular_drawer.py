@@ -43,7 +43,7 @@ class TracksDrawer:
             a1 = math.radians(day * df)
             a2 = math.radians((day + 1) * df)
             if date.day == 1:
-                (first_day, last_day) = calendar.monthrange(date.year, date.month)
+                (_, last_day) = calendar.monthrange(date.year, date.month)
                 a3 = math.radians((day + last_day - 1) * df)
                 r1 = outer_radius + 1
                 r2 = outer_radius + 6
