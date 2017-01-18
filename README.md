@@ -72,6 +72,10 @@ The *Heatmap Poster* displays all tracks within one "map". The more often a loca
 6. Run `./create_poster.py` (see above)
 7. Deactive virtualenv: `deactivate`
 
+## Contributing
+If you have found a bug or have a feature request, please create a new issue. I'm always happy improve the implementation!
+
+Or even better: clone the repo, fix the bug/implement the feature yourself, and file a pull request. Contributions are always welcome!
 
 ## License
 [MIT](https://github.com/flopp/GpxTrackPoster/blob/master/LICENSE) &copy; 2016 florian Pigorsch
