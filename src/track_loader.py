@@ -71,6 +71,15 @@ class TrackLoader:
                     track.store_cache(cache_file)
             tracks.extend(loaded_tracks.values())
 
+        tracks = self.__filter_tracks(tracks)
+
+        # merge tracks that took place within one hour
+        tracks = self.__merge_tracks(tracks)
+
+        # filter out tracks with length < min_length
+        return [t for t in tracks if t.length >= self.min_length]
+
+    def __filter_tracks(self, tracks):
         filtered_tracks = []
         for t in tracks:
             file_name = t.file_names[0]
@@ -83,15 +92,14 @@ class TrackLoader:
             else:
                 t.special = (file_name in self.special_file_names)
                 filtered_tracks.append(t)
+        return filtered_tracks
 
-        # sort tracks by start time
-        sorted_tracks = sorted(filtered_tracks, key=lambda t: t.start_time)
-
-        # merge tracks that took place within one hour
+    def __merge_tracks(self, tracks):
         print("Merging tracks...")
+        tracks = sorted(tracks, key=lambda t: t.start_time)
         merged_tracks = []
         last_end_time = None
-        for t in sorted_tracks:
+        for t in tracks:
             if last_end_time is None:
                 merged_tracks.append(t)
             else:
@@ -101,9 +109,8 @@ class TrackLoader:
                 else:
                     merged_tracks.append(t)
             last_end_time = t.end_time
-        print("Merged {} track(s)".format(len(sorted_tracks) - len(merged_tracks)))
-        # filter out tracks with length < min_length
-        return [t for t in merged_tracks if t.length >= self.min_length]
+        print("Merged {} track(s)".format(len(tracks) - len(merged_tracks)))
+        return merged_tracks
 
     @staticmethod
     def __load_tracks(file_names):
