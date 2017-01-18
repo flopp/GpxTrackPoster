@@ -1,3 +1,7 @@
+[![Scrutinizer Score](https://scrutinizer-ci.com/g/flopp/GpxTrackPoster/badges/quality-score.png)](https://scrutinizer-ci.com/g/flopp/GpxTrackPoster/)
+[![Scrutinizer Build](https://scrutinizer-ci.com/g/flopp/GpxTrackPoster/badges/build.png)](https://scrutinizer-ci.com/g/flopp/GpxTrackPoster/)
+![License MIT](https://img.shields.io/badge/license-MIT-lightgrey.svg?style=flat)
+
 # GpxTrackPoster
 Create a visually appealing poster from your GPX tracks - heavily inspired by https://www.madewithsisu.com/
 
