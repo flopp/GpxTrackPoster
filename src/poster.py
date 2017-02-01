@@ -26,9 +26,9 @@ class Poster:
         d.viewbox(0, 0, self.width, self.height)
         d.add(d.rect((0, 0), (self.width, self.height), fill=self.colors['background']))
 
+        self.__draw_tracks(d, self.width - 20, self.height - 30 - 30, 10, 30)
         self.__draw_header(d)
         self.__draw_footer(d)
-        self.__draw_tracks(d, self.width - 20, self.height - 30 - 30, 10, 30)
 
         d.save()
 
