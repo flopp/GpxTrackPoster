@@ -15,6 +15,7 @@ class Poster:
         self.colors = {"background": "#222222", "text": "#FFFFFF", "special": "#FFFF00", "track": "#4DD2FF"}
         self.width = 200
         self.height = 300
+        self.bbox = []
         self.tracks_drawer = drawer
 
     def set_tracks(self, tracks):
@@ -25,9 +26,9 @@ class Poster:
         d.viewbox(0, 0, self.width, self.height)
         d.add(d.rect((0, 0), (self.width, self.height), fill=self.colors['background']))
 
+        self.__draw_tracks(d, self.width - 20, self.height - 30 - 30, 10, 30)
         self.__draw_header(d)
         self.__draw_footer(d)
-        self.__draw_tracks(d, self.width - 20, self.height - 30 - 30, 10, 30)
 
         d.save()
 
