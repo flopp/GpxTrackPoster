@@ -26,10 +26,6 @@ class TracksDrawer:
             if track.special:
                 xy_polylines_special.extend(track_xy)
 
-        print("bounds xy_polylines: bbox={}" . format(utils.compute_bounds_xy(xy_polylines)))
-        print("bounds xy_polylines_special: bbox={}" . format(utils.compute_bounds_xy(xy_polylines_special)))
-        # FIXME: do we need to handle special tracks?
-
         if None == bbox:
             (min_x, min_y, max_x, max_y) = utils.compute_bounds_xy(xy_polylines)
         else:
