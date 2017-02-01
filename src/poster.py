@@ -15,6 +15,7 @@ class Poster:
         self.colors = {"background": "#222222", "text": "#FFFFFF", "special": "#FFFF00", "track": "#4DD2FF"}
         self.width = 200
         self.height = 300
+        self.bbox = []
         self.tracks_drawer = drawer
 
     def set_tracks(self, tracks):

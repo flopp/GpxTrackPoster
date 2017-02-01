@@ -42,6 +42,8 @@ def main():
                              help='Mark track file from the GPX directory as special; use multiple times to mark multiple tracks.')
     args_parser.add_argument('--type', metavar='TYPE', default='grid', choices=generators.keys(),
                              help='Type of poster to create (default: "grid", available: "{}").'.format('", "'.join(generators.keys())))
+    args_parser.add_argument('--bbox', metavar='BBOX', required=False, nargs=4, type=float,
+                             help='Set bounding box for heatmap poster. E.g. --bbox 8.741 48.815 9.491 48.861')
     args_parser.add_argument('--background-color', dest='background_color', metavar='COLOR', type=str,
                              default='#222222', help='Background color of poster (default: "#222222").')
     args_parser.add_argument('--track-color', dest='track_color', metavar='COLOR', type=str, default='#4DD2FF',
@@ -73,6 +75,7 @@ def main():
                 'special': args.special_color,
                 'text': args.text_color}
     p.tracks = tracks
+    p.bbox = args.bbox
     p.draw(args.output)
 
 

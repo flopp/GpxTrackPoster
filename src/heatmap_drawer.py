@@ -12,6 +12,9 @@ class TracksDrawer:
 
     def draw(self, poster, d, w, h, offset_x, offset_y):
         self.poster = poster
+        bbox = poster.bbox
+        if None != bbox:
+            print("heatmap drawer using bbox: {}" . format(bbox))
 
         xy_polylines = []
         xy_polylines_special = []
@@ -23,7 +26,16 @@ class TracksDrawer:
             if track.special:
                 xy_polylines_special.extend(track_xy)
 
-        (min_x, min_y, max_x, max_y) = utils.compute_bounds_xy(xy_polylines)
+        print("bounds xy_polylines: bbox={}" . format(utils.compute_bounds_xy(xy_polylines)))
+        print("bounds xy_polylines_special: bbox={}" . format(utils.compute_bounds_xy(xy_polylines_special)))
+        # FIXME: do we need to handle special tracks?
+
+        if None == bbox:
+            (min_x, min_y, max_x, max_y) = utils.compute_bounds_xy(xy_polylines)
+        else:
+            (min_x, min_y) = utils.latlng2xy(bbox[0], bbox[3])
+            (max_x, max_y) = utils.latlng2xy(bbox[2], bbox[1])
+
         d_x = max_x - min_x
         d_y = max_y - min_y
 
