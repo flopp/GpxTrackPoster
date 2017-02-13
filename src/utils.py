@@ -29,3 +29,23 @@ def compute_bounds_xy(polylines):
                 min_y = min(y, min_y)
                 max_y = max(y, max_y)
     return min_x, min_y, max_x, max_y
+
+def compute_grid(count, width, height):
+    # this is somehow suboptimal O(count^2). I guess it's possible in O(count)
+    min_waste = -1
+    best_counts = None
+    best_size = None
+    for count_x in range(1, count+1):
+        size_x = width/count_x
+        for count_y in range(1, count+1):
+            if count_x * count_y >= count:
+                size_y = height/count_y
+                size = min(size_x, size_y)
+                waste = width*height - count*size*size
+                if waste < 0:
+                    continue
+                elif best_size is None or waste < min_waste:
+                    best_size = size
+                    best_counts = count_x, count_y
+                    min_waste = waste
+    return best_size, best_counts

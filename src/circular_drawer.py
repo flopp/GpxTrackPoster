@@ -7,6 +7,7 @@ import calendar
 import datetime
 import math
 import svgwrite
+from . import utils
 
 
 class TracksDrawer:
@@ -15,14 +16,11 @@ class TracksDrawer:
 
     def draw(self, poster, d, w, h, offset_x, offset_y):
         self.poster = poster
-        outer_radius = 0.5 * min(w, h) - 6
-        inner_radius = 0.25 * outer_radius
-        c_x = offset_x + 0.5 * w
-        c_y = offset_y + 0.5 * h
-        df = 360.0 / (366 if calendar.isleap(self.poster.year) else 365)
 
         tracks_by_date = {}
         for track in self.poster.tracks:
+            if not self.poster.years.contains(track.start_time):
+                continue
             text_date = track.start_time.strftime("%Y-%m-%d")
             if text_date in tracks_by_date:
                 tracks_by_date[text_date].append(track)
@@ -36,9 +34,41 @@ class TracksDrawer:
         if max_length == 0:
             return
 
+        years = self.poster.years.count()
+        size, (count_x, count_y) = utils.compute_grid(years, w, h)
+        x, y = 0, 0
+        ww, hh = w / count_x, h / count_y
+        margin_x, margin_y = 4, 4
+        if count_x <= 1:
+            margin_x = 0
+        if count_y <= 1:
+            margin_y = 0
+        www = ww - 2 * margin_x
+        hhh = hh - 2 * margin_y
+        for year in range(self.poster.years.from_year, self.poster.years.to_year + 1):
+            self.__draw(d,
+                www, hhh,
+                offset_x + ww * x + margin_x, offset_y + hh * y + margin_y,
+                year, max_length, tracks_by_date)
+            x += 1
+            if x >= count_x:
+                x = 0
+                y += 1
+
+    def __draw(self, d, w, h, offset_x, offset_y, year, max_length, tracks_by_date):
+        outer_radius = 0.5 * min(w, h) - 6
+        inner_radius = 0.25 * outer_radius
+        c_x = offset_x + 0.5 * w
+        c_y = offset_y + 0.5 * h
+
+        year_style = 'font-size:{}px; font-family:Arial;'.format(min(w, h) * 4.0 / 80.0)
+        month_style = 'font-size:{}px; font-family:Arial;'.format(min(w, h) * 3.0 / 80.0)
+
+        d.add(d.text('{}'.format(year), insert=(c_x, c_y), fill=self.poster.colors['text'], text_anchor="middle", alignment_baseline="middle", style=year_style))
+        df = 360.0 / (366 if calendar.isleap(year) else 365)
         day = 0
-        date = datetime.date(self.poster.year, 1, 1)
-        while date.year == self.poster.year:
+        date = datetime.date(year, 1, 1)
+        while date.year == year:
             text_date = date.strftime("%Y-%m-%d")
             a1 = math.radians(day * df)
             a2 = math.radians((day + 1) * df)
@@ -60,7 +90,7 @@ class TracksDrawer:
                     r3 * (math.cos(a1) - math.cos(a3))))
                 d.add(path)
                 tpath = svgwrite.text.TextPath(path, date.strftime("%B"), startOffset=(0.5 * r3 * (a3 - a1)))
-                text = d.text("", fill=self.poster.colors['text'], text_anchor="middle", style="font-size:4px; font-family:Arial")
+                text = d.text("", fill=self.poster.colors['text'], text_anchor="middle", style=month_style)
                 text.add(tpath)
                 d.add(text)
             if text_date in tracks_by_date:

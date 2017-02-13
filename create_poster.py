@@ -15,6 +15,7 @@ from src import grid_drawer
 from src import calendar_drawer
 from src import circular_drawer
 from src import heatmap_drawer
+from src import year_range
 
 
 __app_name__ = "create_poster"
@@ -32,8 +33,8 @@ def main():
                              help='Directory containing GPX files (default: current directory).')
     args_parser.add_argument('--output', metavar='FILE', type=str, default='poster.svg',
                              help='Name of generated SVG image file (default: "poster.svg").')
-    args_parser.add_argument('--year', metavar='YEAR', type=int, default=datetime.date.today().year - 1,
-                             help='Filter tracks by year (default: past year)')
+    args_parser.add_argument('--year', metavar='YEAR', type=str, default='all',
+                             help='Filter tracks by year; "NUM", "NUM-NUM", "all" (default: all years)')
     args_parser.add_argument('--title', metavar='TITLE', type=str, default="My Tracks",
                              help='Title to display (default: "My Tracks").')
     args_parser.add_argument('--athlete', metavar='NAME', type=str, default="John Doe",
@@ -55,7 +56,9 @@ def main():
 
     loader = track_loader.TrackLoader()
     loader.cache_dir = os.path.join(appdirs.user_cache_dir(__app_name__, __app_author__), "tracks")
-    loader.year = args.year
+    if not loader.year_range.parse(args.year):
+        raise Exception('Bad year range: {}.'.format(args.year))
+
     loader.special_file_names = args.special
     if args.clear_cache:
         loader.clear_cache()
@@ -65,7 +68,6 @@ def main():
 
     print("Creating poster of type '{}' and storing it in file '{}'...".format(args.type, args.output))
     p = poster.Poster(generators[args.type])
-    p.year = args.year
     p.athlete = args.athlete
     p.title = args.title
     p.colors = {'background': args.background_color,

@@ -4,27 +4,25 @@
 # license that can be found in the LICENSE file.
 
 import svgwrite
-
+from . import year_range
 
 class Poster:
     def __init__(self, drawer):
-        self.year = None
         self.athlete = None
         self.title = "My Poster"
         self.tracks = []
         self.colors = {"background": "#222222", "text": "#FFFFFF", "special": "#FFFF00", "track": "#4DD2FF"}
         self.width = 200
         self.height = 300
+        self.years = None
         self.tracks_drawer = drawer
-
-    def set_tracks(self, tracks):
-        self.tracks = tracks
 
     def draw(self, output):
         d = svgwrite.Drawing(output, ('{}mm'.format(self.width), '{}mm'.format(self.height)))
         d.viewbox(0, 0, self.width, self.height)
         d.add(d.rect((0, 0), (self.width, self.height), fill=self.colors['background']))
 
+        self.__compute_years()
         self.__draw_header(d)
         self.__draw_footer(d)
         self.__draw_tracks(d, self.width - 20, self.height - 30 - 30, 10, 30)
@@ -45,15 +43,13 @@ class Poster:
         value_style = "font-size:9px; font-family:Arial"
         small_value_style = "font-size:3px; font-family:Arial"
 
-        (total_length, average_length, min_length, max_length) = self.__compute_track_statistics()
+        (total_length, average_length, min_length, max_length, weeks) = self.__compute_track_statistics()
 
-        d.add(d.text("YEAR",                                       insert=(10, self.height-20),  fill=text_color, style=header_style))
-        d.add(d.text("{}".format(self.year),                       insert=(10, self.height-10),  fill=text_color, style=value_style))
-        d.add(d.text("ATHLETE",                                    insert=(40, self.height-20),  fill=text_color, style=header_style))
-        d.add(d.text(self.athlete,                                 insert=(40, self.height-10),  fill=text_color, style=value_style))
+        d.add(d.text("ATHLETE",                                    insert=(10, self.height-20),  fill=text_color, style=header_style))
+        d.add(d.text(self.athlete,                                 insert=(10, self.height-10),  fill=text_color, style=value_style))
         d.add(d.text("STATISTICS",                                 insert=(120, self.height-20), fill=text_color, style=header_style))
-        d.add(d.text("Runs: {}".format(len(self.tracks)),          insert=(120, self.height-15), fill=text_color, style=small_value_style))
-        d.add(d.text("Weekly: {:.1f}".format(len(self.tracks)/52), insert=(120, self.height-10), fill=text_color, style=small_value_style))
+        d.add(d.text("Number: {}".format(len(self.tracks)),        insert=(120, self.height-15), fill=text_color, style=small_value_style))
+        d.add(d.text("Weekly: {:.1f}".format(len(self.tracks)/weeks), insert=(120, self.height-10), fill=text_color, style=small_value_style))
         d.add(d.text("Total: {:.1f} km".format(total_length),      insert=(139, self.height-15), fill=text_color, style=small_value_style))
         d.add(d.text("Avg: {:.1f} km".format(average_length),      insert=(139, self.height-10), fill=text_color, style=small_value_style))
         d.add(d.text("Min: {:.1f} km".format(min_length),          insert=(167, self.height-15), fill=text_color, style=small_value_style))
@@ -63,10 +59,20 @@ class Poster:
         min_length = -1
         max_length = -1
         total_length = 0
+        weeks = {}
         for t in self.tracks:
             total_length += t.length
             if min_length < 0 or t.length < min_length:
                 min_length = t.length
             if max_length < 0 or t.length > max_length:
                 max_length = t.length
-        return 0.001*total_length, 0.001*total_length/len(self.tracks), 0.001*min_length, 0.001*max_length
+            # time.isocalendar()[1] -> week number
+            weeks[(t.start_time.year, t.start_time.isocalendar()[1])] = 1
+        return 0.001*total_length, 0.001*total_length/len(self.tracks), 0.001*min_length, 0.001*max_length, len(weeks)
+
+    def __compute_years(self):
+        if self.years is not None:
+            return
+        self.years = year_range.YearRange()
+        for t in self.tracks:
+            self.years.add(t.start_time)

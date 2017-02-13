@@ -21,11 +21,15 @@ optional arguments:
   -h, --help                show this help message and exit
   --gpx-dir DIR             Directory containing GPX files (default: current directory).
   --output FILE             Name of generated SVG image file (default: "poster.svg").
-  --year YEAR               Filter tracks by year (default: past year)
+  --year YEAR               Filter tracks by year; single year (e.g. "2016"),
+                            year range (e.g. "2014-2016"), all years ("all");
+                            (default: all years)')
   --title TITLE             Title to display (default: "My Tracks").
   --athlete NAME            Athlete name to display (default: "John Doe").
-  --special FILE            Mark track file from the GPX directory as special; use multiple times to mark multiple tracks.
-  --type TYPE               Type of poster to create (default: "grid", available: "calendar", "circular", "grid", "heatmap").
+  --special FILE            Mark track file from the GPX directory as special;
+                            use multiple times to mark multiple tracks.
+  --type TYPE               Type of poster to create (default: "grid", available:
+                            "calendar", "circular", "grid", "heatmap").
   --background-color COLOR  Background color of poster (default: "#222222").
   --track-color COLOR       Color of tracks (default: "#4DD2FF").
   --text-color COLOR        Color of text (default: "#FFFFFF").
@@ -33,7 +37,12 @@ optional arguments:
   --clear-cache             Clear the track cache.
 ```
 
-Example: `create_poster.py --type grid --gpx-dir "my-tracks" --year 2015 --title "Running" --athlete "Florian Pigorsch" --special race1.gpx --special race2.gpx --special race3.gpx` creates a nice poster (`poster.svg`) of the GPX tracks in the directory `my-tracks` (see above).
+Example:
+```
+create_poster.py --type grid --gpx-dir "my-tracks" --year 2015 --title "Running" \
+    --athlete "Florian Pigorsch" --special race1.gpx --special race2.gpx --special race3.gpx
+```
+creates a nice poster (`poster.svg`) of the GPX tracks in the directory `my-tracks` (see above).
 
 
 ### Selection of Tracks

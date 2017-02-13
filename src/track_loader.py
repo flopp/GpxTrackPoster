@@ -8,6 +8,7 @@ import os
 import shutil
 import concurrent.futures
 from . import track
+from . import year_range
 
 
 def load_gpx_file(file_name):
@@ -30,7 +31,7 @@ class TrackLoader:
     def __init__(self):
         self.min_length = 1000
         self.special_file_names = []
-        self.year = None
+        self.year_range = year_range.YearRange()
         self.cache_dir = None
 
     def clear_cache(self):
@@ -87,7 +88,7 @@ class TrackLoader:
                 print("{}: skipping empty track".format(file_name))
             elif not t.start_time:
                 print("{}: skipping track without start time".format(file_name))
-            elif t.start_time.year != self.year:
+            elif not self.year_range.contains(t.start_time):
                 print("{}: skipping track with wrong year {}".format(file_name, t.start_time.year))
             else:
                 t.special = (file_name in self.special_file_names)
