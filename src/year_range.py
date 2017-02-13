@@ -15,12 +15,12 @@ class YearRange:
             self.from_year = None
             self.to_year = None
             return True
-        m = re.match('^\d+$', s)
+        m = re.match(r'^\d+$', s)
         if m:
             self.from_year = int(s)
             self.to_year = self.from_year
             return True
-        m = re.match('^(\d+)-(\d+)$', s)
+        m = re.match(r'^(\d+)-(\d+)$', s)
         if m:
             y1, y2 = int(m.group(1)), int(m.group(2))
             if y1 <= y2:

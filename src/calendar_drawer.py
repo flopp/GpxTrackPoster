@@ -15,7 +15,7 @@ class TracksDrawer:
     def draw(self, poster, d, w, h, offset_x, offset_y):
         self.poster = poster
         years = self.poster.years.count()
-        size, (count_x, count_y) = utils.compute_grid(years, w, h)
+        _, (count_x, count_y) = utils.compute_grid(years, w, h)
         x, y = 0, 0
         ww, hh = w / count_x, h / count_y
         margin_x, margin_y = 4, 8

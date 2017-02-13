@@ -27,7 +27,7 @@ class TracksDrawer:
             else:
                 tracks_by_date[text_date] = [track]
         max_length = 0
-        for date, tracks in tracks_by_date.items():
+        for tracks in tracks_by_date.values():
             length = sum([t.length for t in tracks])
             if length > max_length:
                 max_length = length
@@ -35,7 +35,7 @@ class TracksDrawer:
             return
 
         years = self.poster.years.count()
-        size, (count_x, count_y) = utils.compute_grid(years, w, h)
+        _, (count_x, count_y) = utils.compute_grid(years, w, h)
         x, y = 0, 0
         ww, hh = w / count_x, h / count_y
         margin_x, margin_y = 4, 4
