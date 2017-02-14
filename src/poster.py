@@ -11,6 +11,7 @@ class Poster:
         self.athlete = None
         self.title = "My Poster"
         self.tracks = []
+        self.units = "metric"
         self.colors = {"background": "#222222", "text": "#FFFFFF", "special": "#FFFF00", "track": "#4DD2FF"}
         self.width = 200
         self.height = 300
@@ -28,6 +29,18 @@ class Poster:
         self.__draw_tracks(d, self.width - 20, self.height - 30 - 30, 10, 30)
 
         d.save()
+
+    def m2u(self, m):
+        if self.units == "metric":
+            return 0.001 * m
+        else:
+            return 0.001 * m / 1.609344
+
+    def u(self):
+        if self.units == "metric":
+            return "km"
+        else:
+            return "mi"
 
     def __draw_tracks(self, d, w, h, offset_x, offset_y):
         self.tracks_drawer.draw(self, d, w, h, offset_x, offset_y)
@@ -50,10 +63,10 @@ class Poster:
         d.add(d.text("STATISTICS", insert=(120, self.height-20), fill=text_color, style=header_style))
         d.add(d.text("Number: {}".format(len(self.tracks)), insert=(120, self.height-15), fill=text_color, style=small_value_style))
         d.add(d.text("Weekly: {:.1f}".format(len(self.tracks)/weeks), insert=(120, self.height-10), fill=text_color, style=small_value_style))
-        d.add(d.text("Total: {:.1f} km".format(total_length), insert=(139, self.height-15), fill=text_color, style=small_value_style))
-        d.add(d.text("Avg: {:.1f} km".format(average_length), insert=(139, self.height-10), fill=text_color, style=small_value_style))
-        d.add(d.text("Min: {:.1f} km".format(min_length), insert=(167, self.height-15), fill=text_color, style=small_value_style))
-        d.add(d.text("Max: {:.1f} km".format(max_length), insert=(167, self.height-10), fill=text_color, style=small_value_style))
+        d.add(d.text("Total: {:.1f} {}".format(self.m2u(total_length), self.u()), insert=(139, self.height-15), fill=text_color, style=small_value_style))
+        d.add(d.text("Avg: {:.1f} {}".format(self.m2u(average_length), self.u()), insert=(139, self.height-10), fill=text_color, style=small_value_style))
+        d.add(d.text("Min: {:.1f} {}".format(self.m2u(min_length), self.u()), insert=(167, self.height-15), fill=text_color, style=small_value_style))
+        d.add(d.text("Max: {:.1f} {}".format(self.m2u(max_length), self.u()), insert=(167, self.height-10), fill=text_color, style=small_value_style))
 
     def __compute_track_statistics(self):
         min_length = -1
@@ -68,7 +81,7 @@ class Poster:
                 max_length = t.length
             # time.isocalendar()[1] -> week number
             weeks[(t.start_time.year, t.start_time.isocalendar()[1])] = 1
-        return 0.001*total_length, 0.001*total_length/len(self.tracks), 0.001*min_length, 0.001*max_length, len(weeks)
+        return total_length, total_length/len(self.tracks), min_length, max_length, len(weeks)
 
     def __compute_years(self):
         if self.years is not None:

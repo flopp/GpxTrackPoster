@@ -15,7 +15,8 @@ You will need a little experience running things from the command line to use th
 usage: create_poster.py [-h] [--gpx-dir DIR] [--output FILE] [--year YEAR]
                [--title TITLE] [--athlete NAME] [--special FILE] [--type TYPE]
                [--background-color COLOR] [--track-color COLOR]
-               [--text-color COLOR] [--special-color COLOR] [--clear-cache]
+               [--text-color COLOR] [--special-color COLOR] [--units UNITS]
+               [--clear-cache]
 
 optional arguments:
   -h, --help                show this help message and exit
@@ -34,6 +35,7 @@ optional arguments:
   --track-color COLOR       Color of tracks (default: "#4DD2FF").
   --text-color COLOR        Color of text (default: "#FFFFFF").
   --special-color COLOR     Special track color (default: "#FFFF00").
+  --units UNITS             Distance units; "metric", "imperial" (default: "metric").
   --clear-cache             Clear the track cache.
 ```
 

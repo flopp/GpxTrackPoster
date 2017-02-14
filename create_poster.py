@@ -51,6 +51,8 @@ def main():
                              help='Color of text (default: "#FFFFFF").')
     args_parser.add_argument('--special-color', dest='special_color', metavar='COLOR', default='#FFFF00',
                              help='Special track color (default: "#FFFF00").')
+    args_parser.add_argument('--units', dest='units', metavar='UNITS', type=str, choices=['metric', 'imperial'],
+                             default='metric', help='Distance units; "metric", "imperial" (default: "metric").')
     args_parser.add_argument('--clear-cache', dest='clear_cache', action='store_true', help='Clear the track cache.')
     args = args_parser.parse_args()
 
@@ -74,6 +76,7 @@ def main():
                 'track': args.track_color,
                 'special': args.special_color,
                 'text': args.text_color}
+    p.units = args.units
     p.tracks = tracks
     p.draw(args.output)
 

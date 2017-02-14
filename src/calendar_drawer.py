@@ -83,12 +83,12 @@ class TracksDrawer:
                 if text_date in tracks_by_date:
                     tracks = tracks_by_date[text_date]
                     special = [t for t in tracks if t.special]
-                    length = sum([t.length for t in tracks])/1000
+                    length = sum([t.length for t in tracks])
                     if special:
                         d.add(d.rect(pos, dim, fill=self.poster.colors['special']))
                     else:
                         d.add(d.rect(pos, dim, fill=self.poster.colors['track']))
-                    d.add(d.text("{:.1f}".format(length), insert=(x_pos + size/2, y_pos + size + size/2),
+                    d.add(d.text("{:.1f}".format(self.poster.m2u(length)), insert=(x_pos + size/2, y_pos + size + size/2),
                         text_anchor="middle",
                         style=day_length_style, fill=self.poster.colors['text']))
                 else:
