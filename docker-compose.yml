@@ -1,0 +1,8 @@
+app:
+    build: .
+    env_file:
+        - .env
+    command: /usr/src/app/create_poster.py --type grid --gpx-dir /usr/src/app/gpx_dir --year $YEAR --title $TITLE --athlete $ATHLETE --output /usr/src/app/output/output.svg
+    volumes:
+        - ./output:/usr/src/app/output
+        - ./gpx_dir:/usr/src/app/gpx_dir
