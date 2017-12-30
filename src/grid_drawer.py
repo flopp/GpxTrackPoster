@@ -3,24 +3,26 @@
 # Use of this source code is governed by a MIT-style
 # license that can be found in the LICENSE file.
 
+from . import tracks_drawer
 from . import utils
 
 
-class TracksDrawer:
+class GridDrawer(tracks_drawer.TracksDrawer):
     def __init__(self):
-        self.poster = None
+        super().__init__()
 
     def draw(self, poster, d, w, h, offset_x, offset_y):
         self.poster = poster
-        size, (count_x, count_y) = utils.compute_grid(len(self.poster.tracks), w, h)
+        size, (count_x, count_y) = utils.compute_grid(len(self.poster._tracks), w, h)
         spacing_x = 0 if count_x <= 1 else (w-size*count_x)/(count_x - 1)
         spacing_y = 0 if count_y <= 1 else (h-size*count_y)/(count_y - 1)
         offset_x += (w - count_x*size - (count_x - 1)*spacing_x)/2
         offset_y += (h - count_y*size - (count_y - 1)*spacing_y)/2
-        for (index, track) in enumerate(self.poster.tracks):
+        min_length, max_length = self.poster._length_range
+        for (index, track) in enumerate(self.poster._tracks):
             x = index % count_x
             y = index // count_x
-            color = self.poster.colors['special'] if track.special else self.poster.colors['track']
+            color = self.color(min_length, max_length, track.length, track.special)
             self.__draw_track(d, track, offset_x+(0.05 + x)*size+x*spacing_x, offset_y+(0.05+y)*size+y*spacing_y,
                               0.9 * size, 0.9 * size, color)
 

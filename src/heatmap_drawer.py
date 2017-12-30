@@ -3,19 +3,20 @@
 # Use of this source code is governed by a MIT-style
 # license that can be found in the LICENSE file.
 
+from . import tracks_drawer
 from . import utils
 
 
-class TracksDrawer:
+class HeatmapDrawer(tracks_drawer.TracksDrawer):
     def __init__(self):
-        self.poster = None
+        super().__init__()
 
     def draw(self, poster, d, w, h, offset_x, offset_y):
         self.poster = poster
 
         xy_polylines = []
         xy_polylines_special = []
-        for track in self.poster.tracks:
+        for track in self.poster._tracks:
             track_xy = []
             for polyline in track.polylines:
                 track_xy.append([utils.latlng2xy(lat, lng) for (lat, lng) in polyline])

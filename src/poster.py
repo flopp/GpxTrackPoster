@@ -11,7 +11,10 @@ class Poster:
     def __init__(self, drawer):
         self.athlete = None
         self.title = "My Poster"
-        self.tracks = []
+        self._tracks_by_date = {}
+        self._tracks = []
+        self._length_range = None
+        self._length_range_by_date = None
         self.units = "metric"
         self.colors = {"background": "#222222", "text": "#FFFFFF", "special": "#FFFF00", "track": "#4DD2FF"}
         self.width = 200
@@ -19,16 +22,40 @@ class Poster:
         self.years = None
         self.tracks_drawer = drawer
 
+    def set_tracks(self, tracks):
+        self._tracks = tracks
+        self._tracks_by_date = {}
+        self._length_range = None
+        self._length_range_by_date = None
+        self.__compute_years(tracks)
+        for track in tracks:
+            if not self.years.contains(track.start_time):
+                continue
+            text_date = track.start_time.strftime("%Y-%m-%d")
+            if text_date in self._tracks_by_date:
+                self._tracks_by_date[text_date].append(track)
+            else:
+                self._tracks_by_date[text_date] = [track]
+            if self._length_range is None:
+                self._length_range = track.length, track.length
+            else:
+                rmin, rmax = self._length_range
+                self._length_range = min(rmin, track.length), max(rmax, track.length)
+        for tracks in self._tracks_by_date.values():
+            length = sum([t.length for t in tracks])
+            if self._length_range_by_date is None:
+                self._length_range_by_date = length, length
+            else:
+                rmin, rmax = self._length_range_by_date
+                self._length_range_by_date = min(rmin, length), max(rmax, length)
+
     def draw(self, output):
         d = svgwrite.Drawing(output, ('{}mm'.format(self.width), '{}mm'.format(self.height)))
         d.viewbox(0, 0, self.width, self.height)
         d.add(d.rect((0, 0), (self.width, self.height), fill=self.colors['background']))
-
-        self.__compute_years()
         self.__draw_header(d)
         self.__draw_footer(d)
         self.__draw_tracks(d, self.width - 20, self.height - 30 - 30, 10, 30)
-
         d.save()
 
     def m2u(self, m):
@@ -62,9 +89,9 @@ class Poster:
         d.add(d.text("ATHLETE", insert=(10, self.height-20), fill=text_color, style=header_style))
         d.add(d.text(self.athlete, insert=(10, self.height-10), fill=text_color, style=value_style))
         d.add(d.text("STATISTICS", insert=(120, self.height-20), fill=text_color, style=header_style))
-        d.add(d.text("Number: {}".format(len(self.tracks)), insert=(120, self.height-15), fill=text_color,
+        d.add(d.text("Number: {}".format(len(self._tracks)), insert=(120, self.height-15), fill=text_color,
                      style=small_value_style))
-        d.add(d.text("Weekly: {:.1f}".format(len(self.tracks)/weeks), insert=(120, self.height-10), fill=text_color,
+        d.add(d.text("Weekly: {:.1f}".format(len(self._tracks)/weeks), insert=(120, self.height-10), fill=text_color,
                      style=small_value_style))
         d.add(d.text("Total: {:.1f} {}".format(self.m2u(total_length), self.u()), insert=(139, self.height-15),
                      fill=text_color, style=small_value_style))
@@ -80,7 +107,7 @@ class Poster:
         max_length = -1
         total_length = 0
         weeks = {}
-        for t in self.tracks:
+        for t in self._tracks:
             total_length += t.length
             if min_length < 0 or t.length < min_length:
                 min_length = t.length
@@ -88,11 +115,11 @@ class Poster:
                 max_length = t.length
             # time.isocalendar()[1] -> week number
             weeks[(t.start_time.year, t.start_time.isocalendar()[1])] = 1
-        return total_length, total_length/len(self.tracks), min_length, max_length, len(weeks)
+        return total_length, total_length/len(self._tracks), min_length, max_length, len(weeks)
 
-    def __compute_years(self):
+    def __compute_years(self, tracks):
         if self.years is not None:
             return
         self.years = year_range.YearRange()
-        for t in self.tracks:
+        for t in tracks:
             self.years.add(t.start_time)

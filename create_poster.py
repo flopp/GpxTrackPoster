@@ -21,10 +21,10 @@ __app_author__ = "flopp.net"
 
 
 def main():
-    generators = {"grid": grid_drawer.TracksDrawer(),
-                  "calendar": calendar_drawer.TracksDrawer(),
-                  "heatmap": heatmap_drawer.TracksDrawer(),
-                  "circular": circular_drawer.TracksDrawer()}
+    generators = {"grid": grid_drawer.GridDrawer(),
+                  "calendar": calendar_drawer.CalendarDrawer(),
+                  "heatmap": heatmap_drawer.HeatmapDrawer(),
+                  "circular": circular_drawer.CircularDrawer()}
 
     args_parser = argparse.ArgumentParser()
     args_parser.add_argument('--gpx-dir', dest='gpx_dir', metavar='DIR', type=str, default='.',
@@ -47,10 +47,14 @@ def main():
                              default='#222222', help='Background color of poster (default: "#222222").')
     args_parser.add_argument('--track-color', dest='track_color', metavar='COLOR', type=str, default='#4DD2FF',
                              help='Color of tracks (default: "#4DD2FF").')
+    args_parser.add_argument('--track-color2', dest='track_color2', metavar='COLOR', type=str,
+                             help='Secondary color of tracks (default: none).')
     args_parser.add_argument('--text-color', dest='text_color', metavar='COLOR', type=str, default='#FFFFFF',
                              help='Color of text (default: "#FFFFFF").')
     args_parser.add_argument('--special-color', dest='special_color', metavar='COLOR', default='#FFFF00',
                              help='Special track color (default: "#FFFF00").')
+    args_parser.add_argument('--special-color2', dest='special_color2', metavar='COLOR',
+                             help='Secondary color of special tracks (default: none).')
     args_parser.add_argument('--units', dest='units', metavar='UNITS', type=str, choices=['metric', 'imperial'],
                              default='metric', help='Distance units; "metric", "imperial" (default: "metric").')
     args_parser.add_argument('--clear-cache', dest='clear_cache', action='store_true', help='Clear the track cache.')
@@ -74,10 +78,12 @@ def main():
     p.title = args.title
     p.colors = {'background': args.background_color,
                 'track': args.track_color,
+                'track2': args.track_color2 if args.track_color2 is not None else args.track_color,
                 'special': args.special_color,
+                'special2': args.special_color2 if args.special_color2 is not None else args.special_color,
                 'text': args.text_color}
     p.units = args.units
-    p.tracks = tracks
+    p.set_tracks(tracks)
     p.draw(args.output)
 
 

@@ -7,31 +7,18 @@ import calendar
 import datetime
 import math
 import svgwrite
+from . import tracks_drawer
 from . import utils
 
 
-class TracksDrawer:
+class CircularDrawer(tracks_drawer.TracksDrawer):
     def __init__(self):
-        self.poster = None
+        super().__init__()
 
     def draw(self, poster, d, w, h, offset_x, offset_y):
         self.poster = poster
 
-        tracks_by_date = {}
-        for track in self.poster.tracks:
-            if not self.poster.years.contains(track.start_time):
-                continue
-            text_date = track.start_time.strftime("%Y-%m-%d")
-            if text_date in tracks_by_date:
-                tracks_by_date[text_date].append(track)
-            else:
-                tracks_by_date[text_date] = [track]
-        max_length = 0
-        for tracks in tracks_by_date.values():
-            length = sum([t.length for t in tracks])
-            if length > max_length:
-                max_length = length
-        if max_length == 0:
+        if self.poster._length_range_by_date is None:
             return
 
         years = self.poster.years.count()
@@ -49,19 +36,20 @@ class TracksDrawer:
             self.__draw(d,
                         www, hhh,
                         offset_x + ww * x + margin_x, offset_y + hh * y + margin_y,
-                        year, max_length, tracks_by_date)
+                        year)
             x += 1
             if x >= count_x:
                 x = 0
                 y += 1
 
-    def __draw(self, d, w, h, offset_x, offset_y, year, max_length, tracks_by_date):
+    def __draw(self, d, w, h, offset_x, offset_y, year):
         outer_radius = 0.5 * min(w, h) - 6
         inner_radius = 0.25 * outer_radius
         c_x = offset_x + 0.5 * w
         c_y = offset_y + 0.5 * h
 
-        year_style = 'font-size:{}px; font-family:Arial;'.format(min(w, h) * 4.0 / 80.0)
+        min_length, max_length = self.poster._length_range_by_date
+        year_style = 'dominant-baseline: central; font-size:{}px; font-family:Arial;'.format(min(w, h) * 4.0 / 80.0)
         month_style = 'font-size:{}px; font-family:Arial;'.format(min(w, h) * 3.0 / 80.0)
 
         d.add(d.text('{}'.format(year), insert=(c_x, c_y), fill=self.poster.colors['text'], text_anchor="middle",
@@ -94,11 +82,11 @@ class TracksDrawer:
                 text = d.text("", fill=self.poster.colors['text'], text_anchor="middle", style=month_style)
                 text.add(tpath)
                 d.add(text)
-            if text_date in tracks_by_date:
-                tracks = tracks_by_date[text_date]
+            if text_date in self.poster._tracks_by_date:
+                tracks = self.poster._tracks_by_date[text_date]
                 special = [t for t in tracks if t.special]
                 length = sum([t.length for t in tracks])
-                color = self.poster.colors['special'] if special else self.poster.colors['track']
+                color = self.color(min_length, max_length, length, special)
                 r1 = inner_radius
                 r2 = inner_radius + (outer_radius - inner_radius) * length / max_length
                 path = d.path(d=('M', c_x + r1 * math.sin(a1), c_y - r1 * math.cos(a1)), fill=color, stroke='none')

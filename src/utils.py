@@ -4,6 +4,7 @@
 # license that can be found in the LICENSE file.
 
 import math
+import colour
 
 
 # mercator projection
@@ -50,3 +51,12 @@ def compute_grid(count, width, height):
                     best_counts = count_x, count_y
                     min_waste = waste
     return best_size, best_counts
+
+
+def interpolate_color(color1, color2, ratio):
+    c1 = colour.Color(color1)
+    c2 = colour.Color(color2)
+    c3 = colour.Color(hue=((1 - ratio) * c1.hue + ratio * c2.hue),
+                      saturation=((1 - ratio) * c1.saturation + ratio * c2.saturation),
+                      luminance=((1 - ratio) * c1.luminance + ratio * c2.luminance))
+    return c3.hex_l

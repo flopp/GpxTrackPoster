@@ -5,12 +5,13 @@
 
 import calendar
 import datetime
+from . import tracks_drawer
 from . import utils
 
 
-class TracksDrawer:
+class CalendarDrawer(tracks_drawer.TracksDrawer):
     def __init__(self):
-        self.poster = None
+        super().__init__()
 
     def draw(self, poster, d, w, h, offset_x, offset_y):
         self.poster = poster
@@ -56,13 +57,7 @@ class TracksDrawer:
         spacing_x = (w - size * count_x) / (count_x - 1)
         spacing_y = (h - size * 3 * 12) / 11
 
-        tracks_by_date = {}
-        for track in self.poster.tracks:
-            text_date = track.start_time.strftime("%Y-%m-%d")
-            if text_date in tracks_by_date:
-                tracks_by_date[text_date].append(track)
-            else:
-                tracks_by_date[text_date] = [track]
+        min_length, max_length = self.poster._length_range_by_date
 
         dow = ["M", "T", "W", "T", "F", "S", "S"]
         for month in range(1, 13):
@@ -79,14 +74,12 @@ class TracksDrawer:
                 pos = (x_pos + 0.05 * size, y_pos + 0.05 * size)
                 dim = (size * 0.9, size * 0.9)
                 text_date = date.strftime("%Y-%m-%d")
-                if text_date in tracks_by_date:
-                    tracks = tracks_by_date[text_date]
+                if text_date in self.poster._tracks_by_date:
+                    tracks = self.poster._tracks_by_date[text_date]
                     special = [t for t in tracks if t.special]
                     length = sum([t.length for t in tracks])
-                    if special:
-                        d.add(d.rect(pos, dim, fill=self.poster.colors['special']))
-                    else:
-                        d.add(d.rect(pos, dim, fill=self.poster.colors['track']))
+                    color = self.color(min_length, max_length, length, special)
+                    d.add(d.rect(pos, dim, fill=color))
                     d.add(d.text("{:.1f}".format(self.poster.m2u(length)),
                                  insert=(x_pos + size / 2, y_pos + size + size / 2),
                                  text_anchor="middle",
