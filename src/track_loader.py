@@ -59,7 +59,8 @@ class TrackLoader:
         # load remaining gpx files
         remaining_file_names = [f for f in file_names if f not in cached_tracks]
         if remaining_file_names:
-            print("Trying to load {} track(s) from GPX files; this may take a while...".format(len(remaining_file_names)))
+            print("Trying to load {} track(s) from GPX files; this may take a while..."
+                  .format(len(remaining_file_names)))
             loaded_tracks = self.__load_tracks(remaining_file_names)
             print("Conventionally loaded tracks:", len(loaded_tracks))
 
@@ -95,9 +96,10 @@ class TrackLoader:
                 filtered_tracks.append(t)
         return filtered_tracks
 
-    def __merge_tracks(self, tracks):
+    @staticmethod
+    def __merge_tracks(tracks):
         print("Merging tracks...")
-        tracks = sorted(tracks, key=lambda t: t.start_time)
+        tracks = sorted(tracks, key=lambda t1: t1.start_time)
         merged_tracks = []
         last_end_time = None
         for t in tracks:
@@ -117,7 +119,9 @@ class TrackLoader:
     def __load_tracks(file_names):
         tracks = {}
         with concurrent.futures.ProcessPoolExecutor() as executor:
-            future_to_file_name = {executor.submit(load_gpx_file, file_name): file_name for file_name in file_names}
+            future_to_file_name = {
+                executor.submit(load_gpx_file, file_name): file_name for file_name in file_names
+            }
         for future in concurrent.futures.as_completed(future_to_file_name):
             file_name = future_to_file_name[future]
             try:
@@ -134,7 +138,9 @@ class TrackLoader:
         tracks = {}
         failed_loads = []
         with concurrent.futures.ProcessPoolExecutor() as executor:
-            future_to_file_name = {executor.submit(load_cached_track_file, file_name, cache_dir): file_name for file_name in file_names}
+            future_to_file_name = {
+                executor.submit(load_cached_track_file, file_name, cache_dir): file_name for file_name in file_names
+            }
         for future in concurrent.futures.as_completed(future_to_file_name):
             file_name = future_to_file_name[future]
             try:

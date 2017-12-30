@@ -55,10 +55,14 @@ class TracksDrawer:
         color_special = self.poster.colors["special"]
 
         for line in scaled_lines:
-            d.add(d.polyline(points=line, stroke=color, stroke_opacity=0.1, fill='none', stroke_width=5.0, stroke_linejoin='round', stroke_linecap='round'))
+            d.add(d.polyline(points=line, stroke=color, stroke_opacity=0.1, fill='none',
+                             stroke_width=5.0, stroke_linejoin='round', stroke_linecap='round'))
         for line in scaled_lines:
-            d.add(d.polyline(points=line, stroke=color, stroke_opacity=0.2, fill='none', stroke_width=2.0, stroke_linejoin='round', stroke_linecap='round'))
+            d.add(d.polyline(points=line, stroke=color, stroke_opacity=0.2, fill='none',
+                             stroke_width=2.0, stroke_linejoin='round', stroke_linecap='round'))
         for line in scaled_lines:
-            d.add(d.polyline(points=line, stroke=color, fill='none', stroke_width=0.3, stroke_linejoin='round', stroke_linecap='round'))
+            d.add(d.polyline(points=line, stroke=color, fill='none',
+                             stroke_width=0.3, stroke_linejoin='round', stroke_linecap='round'))
         for line in scaled_lines_special:
-            d.add(d.polyline(points=line, stroke=color_special, fill='none', stroke_width=0.3, stroke_linejoin='round', stroke_linecap='round'))
+            d.add(d.polyline(points=line, stroke=color_special, fill='none',
+                             stroke_width=0.3, stroke_linejoin='round', stroke_linecap='round'))

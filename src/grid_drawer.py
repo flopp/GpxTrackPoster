@@ -21,9 +21,11 @@ class TracksDrawer:
             x = index % count_x
             y = index // count_x
             color = self.poster.colors['special'] if track.special else self.poster.colors['track']
-            self.__draw_track(d, track, offset_x+(0.05 + x)*size+x*spacing_x, offset_y+(0.05+y)*size+y*spacing_y, 0.9 * size, 0.9 * size, color)
+            self.__draw_track(d, track, offset_x+(0.05 + x)*size+x*spacing_x, offset_y+(0.05+y)*size+y*spacing_y,
+                              0.9 * size, 0.9 * size, color)
 
-    def __draw_track(self, d, track, x_offset, y_offset, width, height, color):
+    @staticmethod
+    def __draw_track(d, track, x_offset, y_offset, width, height, color):
         # compute mercator projection of track segments
         lines = []
         for polyline in track.polylines:
@@ -53,4 +55,5 @@ class TracksDrawer:
             scaled_lines.append(scaled_line)
 
         for line in scaled_lines:
-            d.add(d.polyline(points=line, stroke=color, fill='none', stroke_width=0.5, stroke_linejoin='round', stroke_linecap='round'))
+            d.add(d.polyline(points=line, stroke=color, fill='none',
+                             stroke_width=0.5, stroke_linejoin='round', stroke_linecap='round'))

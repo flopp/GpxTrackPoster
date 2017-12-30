@@ -6,7 +6,6 @@
 # license that can be found in the LICENSE file.
 
 import argparse
-import datetime
 import appdirs
 import os
 from src import track_loader
@@ -15,7 +14,6 @@ from src import grid_drawer
 from src import calendar_drawer
 from src import circular_drawer
 from src import heatmap_drawer
-from src import year_range
 
 
 __app_name__ = "create_poster"
@@ -40,9 +38,11 @@ def main():
     args_parser.add_argument('--athlete', metavar='NAME', type=str, default="John Doe",
                              help='Athlete name to display (default: "John Doe").')
     args_parser.add_argument('--special', metavar='FILE', action='append', default=[],
-                             help='Mark track file from the GPX directory as special; use multiple times to mark multiple tracks.')
+                             help='Mark track file from the GPX directory as special; use multiple times to mark '
+                                  'multiple tracks.')
     args_parser.add_argument('--type', metavar='TYPE', default='grid', choices=generators.keys(),
-                             help='Type of poster to create (default: "grid", available: "{}").'.format('", "'.join(generators.keys())))
+                             help='Type of poster to create (default: "grid", available: "{}").'
+                             .format('", "'.join(generators.keys())))
     args_parser.add_argument('--background-color', dest='background_color', metavar='COLOR', type=str,
                              default='#222222', help='Background color of poster (default: "#222222").')
     args_parser.add_argument('--track-color', dest='track_color', metavar='COLOR', type=str, default='#4DD2FF',

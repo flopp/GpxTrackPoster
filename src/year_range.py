@@ -5,6 +5,7 @@
 
 import re
 
+
 class YearRange:
     def __init__(self):
         self.from_year = None

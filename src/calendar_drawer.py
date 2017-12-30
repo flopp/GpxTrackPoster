@@ -27,10 +27,9 @@ class TracksDrawer:
         hhh = hh - 2 * margin_y
 
         for year in range(self.poster.years.from_year, self.poster.years.to_year + 1):
-            self.__draw(d,
-                www, hhh,
-                offset_x + ww * x + margin_x, offset_y + hh * y + margin_y,
-                year)
+            self.__draw(d, www, hhh,
+                        offset_x + ww * x + margin_x, offset_y + hh * y + margin_y,
+                        year)
             x += 1
             if x >= count_x:
                 x = 0
@@ -44,7 +43,7 @@ class TracksDrawer:
         day_length_style = 'font-size:{}px; font-family:Arial;'.format(min(w, h) * 1.0 / 80.0)
 
         d.add(d.text('{}'.format(year), insert=(offset_x, offset_y), fill=self.poster.colors['text'],
-            alignment_baseline="hanging", style=year_style))
+                     alignment_baseline="hanging", style=year_style))
         offset_y += year_size
         h = h - year_size
         count_x = 31
@@ -54,8 +53,8 @@ class TracksDrawer:
             count_x = max(count_x, date.weekday() + last_day)
 
         size = min(w / count_x, h / 36)
-        spacing_x = (w - size * count_x)/(count_x - 1)
-        spacing_y = (h - size * 3 * 12)/11
+        spacing_x = (w - size * count_x) / (count_x - 1)
+        spacing_y = (h - size * 3 * 12) / 11
 
         tracks_by_date = {}
         for track in self.poster.tracks:
@@ -68,17 +67,17 @@ class TracksDrawer:
         dow = ["M", "T", "W", "T", "F", "S", "S"]
         for month in range(1, 13):
             date = datetime.date(year, month, 1)
-            y = month-1
-            y_pos = offset_y + (y*3 + 1)*size + y*spacing_y
-            d.add(d.text(date.strftime("%B"), insert=(offset_x, y_pos-2), fill=self.poster.colors['text'],
-                alignment_baseline="hanging", style=month_style))
+            y = month - 1
+            y_pos = offset_y + (y * 3 + 1) * size + y * spacing_y
+            d.add(d.text(date.strftime("%B"), insert=(offset_x, y_pos - 2), fill=self.poster.colors['text'],
+                         alignment_baseline="hanging", style=month_style))
 
             day_offset = date.weekday()
             while date.month == month:
-                x = date.day-1
-                x_pos = offset_x + (day_offset+x)*size + x*spacing_x
-                pos = (x_pos + 0.05*size, y_pos + 0.05*size)
-                dim = (size*0.9, size*0.9)
+                x = date.day - 1
+                x_pos = offset_x + (day_offset + x) * size + x * spacing_x
+                pos = (x_pos + 0.05 * size, y_pos + 0.05 * size)
+                dim = (size * 0.9, size * 0.9)
                 text_date = date.strftime("%Y-%m-%d")
                 if text_date in tracks_by_date:
                     tracks = tracks_by_date[text_date]
@@ -88,13 +87,15 @@ class TracksDrawer:
                         d.add(d.rect(pos, dim, fill=self.poster.colors['special']))
                     else:
                         d.add(d.rect(pos, dim, fill=self.poster.colors['track']))
-                    d.add(d.text("{:.1f}".format(self.poster.m2u(length)), insert=(x_pos + size/2, y_pos + size + size/2),
-                        text_anchor="middle",
-                        style=day_length_style, fill=self.poster.colors['text']))
+                    d.add(d.text("{:.1f}".format(self.poster.m2u(length)),
+                                 insert=(x_pos + size / 2, y_pos + size + size / 2),
+                                 text_anchor="middle",
+                                 style=day_length_style, fill=self.poster.colors['text']))
                 else:
                     d.add(d.rect(pos, dim, fill='#444444'))
 
-                d.add(d.text(dow[date.weekday()], insert=(offset_x + (day_offset + x)*size + size/2, y_pos + size/2),
-                    text_anchor="middle", alignment_baseline="middle",
-                    style=day_style))
+                d.add(d.text(dow[date.weekday()],
+                             insert=(offset_x + (day_offset + x) * size + size / 2, y_pos + size / 2),
+                             text_anchor="middle", alignment_baseline="middle",
+                             style=day_style))
                 date += datetime.timedelta(1)

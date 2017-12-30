@@ -1,5 +1,5 @@
+[![Build Status](https://travis-ci.org/flopp/GpxTrackPoster.svg?branch=master)](https://travis-ci.org/flopp/GpxTrackPoster)
 [![Scrutinizer Score](https://scrutinizer-ci.com/g/flopp/GpxTrackPoster/badges/quality-score.png)](https://scrutinizer-ci.com/g/flopp/GpxTrackPoster/)
-[![Scrutinizer Build](https://scrutinizer-ci.com/g/flopp/GpxTrackPoster/badges/build.png)](https://scrutinizer-ci.com/g/flopp/GpxTrackPoster/)
 ![License MIT](https://img.shields.io/badge/license-MIT-lightgrey.svg?style=flat)
 
 # GpxTrackPoster
@@ -69,7 +69,7 @@ The *Grid Poster* layouts all tracks in a grid, starting with the earliest track
 ### Calendar Poster (`--type calendar`)
 The *Calendar Poster* draws one square for each day, each row of squares corresponds to specific month. If a track was recorded of a day the corresponding square is colored with the *track color* or with the *special color* if the track is marked as special. A day's total track length in kilometers is printed below each square.
 
-![Example Grid Poster](https://github.com/flopp/GpxTrackPoster/blob/master/examples/example_calendar.png)
+![Example Calendar Poster](https://github.com/flopp/GpxTrackPoster/blob/master/examples/example_calendar.png)
 [svg](https://github.com/flopp/GpxTrackPoster/blob/master/examples/example_calendar.svg)
 
 ### Circular Poster (`--type circular`)
@@ -81,7 +81,7 @@ The *Circular Poster* the year in a circle; each day corresponds to a circle seg
 ### Heatmap Poster (`--type heatmap`)
 The *Heatmap Poster* displays all tracks within one "map". The more often a location has been "visited" on a track, the more colorful the corresponding location is on the map. *Special tracks* are drawn with the *special color*.
 
-![Example Grid Poster](https://github.com/flopp/GpxTrackPoster/blob/master/examples/example_heatmap.png)
+![Example Heatmap Poster](https://github.com/flopp/GpxTrackPoster/blob/master/examples/example_heatmap.png)
 [svg](https://github.com/flopp/GpxTrackPoster/blob/master/examples/example_heatmap.svg)
 
 ## Setup
@@ -99,4 +99,4 @@ If you have found a bug or have a feature request, please create a new issue. I'
 Or even better: clone the repo, fix the bug/implement the feature yourself, and file a pull request. Contributions are always welcome!
 
 ## License
-[MIT](https://github.com/flopp/GpxTrackPoster/blob/master/LICENSE) &copy; 2016 florian Pigorsch
+[MIT](https://github.com/flopp/GpxTrackPoster/blob/master/LICENSE) &copy; 2016-2017 Florian Pigorsch

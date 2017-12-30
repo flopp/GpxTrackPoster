@@ -47,9 +47,9 @@ class TracksDrawer:
         hhh = hh - 2 * margin_y
         for year in range(self.poster.years.from_year, self.poster.years.to_year + 1):
             self.__draw(d,
-                www, hhh,
-                offset_x + ww * x + margin_x, offset_y + hh * y + margin_y,
-                year, max_length, tracks_by_date)
+                        www, hhh,
+                        offset_x + ww * x + margin_x, offset_y + hh * y + margin_y,
+                        year, max_length, tracks_by_date)
             x += 1
             if x >= count_x:
                 x = 0
@@ -64,7 +64,8 @@ class TracksDrawer:
         year_style = 'font-size:{}px; font-family:Arial;'.format(min(w, h) * 4.0 / 80.0)
         month_style = 'font-size:{}px; font-family:Arial;'.format(min(w, h) * 3.0 / 80.0)
 
-        d.add(d.text('{}'.format(year), insert=(c_x, c_y), fill=self.poster.colors['text'], text_anchor="middle", alignment_baseline="middle", style=year_style))
+        d.add(d.text('{}'.format(year), insert=(c_x, c_y), fill=self.poster.colors['text'], text_anchor="middle",
+                     alignment_baseline="middle", style=year_style))
         df = 360.0 / (366 if calendar.isleap(year) else 365)
         day = 0
         date = datetime.date(year, 1, 1)
@@ -99,10 +100,11 @@ class TracksDrawer:
                 length = sum([t.length for t in tracks])
                 color = self.poster.colors['special'] if special else self.poster.colors['track']
                 r1 = inner_radius
-                r2 = inner_radius + (outer_radius-inner_radius) * length / max_length
+                r2 = inner_radius + (outer_radius - inner_radius) * length / max_length
                 path = d.path(d=('M', c_x + r1 * math.sin(a1), c_y - r1 * math.cos(a1)), fill=color, stroke='none')
                 path.push('l', (r2 - r1) * math.sin(a1), (r1 - r2) * math.cos(a1))
-                path.push('a{},{} 0 0,0 {},{}'.format(r2, r2, r2 * (math.sin(a2) - math.sin(a1)), r2 * (math.cos(a1) - math.cos(a2))))
+                path.push('a{},{} 0 0,0 {},{}'.format(r2, r2, r2 * (math.sin(a2) - math.sin(a1)),
+                                                      r2 * (math.cos(a1) - math.cos(a2))))
                 path.push('l', (r1 - r2) * math.sin(a2), (r2 - r1) * math.cos(a2))
                 d.add(path)
 
