@@ -14,8 +14,11 @@ You will need a little experience running things from the command line to use th
 ```
 usage: create_poster.py [-h] [--gpx-dir DIR] [--output FILE] [--year YEAR]
                [--title TITLE] [--athlete NAME] [--special FILE] [--type TYPE]
-               [--background-color COLOR] [--track-color COLOR]
-               [--text-color COLOR] [--special-color COLOR] [--units UNITS]
+               [--background-color COLOR]
+               [--track-color COLOR] [--track-color2 COLOR]
+               [--text-color COLOR] 
+               [--special-color COLOR] [--special-color2 COLOR]
+               [--units UNITS]
                [--clear-cache]
 
 optional arguments:
@@ -33,8 +36,10 @@ optional arguments:
                             "calendar", "circular", "grid", "heatmap").
   --background-color COLOR  Background color of poster (default: "#222222").
   --track-color COLOR       Color of tracks (default: "#4DD2FF").
+  --track-color2 COLOR      Secondary color of tracks (default: none).
   --text-color COLOR        Color of text (default: "#FFFFFF").
   --special-color COLOR     Special track color (default: "#FFFF00").
+  --special-color2 COLOR    Secondary color of special tracks (default: none).
   --units UNITS             Distance units; "metric", "imperial" (default: "metric").
   --clear-cache             Clear the track cache.
 ```
