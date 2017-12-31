@@ -18,7 +18,7 @@ class CircularDrawer(tracks_drawer.TracksDrawer):
     def draw(self, poster, d, w, h, offset_x, offset_y):
         self.poster = poster
 
-        if self.poster._length_range_by_date is None:
+        if self.poster.length_range_by_date is None:
             return
 
         years = self.poster.years.count()
@@ -81,13 +81,13 @@ class CircularDrawer(tracks_drawer.TracksDrawer):
                 text = d.text("", fill=self.poster.colors['text'], text_anchor="middle", style=month_style)
                 text.add(tpath)
                 d.add(text)
-            if text_date in self.poster._tracks_by_date:
-                tracks = self.poster._tracks_by_date[text_date]
+            if text_date in self.poster.tracks_by_date:
+                tracks = self.poster.tracks_by_date[text_date]
                 special = [t for t in tracks if t.special]
                 length = sum([t.length for t in tracks])
-                color = self.color(self.poster._length_range_by_date, length, special)
+                color = self.color(self.poster.length_range_by_date, length, special)
                 r1 = inner_radius
-                r2 = inner_radius + (outer_radius - inner_radius) * length / self.poster._length_range_by_date.upper()
+                r2 = inner_radius + (outer_radius - inner_radius) * length / self.poster.length_range_by_date.upper()
                 path = d.path(d=('M', c_x + r1 * math.sin(a1), c_y - r1 * math.cos(a1)), fill=color, stroke='none')
                 path.push('l', (r2 - r1) * math.sin(a1), (r1 - r2) * math.cos(a1))
                 path.push('a{},{} 0 0,0 {},{}'.format(r2, r2, r2 * (math.sin(a2) - math.sin(a1)),

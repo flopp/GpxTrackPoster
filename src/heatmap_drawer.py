@@ -16,7 +16,7 @@ class HeatmapDrawer(tracks_drawer.TracksDrawer):
 
         xy_polylines = []
         xy_polylines_special = []
-        for track in self.poster._tracks:
+        for track in self.poster.tracks:
             track_xy = []
             for polyline in track.polylines:
                 track_xy.append([utils.latlng2xy(lat, lng) for (lat, lng) in polyline])

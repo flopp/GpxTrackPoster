@@ -12,10 +12,10 @@ class Poster:
     def __init__(self, drawer):
         self.athlete = None
         self.title = "My Poster"
-        self._tracks_by_date = {}
-        self._tracks = []
-        self._length_range = value_range.ValueRange()
-        self._length_range_by_date = value_range.ValueRange()
+        self.tracks_by_date = {}
+        self.tracks = []
+        self.length_range = value_range.ValueRange()
+        self.length_range_by_date = value_range.ValueRange()
         self.units = "metric"
         self.colors = {"background": "#222222", "text": "#FFFFFF", "special": "#FFFF00", "track": "#4DD2FF"}
         self.width = 200
@@ -24,23 +24,23 @@ class Poster:
         self.tracks_drawer = drawer
 
     def set_tracks(self, tracks):
-        self._tracks = tracks
-        self._tracks_by_date = {}
-        self._length_range = value_range.ValueRange()
-        self._length_range_by_date = value_range.ValueRange()
+        self.tracks = tracks
+        self.tracks_by_date = {}
+        self.length_range = value_range.ValueRange()
+        self.length_range_by_date = value_range.ValueRange()
         self.__compute_years(tracks)
         for track in tracks:
             if not self.years.contains(track.start_time):
                 continue
             text_date = track.start_time.strftime("%Y-%m-%d")
-            if text_date in self._tracks_by_date:
-                self._tracks_by_date[text_date].append(track)
+            if text_date in self.tracks_by_date:
+                self.tracks_by_date[text_date].append(track)
             else:
-                self._tracks_by_date[text_date] = [track]
-            self._length_range.extend(track.length)
-        for tracks in self._tracks_by_date.values():
+                self.tracks_by_date[text_date] = [track]
+            self.length_range.extend(track.length)
+        for tracks in self.tracks_by_date.values():
             length = sum([t.length for t in tracks])
-            self._length_range_by_date.extend(length)
+            self.length_range_by_date.extend(length)
 
     def draw(self, output):
         d = svgwrite.Drawing(output, ('{}mm'.format(self.width), '{}mm'.format(self.height)))
@@ -82,9 +82,9 @@ class Poster:
         d.add(d.text("ATHLETE", insert=(10, self.height-20), fill=text_color, style=header_style))
         d.add(d.text(self.athlete, insert=(10, self.height-10), fill=text_color, style=value_style))
         d.add(d.text("STATISTICS", insert=(120, self.height-20), fill=text_color, style=header_style))
-        d.add(d.text("Number: {}".format(len(self._tracks)), insert=(120, self.height-15), fill=text_color,
+        d.add(d.text("Number: {}".format(len(self.tracks)), insert=(120, self.height - 15), fill=text_color,
                      style=small_value_style))
-        d.add(d.text("Weekly: {:.1f}".format(len(self._tracks)/weeks), insert=(120, self.height-10), fill=text_color,
+        d.add(d.text("Weekly: {:.1f}".format(len(self.tracks) / weeks), insert=(120, self.height - 10), fill=text_color,
                      style=small_value_style))
         d.add(d.text("Total: {:.1f} {}".format(self.m2u(total_length), self.u()), insert=(139, self.height-15),
                      fill=text_color, style=small_value_style))
@@ -99,12 +99,12 @@ class Poster:
         length_range = value_range.ValueRange()
         total_length = 0
         weeks = {}
-        for t in self._tracks:
+        for t in self.tracks:
             total_length += t.length
             length_range.extend(t.length)
             # time.isocalendar()[1] -> week number
             weeks[(t.start_time.year, t.start_time.isocalendar()[1])] = 1
-        return total_length, total_length/len(self._tracks), length_range.lower(), length_range.upper(), len(weeks)
+        return total_length, total_length / len(self.tracks), length_range.lower(), length_range.upper(), len(weeks)
 
     def __compute_years(self, tracks):
         if self.years is not None:

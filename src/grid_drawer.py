@@ -13,12 +13,12 @@ class GridDrawer(tracks_drawer.TracksDrawer):
 
     def draw(self, poster, d, w, h, offset_x, offset_y):
         self.poster = poster
-        size, (count_x, count_y) = utils.compute_grid(len(self.poster._tracks), w, h)
+        size, (count_x, count_y) = utils.compute_grid(len(self.poster.tracks), w, h)
         spacing_x = 0 if count_x <= 1 else (w-size*count_x)/(count_x - 1)
         spacing_y = 0 if count_y <= 1 else (h-size*count_y)/(count_y - 1)
         offset_x += (w - count_x*size - (count_x - 1)*spacing_x)/2
         offset_y += (h - count_y*size - (count_y - 1)*spacing_y)/2
-        for (index, track) in enumerate(self.poster._tracks):
+        for (index, track) in enumerate(self.poster.tracks):
             x = index % count_x
             y = index // count_x
             self.__draw_track(d, track, offset_x+(0.05 + x)*size+x*spacing_x, offset_y+(0.05+y)*size+y*spacing_y,
@@ -44,7 +44,7 @@ class GridDrawer(tracks_drawer.TracksDrawer):
         x_offset += 0.5 * width - 0.5 * scale * d_x
         y_offset += 0.5 * height - 0.5 * scale * d_y
 
-        color = self.color(self.poster._length_range, track.length, track.special)
+        color = self.color(self.poster.length_range, track.length, track.special)
 
         for line in lines:
             scaled_line = []
