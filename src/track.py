@@ -18,7 +18,7 @@ class Track:
         self.length = 0
         self.special = False
 
-    def load_gpx(self, file_name):
+    def load_gpx(self, file_name: str):
         self.file_names = [os.path.basename(file_name)]
         with open(file_name, 'r') as file:
             gpx = gpxpy.parse(file)
@@ -38,14 +38,14 @@ class Track:
                     line = [(p.latitude, p.longitude) for p in s.points]
                     self.polylines.append(line)
 
-    def append(self, other):
+    def append(self, other: 'Track'):
         self.end_time = other.end_time
         self.polylines.extend(other.polylines)
         self.length += other.length
         self.file_names.extend(other.file_names)
         self.special = self.special or other.special
 
-    def load_cache(self, cache_file_name):
+    def load_cache(self, cache_file_name: str):
         with open(cache_file_name) as data_file:
             data = json.load(data_file)
             self.start_time = datetime.datetime.strptime(data["start"], "%Y-%m-%d %H:%M:%S")
@@ -55,7 +55,7 @@ class Track:
             for data_line in data["segments"]:
                 self.polylines.append([(float(d["lat"]), float(d["lng"])) for d in data_line])
 
-    def store_cache(self, cache_file_name):
+    def store_cache(self, cache_file_name: str):
         dir_name = os.path.dirname(cache_file_name)
         if not os.path.isdir(dir_name):
             os.makedirs(dir_name)

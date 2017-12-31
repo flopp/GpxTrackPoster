@@ -6,19 +6,20 @@
 import hashlib
 import os
 import shutil
+import typing
 import concurrent.futures
 from . import track
 from . import year_range
 
 
-def load_gpx_file(file_name):
+def load_gpx_file(file_name: str) -> track.Track:
     print("Loading track {}...".format(os.path.basename(file_name)))
     t = track.Track()
     t.load_gpx(file_name)
     return t
 
 
-def load_cached_track_file(file_name, cache_dir):
+def load_cached_track_file(file_name: str, cache_dir: str) -> track.Track:
     checksum = hashlib.sha256(open(file_name, 'rb').read()).hexdigest()
     cache_file = os.path.join(cache_dir, checksum + ".json")
     t = track.Track()
@@ -42,7 +43,7 @@ class TrackLoader:
             except OSError as e:
                 print("Failed: {}".format(e))
 
-    def load_tracks(self, base_dir: str):
+    def load_tracks(self, base_dir: str) -> typing.List[track.Track]:
         file_names = [x for x in self.__list_gpx_files(base_dir)]
         print("GPX files: {}".format(len(file_names)))
 
@@ -81,7 +82,7 @@ class TrackLoader:
         # filter out tracks with length < min_length
         return [t for t in tracks if t.length >= self.min_length]
 
-    def __filter_tracks(self, tracks):
+    def __filter_tracks(self, tracks: typing.List[track.Track]) -> typing.List[track.Track]:
         filtered_tracks = []
         for t in tracks:
             file_name = t.file_names[0]
@@ -97,7 +98,7 @@ class TrackLoader:
         return filtered_tracks
 
     @staticmethod
-    def __merge_tracks(tracks):
+    def __merge_tracks(tracks: typing.List[track.Track]) -> typing.List[track.Track]:
         print("Merging tracks...")
         tracks = sorted(tracks, key=lambda t1: t1.start_time)
         merged_tracks = []
@@ -116,7 +117,7 @@ class TrackLoader:
         return merged_tracks
 
     @staticmethod
-    def __load_tracks(file_names):
+    def __load_tracks(file_names: typing.List[str]) -> typing.List[track.Track]:
         tracks = {}
         with concurrent.futures.ProcessPoolExecutor() as executor:
             future_to_file_name = {
@@ -134,7 +135,7 @@ class TrackLoader:
         return tracks
 
     @staticmethod
-    def __load_tracks_from_cache(file_names, cache_dir):
+    def __load_tracks_from_cache(file_names: typing.List[str], cache_dir: str) -> typing.List[track.Track]:
         tracks = {}
         failed_loads = []
         with concurrent.futures.ProcessPoolExecutor() as executor:
@@ -152,7 +153,7 @@ class TrackLoader:
         return tracks
 
     @staticmethod
-    def __list_gpx_files(base_dir):
+    def __list_gpx_files(base_dir: str) -> typing.Generator[str]:
         base_dir = os.path.abspath(base_dir)
         if not os.path.isdir(base_dir):
             raise Exception("Not a directory: {}".format(base_dir))

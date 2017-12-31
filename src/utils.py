@@ -3,17 +3,18 @@
 # Use of this source code is governed by a MIT-style
 # license that can be found in the LICENSE file.
 
-import math
 import colour
+import math
+import typing
 from . import value_range
 
 
 # mercator projection
-def latlng2xy(lat, lng):
+def latlng2xy(lat: float, lng: float) -> (float, float):
     return lng/180+1, 0.5-math.log(math.tan(math.pi/4*(1+lat/90)))/math.pi
 
 
-def compute_bounds_xy(polylines):
+def compute_bounds_xy(polylines: typing.List[float, float]) -> (value_range.ValueRange, value_range.ValueRange):
     range_x = value_range.ValueRange()
     range_y = value_range.ValueRange()
     for line in polylines:
@@ -23,7 +24,7 @@ def compute_bounds_xy(polylines):
     return range_x, range_y
 
 
-def compute_grid(count, width, height):
+def compute_grid(count: int, width: float, height: float) -> (float, (int, int)):
     # this is somehow suboptimal O(count^2). I guess it's possible in O(count)
     min_waste = -1
     best_counts = None
@@ -44,7 +45,7 @@ def compute_grid(count, width, height):
     return best_size, best_counts
 
 
-def interpolate_color(color1, color2, ratio):
+def interpolate_color(color1: str, color2: str, ratio: float) -> str:
     c1 = colour.Color(color1)
     c2 = colour.Color(color2)
     c3 = colour.Color(hue=((1 - ratio) * c1.hue + ratio * c2.hue),
