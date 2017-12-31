@@ -34,9 +34,9 @@ class GridDrawer(tracks_drawer.TracksDrawer):
             lines.append([utils.latlng2xy(lat, lng) for (lat, lng) in polyline])
 
         # compute bounds
-        (min_x, min_y, max_x, max_y) = utils.compute_bounds_xy(lines)
-        d_x = max_x - min_x
-        d_y = max_y - min_y
+        range_x, range_y = utils.compute_bounds_xy(lines)
+        d_x = range_x.diameter()
+        d_y = range_y.diameter()
 
         # compute scale
         scale = width/d_x
@@ -47,15 +47,11 @@ class GridDrawer(tracks_drawer.TracksDrawer):
         x_offset += 0.5 * width - 0.5 * scale * d_x
         y_offset += 0.5 * height - 0.5 * scale * d_y
 
-        scaled_lines = []
         for line in lines:
             scaled_line = []
             for (x, y) in line:
-                scaled_x = x_offset + scale * (x - min_x)
-                scaled_y = y_offset + scale * (y - min_y)
+                scaled_x = x_offset + scale * (x - range_x.lower())
+                scaled_y = y_offset + scale * (y - range_y.lower())
                 scaled_line.append((scaled_x, scaled_y))
-            scaled_lines.append(scaled_line)
-
-        for line in scaled_lines:
-            d.add(d.polyline(points=line, stroke=color, fill='none',
+            d.add(d.polyline(points=scaled_line, stroke=color, fill='none',
                              stroke_width=0.5, stroke_linejoin='round', stroke_linecap='round'))
