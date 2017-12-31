@@ -12,7 +12,7 @@ class TracksDrawer:
     def __init__(self):
         self.poster = None
 
-    def draw(self, poster: poster.Poster, d, w: int, h: int, offset_x: int, offset_y: int):
+    def draw(self, the_poster: poster.Poster, d, w: int, h: int, offset_x: int, offset_y: int):
         pass
 
     def color(self, length_range: value_range.ValueRange, length: float, is_special: bool=False) -> str:

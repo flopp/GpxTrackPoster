@@ -11,8 +11,8 @@ class GridDrawer(tracks_drawer.TracksDrawer):
     def __init__(self):
         super().__init__()
 
-    def draw(self, poster, d, w, h, offset_x, offset_y):
-        self.poster = poster
+    def draw(self, the_poster, d, w, h, offset_x, offset_y):
+        self.poster = the_poster
         size, (count_x, count_y) = utils.compute_grid(len(self.poster.tracks), w, h)
         spacing_x = 0 if count_x <= 1 else (w-size*count_x)/(count_x - 1)
         spacing_y = 0 if count_y <= 1 else (h-size*count_y)/(count_y - 1)

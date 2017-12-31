@@ -11,8 +11,8 @@ class HeatmapDrawer(tracks_drawer.TracksDrawer):
     def __init__(self):
         super().__init__()
 
-    def draw(self, poster, d, w, h, offset_x, offset_y):
-        self.poster = poster
+    def draw(self, the_poster, d, w, h, offset_x, offset_y):
+        self.poster = the_poster
 
         xy_polylines = []
         xy_polylines_special = []

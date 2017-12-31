@@ -15,8 +15,8 @@ class CircularDrawer(tracks_drawer.TracksDrawer):
     def __init__(self):
         super().__init__()
 
-    def draw(self, poster, d, w, h, offset_x, offset_y):
-        self.poster = poster
+    def draw(self, the_poster, d, w, h, offset_x, offset_y):
+        self.poster = the_poster
 
         if self.poster.length_range_by_date is None:
             return

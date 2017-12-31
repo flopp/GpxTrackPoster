@@ -14,8 +14,8 @@ class CalendarDrawer(tracks_drawer.TracksDrawer):
     def __init__(self):
         super().__init__()
 
-    def draw(self, poster: poster.Poster, d, w: int, h: int, offset_x: int, offset_y: int):
-        self.poster = poster
+    def draw(self, the_poster: poster.Poster, d, w: int, h: int, offset_x: int, offset_y: int):
+        self.poster = the_poster
         years = self.poster.years.count()
         _, (count_x, count_y) = utils.compute_grid(years, w, h)
         x, y = 0, 0
