@@ -5,6 +5,7 @@
 
 import calendar
 import datetime
+from . import poster
 from . import tracks_drawer
 from . import utils
 
@@ -13,7 +14,7 @@ class CalendarDrawer(tracks_drawer.TracksDrawer):
     def __init__(self):
         super().__init__()
 
-    def draw(self, poster, d, w, h, offset_x, offset_y):
+    def draw(self, poster: poster.Poster, d, w: int, h: int, offset_x: int, offset_y: int):
         self.poster = poster
         years = self.poster.years.count()
         _, (count_x, count_y) = utils.compute_grid(years, w, h)
@@ -36,7 +37,7 @@ class CalendarDrawer(tracks_drawer.TracksDrawer):
                 x = 0
                 y += 1
 
-    def __draw(self, d, w, h, offset_x, offset_y, year):
+    def __draw(self, d, w: int, h: int, offset_x: int, offset_y: int, year):
         year_size = min(w, h) * 4.0 / 80.0
         year_style = 'font-size:{}px; font-family:Arial;'.format(year_size)
         month_style = 'font-size:{}px; font-family:Arial;'.format(min(w, h) * 3.0 / 80.0)

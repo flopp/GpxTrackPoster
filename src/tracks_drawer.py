@@ -3,17 +3,19 @@
 # Use of this source code is governed by a MIT-style
 # license that can be found in the LICENSE file.
 
+from . import poster
 from . import utils
+from . import value_range
 
 
 class TracksDrawer:
     def __init__(self):
         self.poster = None
 
-    def draw(self, poster, d, w, h, offset_x, offset_y):
+    def draw(self, poster: poster.Poster, d, w: int, h: int, offset_x: int, offset_y: int):
         pass
 
-    def color(self, length_range, length, is_special=False):
+    def color(self, length_range: value_range.ValueRange, length: float, is_special: bool=False) -> str:
         assert length_range.is_valid()
         assert length_range.contains(length)
 

@@ -4,6 +4,7 @@
 # license that can be found in the LICENSE file.
 
 import re
+import typing
 
 
 class YearRange:
@@ -11,7 +12,7 @@ class YearRange:
         self.from_year = None
         self.to_year = None
 
-    def parse(self, s):
+    def parse(self, s: str) -> bool:
         if s == 'all':
             self.from_year = None
             self.to_year = None
@@ -39,19 +40,12 @@ class YearRange:
         elif t.year > self.to_year:
             self.to_year = t.year
 
-    def contains(self, t):
+    def contains(self, t) -> bool:
         if self.from_year is None:
             return True
-        return (self.from_year <= t.year) and (t.year <= self.to_year)
+        return (self.from_year <= t.year <= self.to_year)
 
-    def count(self):
+    def count(self) -> typing.Optional[int]:
         if self.from_year is None:
             return None
         return 1 + self.to_year - self.from_year
-
-    def str(self):
-        if self.from_year is None:
-            return "n/a"
-        elif self.from_year == self.to_year:
-            return '{}'.format(self.from_year)
-        return '{}-{}'.format(self.from_year, self.to_year)

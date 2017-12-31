@@ -42,7 +42,7 @@ class TrackLoader:
             except OSError as e:
                 print("Failed: {}".format(e))
 
-    def load_tracks(self, base_dir):
+    def load_tracks(self, base_dir: str):
         file_names = [x for x in self.__list_gpx_files(base_dir)]
         print("GPX files: {}".format(len(file_names)))
 
