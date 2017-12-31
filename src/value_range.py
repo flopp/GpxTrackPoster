@@ -23,6 +23,9 @@ class ValueRange:
             return self.upper() - self.lower()
         return 0
 
+    def contains(self, value):
+        return self.is_valid() and (self.lower() <= value <= self.upper())
+
     def extend(self, value):
         if not self.is_valid():
             self._lower = value

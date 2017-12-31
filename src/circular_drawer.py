@@ -48,7 +48,6 @@ class CircularDrawer(tracks_drawer.TracksDrawer):
         c_x = offset_x + 0.5 * w
         c_y = offset_y + 0.5 * h
 
-        min_length, max_length = self.poster._length_range_by_date
         year_style = 'dominant-baseline: central; font-size:{}px; font-family:Arial;'.format(min(w, h) * 4.0 / 80.0)
         month_style = 'font-size:{}px; font-family:Arial;'.format(min(w, h) * 3.0 / 80.0)
 
@@ -86,9 +85,9 @@ class CircularDrawer(tracks_drawer.TracksDrawer):
                 tracks = self.poster._tracks_by_date[text_date]
                 special = [t for t in tracks if t.special]
                 length = sum([t.length for t in tracks])
-                color = self.color(min_length, max_length, length, special)
+                color = self.color(self.poster._length_range_by_date, length, special)
                 r1 = inner_radius
-                r2 = inner_radius + (outer_radius - inner_radius) * length / max_length
+                r2 = inner_radius + (outer_radius - inner_radius) * length / self.poster._length_range_by_date.upper()
                 path = d.path(d=('M', c_x + r1 * math.sin(a1), c_y - r1 * math.cos(a1)), fill=color, stroke='none')
                 path.push('l', (r2 - r1) * math.sin(a1), (r1 - r2) * math.cos(a1))
                 path.push('a{},{} 0 0,0 {},{}'.format(r2, r2, r2 * (math.sin(a2) - math.sin(a1)),

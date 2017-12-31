@@ -4,6 +4,7 @@
 # license that can be found in the LICENSE file.
 
 import svgwrite
+from . import value_range
 from . import year_range
 
 
@@ -13,8 +14,8 @@ class Poster:
         self.title = "My Poster"
         self._tracks_by_date = {}
         self._tracks = []
-        self._length_range = None
-        self._length_range_by_date = None
+        self._length_range = value_range.ValueRange()
+        self._length_range_by_date = value_range.ValueRange()
         self.units = "metric"
         self.colors = {"background": "#222222", "text": "#FFFFFF", "special": "#FFFF00", "track": "#4DD2FF"}
         self.width = 200
@@ -25,8 +26,8 @@ class Poster:
     def set_tracks(self, tracks):
         self._tracks = tracks
         self._tracks_by_date = {}
-        self._length_range = None
-        self._length_range_by_date = None
+        self._length_range = value_range.ValueRange()
+        self._length_range_by_date = value_range.ValueRange()
         self.__compute_years(tracks)
         for track in tracks:
             if not self.years.contains(track.start_time):
@@ -36,18 +37,10 @@ class Poster:
                 self._tracks_by_date[text_date].append(track)
             else:
                 self._tracks_by_date[text_date] = [track]
-            if self._length_range is None:
-                self._length_range = track.length, track.length
-            else:
-                rmin, rmax = self._length_range
-                self._length_range = min(rmin, track.length), max(rmax, track.length)
+            self._length_range.extend(track.length)
         for tracks in self._tracks_by_date.values():
             length = sum([t.length for t in tracks])
-            if self._length_range_by_date is None:
-                self._length_range_by_date = length, length
-            else:
-                rmin, rmax = self._length_range_by_date
-                self._length_range_by_date = min(rmin, length), max(rmax, length)
+            self._length_range_by_date.extend(length)
 
     def draw(self, output):
         d = svgwrite.Drawing(output, ('{}mm'.format(self.width), '{}mm'.format(self.height)))
@@ -103,19 +96,15 @@ class Poster:
                      fill=text_color, style=small_value_style))
 
     def __compute_track_statistics(self):
-        min_length = -1
-        max_length = -1
+        length_range = value_range.ValueRange()
         total_length = 0
         weeks = {}
         for t in self._tracks:
             total_length += t.length
-            if min_length < 0 or t.length < min_length:
-                min_length = t.length
-            if max_length < 0 or t.length > max_length:
-                max_length = t.length
+            length_range.extend(t.length)
             # time.isocalendar()[1] -> week number
             weeks[(t.start_time.year, t.start_time.isocalendar()[1])] = 1
-        return total_length, total_length/len(self._tracks), min_length, max_length, len(weeks)
+        return total_length, total_length/len(self._tracks), length_range.lower(), length_range.upper(), len(weeks)
 
     def __compute_years(self, tracks):
         if self.years is not None:

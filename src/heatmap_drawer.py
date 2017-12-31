@@ -36,10 +36,10 @@ class HeatmapDrawer(tracks_drawer.TracksDrawer):
         offset_x += 0.5 * w - 0.5 * scale * d_x
         offset_y += 0.5 * h - 0.5 * scale * d_y
 
-        for lines, color in [(xy_polylines, self.poster.colors["track"]),
-                             (xy_polylines_special, self.poster.colors["special"])]:
+        for lines, color in [(xy_polylines, self.poster.colors['track']),
+                             (xy_polylines_special, self.poster.colors['special'])]:
             scaled_lines = []
-            for line in xy_polylines:
+            for line in lines:
                 scaled_line = []
                 for (x, y) in line:
                     scaled_x = offset_x + scale * (x - range_x.lower())
@@ -48,5 +48,5 @@ class HeatmapDrawer(tracks_drawer.TracksDrawer):
                 scaled_lines.append(scaled_line)
             for opacity, width in [(0.1, 5.0), (0.2, 2.0), (1.0, 0.3)]:
                 for line in scaled_lines:
-                    d.add(d.polyline(points=line, stroke=color, stroke_opacity=opacity,
+                    d.add(d.polyline(points=line, stroke=color, stroke_opacity=opacity, fill='none',
                                      stroke_width=width, stroke_linejoin='round', stroke_linecap='round'))
