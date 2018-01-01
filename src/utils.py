@@ -14,7 +14,7 @@ def latlng2xy(lat: float, lng: float) -> (float, float):
     return lng/180+1, 0.5-math.log(math.tan(math.pi/4*(1+lat/90)))/math.pi
 
 
-def compute_bounds_xy(polylines: typing.List[float, float]) -> (value_range.ValueRange, value_range.ValueRange):
+def compute_bounds_xy(polylines: typing.List[float]) -> (value_range.ValueRange, value_range.ValueRange):
     range_x = value_range.ValueRange()
     range_y = value_range.ValueRange()
     for line in polylines:
