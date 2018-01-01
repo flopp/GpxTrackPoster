@@ -153,7 +153,7 @@ class TrackLoader:
         return tracks
 
     @staticmethod
-    def __list_gpx_files(base_dir: str) -> typing.Generator[str]:
+    def __list_gpx_files(base_dir: str) -> typing.Generator[str, None, None]:
         base_dir = os.path.abspath(base_dir)
         if not os.path.isdir(base_dir):
             raise Exception("Not a directory: {}".format(base_dir))
