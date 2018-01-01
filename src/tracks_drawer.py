@@ -3,16 +3,17 @@
 # Use of this source code is governed by a MIT-style
 # license that can be found in the LICENSE file.
 
+import svgwrite
 from . import poster
 from . import utils
 from . import value_range
 
 
 class TracksDrawer:
-    def __init__(self):
-        self.poster = None
+    def __init__(self, the_poster: poster.Poster):
+        self.poster = the_poster
 
-    def draw(self, the_poster: poster.Poster, d, w: int, h: int, offset_x: int, offset_y: int):
+    def draw(self, d: svgwrite.Drawing, w: float, h: float, offset_x: float, offset_y: float):
         pass
 
     def color(self, length_range: value_range.ValueRange, length: float, is_special: bool=False) -> str:

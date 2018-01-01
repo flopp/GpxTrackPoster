@@ -7,17 +7,16 @@ import calendar
 import datetime
 import math
 import svgwrite
+from . import poster
 from . import tracks_drawer
 from . import utils
 
 
 class CircularDrawer(tracks_drawer.TracksDrawer):
-    def __init__(self):
-        super().__init__()
+    def __init__(self, the_poster: poster.Poster):
+        super().__init__(the_poster)
 
-    def draw(self, the_poster, d, w, h, offset_x, offset_y):
-        self.poster = the_poster
-
+    def draw(self, d: svgwrite.Drawing, w: float, h: float, offset_x: float, offset_y: float):
         if self.poster.length_range_by_date is None:
             return
 
@@ -42,7 +41,7 @@ class CircularDrawer(tracks_drawer.TracksDrawer):
                 x = 0
                 y += 1
 
-    def __draw(self, d, w, h, offset_x, offset_y, year):
+    def __draw(self, d: svgwrite.Drawing, w: float, h: float, offset_x: float, offset_y: float, year: int):
         outer_radius = 0.5 * min(w, h) - 6
         inner_radius = 0.25 * outer_radius
         c_x = offset_x + 0.5 * w

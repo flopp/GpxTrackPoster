@@ -21,10 +21,11 @@ __app_author__ = "flopp.net"
 
 
 def main():
-    generators = {"grid": grid_drawer.GridDrawer(),
-                  "calendar": calendar_drawer.CalendarDrawer(),
-                  "heatmap": heatmap_drawer.HeatmapDrawer(),
-                  "circular": circular_drawer.CircularDrawer()}
+    p = poster.Poster()
+    drawers = {"grid": grid_drawer.GridDrawer(p),
+               "calendar": calendar_drawer.CalendarDrawer(p),
+               "heatmap": heatmap_drawer.HeatmapDrawer(p),
+               "circular": circular_drawer.CircularDrawer(p)}
 
     args_parser = argparse.ArgumentParser()
     args_parser.add_argument('--gpx-dir', dest='gpx_dir', metavar='DIR', type=str, default='.',
@@ -40,9 +41,9 @@ def main():
     args_parser.add_argument('--special', metavar='FILE', action='append', default=[],
                              help='Mark track file from the GPX directory as special; use multiple times to mark '
                                   'multiple tracks.')
-    args_parser.add_argument('--type', metavar='TYPE', default='grid', choices=generators.keys(),
+    args_parser.add_argument('--type', metavar='TYPE', default='grid', choices=drawers.keys(),
                              help='Type of poster to create (default: "grid", available: "{}").'
-                             .format('", "'.join(generators.keys())))
+                             .format('", "'.join(drawers.keys())))
     args_parser.add_argument('--background-color', dest='background_color', metavar='COLOR', type=str,
                              default='#222222', help='Background color of poster (default: "#222222").')
     args_parser.add_argument('--track-color', dest='track_color', metavar='COLOR', type=str, default='#4DD2FF',
@@ -73,7 +74,6 @@ def main():
         raise Exception('No tracks found.')
 
     print("Creating poster of type '{}' and storing it in file '{}'...".format(args.type, args.output))
-    p = poster.Poster(generators[args.type])
     p.athlete = args.athlete
     p.title = args.title
     p.colors = {'background': args.background_color,
@@ -84,7 +84,7 @@ def main():
                 'text': args.text_color}
     p.units = args.units
     p.set_tracks(tracks)
-    p.draw(args.output)
+    p.draw(drawers[args.type], args.output)
 
 
 if __name__ == '__main__':

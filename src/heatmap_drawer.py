@@ -3,23 +3,23 @@
 # Use of this source code is governed by a MIT-style
 # license that can be found in the LICENSE file.
 
+import svgwrite
+from . import poster
 from . import tracks_drawer
 from . import utils
 
 
 class HeatmapDrawer(tracks_drawer.TracksDrawer):
-    def __init__(self):
-        super().__init__()
+    def __init__(self, the_poster: poster.Poster):
+        super().__init__(the_poster)
 
-    def draw(self, the_poster, d, w, h, offset_x, offset_y):
-        self.poster = the_poster
-
+    def draw(self, d: svgwrite.Drawing, w: float, h: float, offset_x: float, offset_y: float):
         xy_polylines = []
         xy_polylines_special = []
         for track in self.poster.tracks:
             track_xy = []
             for polyline in track.polylines:
-                track_xy.append([utils.latlng2xy(lat, lng) for (lat, lng) in polyline])
+                track_xy.append([utils.latlng2xy(latlng) for latlng in polyline])
             if not track.special:
                 xy_polylines.extend(track_xy)
             else:

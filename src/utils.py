@@ -5,16 +5,17 @@
 
 import colour
 import math
-import typing
+from typing import List, Tuple
+import s2sphere as s2
 from . import value_range
 
 
 # mercator projection
-def latlng2xy(lat: float, lng: float) -> (float, float):
-    return lng/180+1, 0.5-math.log(math.tan(math.pi/4*(1+lat/90)))/math.pi
+def latlng2xy(latlng: s2.LatLng) -> Tuple[float, float]:
+    return latlng.lng().degrees/180+1, 0.5-math.log(math.tan(math.pi/4*(1 + latlng.lat().degrees/90)))/math.pi
 
 
-def compute_bounds_xy(polylines: typing.List[float, float]) -> (value_range.ValueRange, value_range.ValueRange):
+def compute_bounds_xy(polylines: List[Tuple[float, float]]) -> Tuple[value_range.ValueRange, value_range.ValueRange]:
     range_x = value_range.ValueRange()
     range_y = value_range.ValueRange()
     for line in polylines:
@@ -24,7 +25,7 @@ def compute_bounds_xy(polylines: typing.List[float, float]) -> (value_range.Valu
     return range_x, range_y
 
 
-def compute_grid(count: int, width: float, height: float) -> (float, (int, int)):
+def compute_grid(count: int, width: float, height: float) -> Tuple[float, Tuple[int, int]]:
     # this is somehow suboptimal O(count^2). I guess it's possible in O(count)
     min_waste = -1
     best_counts = None

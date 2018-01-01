@@ -5,6 +5,7 @@
 
 import re
 import typing
+from . import track
 
 
 class YearRange:
@@ -31,7 +32,7 @@ class YearRange:
                 return True
         return False
 
-    def add(self, t):
+    def add(self, t: track.Track):
         if self.from_year is None:
             self.from_year = t.year
             self.to_year = t.year
@@ -40,7 +41,7 @@ class YearRange:
         elif t.year > self.to_year:
             self.to_year = t.year
 
-    def contains(self, t) -> bool:
+    def contains(self, t: track.Track) -> bool:
         if self.from_year is None:
             return True
         return (self.from_year <= t.year <= self.to_year)

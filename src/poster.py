@@ -9,7 +9,7 @@ from . import year_range
 
 
 class Poster:
-    def __init__(self, drawer):
+    def __init__(self):
         self.athlete = None
         self.title = "My Poster"
         self.tracks_by_date = {}
@@ -21,7 +21,7 @@ class Poster:
         self.width = 200
         self.height = 300
         self.years = None
-        self.tracks_drawer = drawer
+        self.tracks_drawer = None
 
     def set_tracks(self, tracks):
         self.tracks = tracks
@@ -42,7 +42,8 @@ class Poster:
             length = sum([t.length for t in tracks])
             self.length_range_by_date.extend(length)
 
-    def draw(self, output):
+    def draw(self, drawer, output):
+        self.tracks_drawer = drawer
         d = svgwrite.Drawing(output, ('{}mm'.format(self.width), '{}mm'.format(self.height)))
         d.viewbox(0, 0, self.width, self.height)
         d.add(d.rect((0, 0), (self.width, self.height), fill=self.colors['background']))
@@ -64,7 +65,7 @@ class Poster:
             return "mi"
 
     def __draw_tracks(self, d, w, h, offset_x, offset_y):
-        self.tracks_drawer.draw(self, d, w, h, offset_x, offset_y)
+        self.tracks_drawer.draw(d, w, h, offset_x, offset_y)
 
     def __draw_header(self, d):
         text_color = self.colors["text"]
