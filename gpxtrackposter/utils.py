@@ -47,6 +47,10 @@ def compute_grid(count: int, width: float, height: float) -> Tuple[float, Tuple[
 
 
 def interpolate_color(color1: str, color2: str, ratio: float) -> str:
+    if ratio < 0:
+        ratio = 0
+    elif ratio > 1:
+        ratio = 1
     c1 = colour.Color(color1)
     c2 = colour.Color(color2)
     c3 = colour.Color(hue=((1 - ratio) * c1.hue + ratio * c2.hue),
