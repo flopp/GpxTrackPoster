@@ -8,12 +8,8 @@
 import argparse
 import appdirs
 import os
-from src import track_loader
-from src import poster
-from src import grid_drawer
-from src import calendar_drawer
-from src import circular_drawer
-from src import heatmap_drawer
+from gpxtrackposter import poster, track_loader
+from gpxtrackposter import grid_drawer, calendar_drawer, circular_drawer, heatmap_drawer
 
 
 __app_name__ = "create_poster"

@@ -1,3 +1,3 @@
 lint:
 	flake8 \
-	    src create_poster.py
+	    gpxtrackposter create_poster.py
