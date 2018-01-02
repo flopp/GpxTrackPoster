@@ -8,8 +8,10 @@
 import argparse
 import appdirs
 import os
+import sys
 from gpxtrackposter import poster, track_loader
 from gpxtrackposter import grid_drawer, calendar_drawer, circular_drawer, heatmap_drawer
+from gpxtrackposter.exceptions import ParameterError, PosterError
 
 
 __app_name__ = "create_poster"
@@ -60,14 +62,15 @@ def main():
     loader = track_loader.TrackLoader()
     loader.cache_dir = os.path.join(appdirs.user_cache_dir(__app_name__, __app_author__), "tracks")
     if not loader.year_range.parse(args.year):
-        raise Exception('Bad year range: {}.'.format(args.year))
+        raise ParameterError('Bad year range: {}.'.format(args.year))
 
     loader.special_file_names = args.special
     if args.clear_cache:
         loader.clear_cache()
     tracks = loader.load_tracks(args.gpx_dir)
     if not tracks:
-        raise Exception('No tracks found.')
+        print('No tracks found.')
+        return
 
     print("Creating poster of type '{}' and storing it in file '{}'...".format(args.type, args.output))
     p.athlete = args.athlete
@@ -84,4 +87,8 @@ def main():
 
 
 if __name__ == '__main__':
-    main()
+    try:
+        main()
+    except PosterError as e:
+        print(e)
+        sys.exit(1)

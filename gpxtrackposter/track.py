@@ -8,6 +8,7 @@ import gpxpy
 import json
 import os
 import s2sphere as s2
+from .exceptions import TrackLoadError
 
 
 class Track:
@@ -20,24 +21,34 @@ class Track:
         self.special = False
 
     def load_gpx(self, file_name: str):
-        self.file_names = [os.path.basename(file_name)]
-        with open(file_name, 'r') as file:
-            gpx = gpxpy.parse(file)
-            b = gpx.get_time_bounds()
-            self.start_time = b[0]
-            self.end_time = b[1]
-            if self.start_time is None:
-                raise Exception("Track has no start time.")
-            if self.end_time is None:
-                raise Exception("Track has no end time.")
-            self.length = gpx.length_2d()
-            if self.length == 0:
-                raise Exception("Track is empty.")
-            gpx.simplify()
-            for t in gpx.tracks:
-                for s in t.segments:
-                    line = [s2.LatLng.from_degrees(p.latitude, p.longitude) for p in s.points]
-                    self.polylines.append(line)
+        try:
+            self.file_names = [os.path.basename(file_name)]
+            with open(file_name, 'r') as file:
+                try:
+                    gpx = gpxpy.parse(file)
+                except gpxpy.gpx.GPXXMLSyntaxException as e:
+                    raise TrackLoadError("Failed to parse GPX.") from e
+                b = gpx.get_time_bounds()
+                self.start_time = b[0]
+                self.end_time = b[1]
+                if self.start_time is None:
+                    raise TrackLoadError("Track has no start time.")
+                if self.end_time is None:
+                    raise TrackLoadError("Track has no end time.")
+                self.length = gpx.length_2d()
+                if self.length == 0:
+                    raise TrackLoadError("Track is empty.")
+                gpx.simplify()
+                for t in gpx.tracks:
+                    for s in t.segments:
+                        line = [s2.LatLng.from_degrees(p.latitude, p.longitude) for p in s.points]
+                        self.polylines.append(line)
+        except TrackLoadError as e:
+            raise e
+        except PermissionError as e:
+            raise TrackLoadError('Cannot load GPX (bad permissions)') from e
+        except Exception as e:
+            raise TrackLoadError("Something went wrong when loading GPX.") from e
 
     def append(self, other: 'Track'):
         self.end_time = other.end_time
@@ -47,14 +58,17 @@ class Track:
         self.special = self.special or other.special
 
     def load_cache(self, cache_file_name: str):
-        with open(cache_file_name) as data_file:
-            data = json.load(data_file)
-            self.start_time = datetime.datetime.strptime(data["start"], "%Y-%m-%d %H:%M:%S")
-            self.end_time = datetime.datetime.strptime(data["end"], "%Y-%m-%d %H:%M:%S")
-            self.length = float(data["length"])
-            self.polylines = []
-            for data_line in data["segments"]:
-                self.polylines.append([s2.LatLng.from_degrees(float(d["lat"]), float(d["lng"])) for d in data_line])
+        try:
+            with open(cache_file_name) as data_file:
+                data = json.load(data_file)
+                self.start_time = datetime.datetime.strptime(data["start"], "%Y-%m-%d %H:%M:%S")
+                self.end_time = datetime.datetime.strptime(data["end"], "%Y-%m-%d %H:%M:%S")
+                self.length = float(data["length"])
+                self.polylines = []
+                for data_line in data["segments"]:
+                    self.polylines.append([s2.LatLng.from_degrees(float(d["lat"]), float(d["lng"])) for d in data_line])
+        except Exception as e:
+            raise TrackLoadError('Failed to load track data from cache.') from e
 
     def store_cache(self, cache_file_name: str):
         dir_name = os.path.dirname(cache_file_name)

@@ -10,6 +10,7 @@ from typing import List, Generator
 import concurrent.futures
 from . import track
 from . import year_range
+from .exceptions import ParameterError, TrackLoadError
 
 
 def load_gpx_file(file_name: str) -> track.Track:
@@ -20,7 +21,12 @@ def load_gpx_file(file_name: str) -> track.Track:
 
 
 def load_cached_track_file(file_name: str, cache_dir: str) -> track.Track:
-    checksum = hashlib.sha256(open(file_name, 'rb').read()).hexdigest()
+    try:
+        checksum = hashlib.sha256(open(file_name, 'rb').read()).hexdigest()
+    except PermissionError as e:
+        raise TrackLoadError('Failed to compute checksum (bad permissions).') from e
+    except Exception as e:
+        raise TrackLoadError('Failed to compute checksum.') from e
     cache_file = os.path.join(cache_dir, checksum + ".json")
     t = track.Track()
     t.load_cache(cache_file)
@@ -127,7 +133,7 @@ class TrackLoader:
             file_name = future_to_file_name[future]
             try:
                 t = future.result()
-            except Exception as e:
+            except TrackLoadError as e:
                 print("Error while loading {}: {}".format(file_name, e))
             else:
                 tracks[file_name] = t
@@ -146,7 +152,7 @@ class TrackLoader:
             file_name = future_to_file_name[future]
             try:
                 t = future.result()
-            except Exception as e:
+            except TrackLoadError as e:
                 failed_loads.append((file_name, e))
             else:
                 tracks[file_name] = t
@@ -156,7 +162,7 @@ class TrackLoader:
     def __list_gpx_files(base_dir: str) -> Generator[str, None, None]:
         base_dir = os.path.abspath(base_dir)
         if not os.path.isdir(base_dir):
-            raise Exception("Not a directory: {}".format(base_dir))
+            raise ParameterError("Not a directory: {}".format(base_dir))
         for name in os.listdir(base_dir):
             path_name = os.path.join(base_dir, name)
             if name.endswith(".gpx") and os.path.isfile(path_name):
