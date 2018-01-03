@@ -3,6 +3,7 @@
 # Use of this source code is governed by a MIT-style
 # license that can be found in the LICENSE file.
 
+import argparse
 import calendar
 import datetime
 import math
@@ -18,6 +19,18 @@ from . import value_range
 class CircularDrawer(tracks_drawer.TracksDrawer):
     def __init__(self, the_poster: poster.Poster):
         super().__init__(the_poster)
+        self._rings = False
+        self._ring_color = 'darkgrey'
+
+    def create_args(self, args_parser: argparse.ArgumentParser):
+        group = args_parser.add_argument_group('Circular Type Options')
+        group.add_argument('--circular-rings', dest='circular_rings', action='store_true', help='Draw distance rings.')
+        group.add_argument('--circular-ring-color', dest='circular_ring_color', metavar='COLOR', type=str,
+                           default='darkgrey', help='Color of distance rings.')
+
+    def fetch_args(self, args):
+        self._rings = args.circular_rings
+        self._ring_color = args.circular_ring_color
 
     def draw(self, d: svgwrite.Drawing, w: float, h: float, offset_x: float, offset_y: float):
         if self.poster.length_range_by_date is None:
@@ -35,20 +48,22 @@ class CircularDrawer(tracks_drawer.TracksDrawer):
         www = ww - 2 * margin_x
         hhh = hh - 2 * margin_y
         for year in range(self.poster.years.from_year, self.poster.years.to_year + 1):
-            self.__draw(d,
-                        www, hhh,
-                        offset_x + ww * x + margin_x, offset_y + hh * y + margin_y,
-                        year)
+            self._draw_year(d, www, hhh,
+                            offset_x + ww * x + margin_x, offset_y + hh * y + margin_y,
+                            year)
             x += 1
             if x >= count_x:
                 x = 0
                 y += 1
 
-    def __draw(self, d: svgwrite.Drawing, w: float, h: float, offset_x: float, offset_y: float, year: int):
+    def _draw_year(self, d: svgwrite.Drawing, w: float, h: float, offset_x: float, offset_y: float, year: int):
         outer_radius = 0.5 * min(w, h) - 6
         radius_range = value_range.ValueRange.from_pair(outer_radius / 4, outer_radius)
         c_x = offset_x + 0.5 * w
         c_y = offset_y + 0.5 * h
+
+        if self._rings:
+            self._draw_rings(d, c_x, c_y, radius_range)
 
         year_style = 'dominant-baseline: central; font-size:{}px; font-family:Arial;'.format(min(w, h) * 4.0 / 80.0)
         month_style = 'font-size:{}px; font-family:Arial;'.format(min(w, h) * 3.0 / 80.0)
@@ -87,6 +102,28 @@ class CircularDrawer(tracks_drawer.TracksDrawer):
 
             day += 1
             date += datetime.timedelta(1)
+
+    def _draw_rings(self, d: svgwrite.Drawing, c_x: float, c_y: float, radius_range: value_range.ValueRange):
+        length_range = self.poster.length_range_by_date
+        # todo: support for non-metric units
+        ring_distance = None
+        for distance in [1000, 5000, 10000, 50000]:
+            if self.poster.units != 'metric':
+                # convert to miles
+                distance *= 1.609344
+            if length_range.upper() < distance:
+                continue
+            ring_distance = distance
+            if (length_range.upper() / distance) <= 5:
+                break
+        if ring_distance is None:
+            return
+        distance = ring_distance
+        while distance < length_range.upper():
+            radius = radius_range.lower() + radius_range.diameter() * distance / length_range.upper()
+            d.add(d.circle(center=(c_x, c_y), r=radius, stroke=self._ring_color, stroke_opacity='0.2', fill='none',
+                           stroke_width=0.3))
+            distance += ring_distance
 
     def _draw_circle_segment(self, d: svgwrite.Drawing, tracks: List[track.Track], a1: float, a2: float,
                              rr: value_range.ValueRange, c_x: float, c_y: float):

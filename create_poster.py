@@ -59,7 +59,14 @@ def main():
     args_parser.add_argument('--clear-cache', dest='clear_cache', action='store_true', help='Clear the track cache.')
     args_parser.add_argument('--verbose', dest='verbose', action='store_true', help='Verbose logging.')
     args_parser.add_argument('--logfile', dest='logfile', metavar='FILE', type=str)
+
+    for _, drawer in drawers.items():
+        drawer.create_args(args_parser)
+
     args = args_parser.parse_args()
+
+    for _, drawer in drawers.items():
+        drawer.fetch_args(args)
 
     log = logging.getLogger('gpxtrackposter')
     log.setLevel(logging.INFO if args.verbose else logging.ERROR)

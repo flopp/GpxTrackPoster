@@ -3,6 +3,7 @@
 # Use of this source code is governed by a MIT-style
 # license that can be found in the LICENSE file.
 
+import argparse
 import svgwrite
 from . import poster
 from . import utils
@@ -12,6 +13,12 @@ from . import value_range
 class TracksDrawer:
     def __init__(self, the_poster: poster.Poster):
         self.poster = the_poster
+
+    def create_args(self, args_parser: argparse.ArgumentParser):
+        pass
+
+    def fetch_args(self, args):
+        pass
 
     def draw(self, d: svgwrite.Drawing, w: float, h: float, offset_x: float, offset_y: float):
         pass

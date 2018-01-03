@@ -75,9 +75,8 @@ class CalendarDrawer(tracks_drawer.TracksDrawer):
                 text_date = date.strftime("%Y-%m-%d")
                 if text_date in self.poster.tracks_by_date:
                     tracks = self.poster.tracks_by_date[text_date]
-                    special = [t for t in tracks if t.special]
                     length = sum([t.length for t in tracks])
-                    color = self.color(self.poster.length_range_by_date, length, special)
+                    color = self.color(self.poster.length_range_by_date, length, [t for t in tracks if t.special])
                     d.add(d.rect(pos, dim, fill=color))
                     d.add(d.text("{:.1f}".format(self.poster.m2u(length)),
                                  insert=(x_pos + size / 2, y_pos + size + size / 2),

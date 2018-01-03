@@ -13,35 +13,47 @@ You will need a little experience running things from the command line to use th
 
 ```
 usage: create_poster.py [-h] [--gpx-dir DIR] [--output FILE] [--year YEAR]
-               [--title TITLE] [--athlete NAME] [--special FILE] [--type TYPE]
-               [--background-color COLOR]
-               [--track-color COLOR] [--track-color2 COLOR]
-               [--text-color COLOR] 
-               [--special-color COLOR] [--special-color2 COLOR]
-               [--units UNITS]
-               [--clear-cache]
+                        [--title TITLE] [--athlete NAME] [--special FILE]
+                        [--type TYPE] [--background-color COLOR]
+                        [--track-color COLOR] [--track-color2 COLOR]
+                        [--text-color COLOR] [--special-color COLOR]
+                        [--special-color2 COLOR] [--units UNITS]
+                        [--clear-cache] [--verbose] [--logfile FILE]
+                        [--circular-rings] [--circular-ring-color COLOR]
 
 optional arguments:
-  -h, --help                show this help message and exit
-  --gpx-dir DIR             Directory containing GPX files (default: current directory).
-  --output FILE             Name of generated SVG image file (default: "poster.svg").
-  --year YEAR               Filter tracks by year; single year (e.g. "2016"),
-                            year range (e.g. "2014-2016"), all years ("all");
-                            (default: all years)')
-  --title TITLE             Title to display (default: "My Tracks").
-  --athlete NAME            Athlete name to display (default: "John Doe").
-  --special FILE            Mark track file from the GPX directory as special;
-                            use multiple times to mark multiple tracks.
-  --type TYPE               Type of poster to create (default: "grid", available:
-                            "calendar", "circular", "grid", "heatmap").
-  --background-color COLOR  Background color of poster (default: "#222222").
-  --track-color COLOR       Color of tracks (default: "#4DD2FF").
-  --track-color2 COLOR      Secondary color of tracks (default: none).
-  --text-color COLOR        Color of text (default: "#FFFFFF").
-  --special-color COLOR     Special track color (default: "#FFFF00").
-  --special-color2 COLOR    Secondary color of special tracks (default: none).
-  --units UNITS             Distance units; "metric", "imperial" (default: "metric").
-  --clear-cache             Clear the track cache.
+  -h, --help            show this help message and exit
+  --gpx-dir DIR         Directory containing GPX files (default: current
+                        directory).
+  --output FILE         Name of generated SVG image file (default:
+                        "poster.svg").
+  --year YEAR           Filter tracks by year; "NUM", "NUM-NUM", "all"
+                        (default: all years)
+  --title TITLE         Title to display (default: "My Tracks").
+  --athlete NAME        Athlete name to display (default: "John Doe").
+  --special FILE        Mark track file from the GPX directory as special; use
+                        multiple times to mark multiple tracks.
+  --type TYPE           Type of poster to create (default: "grid", available:
+                        "grid", "calendar", "heatmap", "circular").
+  --background-color COLOR
+                        Background color of poster (default: "#222222").
+  --track-color COLOR   Color of tracks (default: "#4DD2FF").
+  --track-color2 COLOR  Secondary color of tracks (default: none).
+  --text-color COLOR    Color of text (default: "#FFFFFF").
+  --special-color COLOR
+                        Special track color (default: "#FFFF00").
+  --special-color2 COLOR
+                        Secondary color of special tracks (default: none).
+  --units UNITS         Distance units; "metric", "imperial" (default:
+                        "metric").
+  --clear-cache         Clear the track cache.
+  --verbose             Verbose logging.
+  --logfile FILE
+
+Circular Type Options:
+  --circular-rings      Draw distance rings.
+  --circular-ring-color COLOR
+                        Color of distance rings.
 ```
 
 Example:
