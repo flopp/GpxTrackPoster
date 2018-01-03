@@ -4,6 +4,7 @@
 # license that can be found in the LICENSE file.
 
 import hashlib
+import logging
 import os
 import shutil
 from typing import List, Generator
@@ -13,8 +14,11 @@ from . import year_range
 from .exceptions import ParameterError, TrackLoadError
 
 
+log = logging.getLogger(__name__)
+
+
 def load_gpx_file(file_name: str) -> track.Track:
-    print("Loading track {}...".format(os.path.basename(file_name)))
+    log.info("Loading track {}...".format(os.path.basename(file_name)))
     t = track.Track()
     t.load_gpx(file_name)
     return t
@@ -27,11 +31,15 @@ def load_cached_track_file(file_name: str, cache_dir: str) -> track.Track:
         raise TrackLoadError('Failed to compute checksum (bad permissions).') from e
     except Exception as e:
         raise TrackLoadError('Failed to compute checksum.') from e
-    cache_file = os.path.join(cache_dir, checksum + ".json")
-    t = track.Track()
-    t.load_cache(cache_file)
-    t.file_names = [os.path.basename(file_name)]
-    return t
+    try:
+        cache_file = os.path.join(cache_dir, checksum + ".json")
+        t = track.Track()
+        t.load_cache(cache_file)
+        t.file_names = [os.path.basename(file_name)]
+        log.info('Loaded track {} from cache file {}'.format(file_name, cache_file))
+        return t
+    except Exception as e:
+        raise TrackLoadError('Failed to load track from cache.') from e
 
 
 class TrackLoader:
@@ -43,37 +51,37 @@ class TrackLoader:
 
     def clear_cache(self):
         if os.path.isdir(self.cache_dir):
-            print("Removing cache dir: {}".format(self.cache_dir))
+            log.info("Removing cache dir: {}".format(self.cache_dir))
             try:
                 shutil.rmtree(self.cache_dir)
             except OSError as e:
-                print("Failed: {}".format(e))
+                log.info("Failed: {}".format(e))
 
     def load_tracks(self, base_dir: str) -> List[track.Track]:
         file_names = [x for x in self.__list_gpx_files(base_dir)]
-        print("GPX files: {}".format(len(file_names)))
+        log.info("GPX files: {}".format(len(file_names)))
 
         tracks = []
 
         # load track from cache
         cached_tracks = []
         if self.cache_dir:
-            print("Trying to load {} track(s) from cache...".format(len(file_names)))
+            log.info("Trying to load {} track(s) from cache...".format(len(file_names)))
             cached_tracks = self.__load_tracks_from_cache(file_names, self.cache_dir)
-            print("Loaded tracks from cache:", len(cached_tracks))
+            log.info("Loaded tracks from cache:  {}".format(len(cached_tracks)))
             tracks = list(cached_tracks.values())
 
         # load remaining gpx files
         remaining_file_names = [f for f in file_names if f not in cached_tracks]
         if remaining_file_names:
-            print("Trying to load {} track(s) from GPX files; this may take a while..."
-                  .format(len(remaining_file_names)))
+            log.info(
+                "Trying to load {} track(s) from GPX files; this may take a while...".format(len(remaining_file_names)))
             loaded_tracks = self.__load_tracks(remaining_file_names)
-            print("Conventionally loaded tracks:", len(loaded_tracks))
+            log.info("Conventionally loaded tracks: {}".format(len(loaded_tracks)))
 
             # store non-cached tracks in cache
             if loaded_tracks and self.cache_dir:
-                print("Storing {} track(s) in cache...".format(len(loaded_tracks)))
+                log.info("Storing {} track(s) in cache...".format(len(loaded_tracks)))
                 for (file_name, t) in loaded_tracks.items():
                     checksum = hashlib.sha256(open(file_name, 'rb').read()).hexdigest()
                     cache_file = os.path.join(self.cache_dir, checksum + ".json")
@@ -93,11 +101,11 @@ class TrackLoader:
         for t in tracks:
             file_name = t.file_names[0]
             if t.length == 0:
-                print("{}: skipping empty track".format(file_name))
+                log.info("{}: skipping empty track".format(file_name))
             elif not t.start_time:
-                print("{}: skipping track without start time".format(file_name))
+                log.info("{}: skipping track without start time".format(file_name))
             elif not self.year_range.contains(t.start_time):
-                print("{}: skipping track with wrong year {}".format(file_name, t.start_time.year))
+                log.info("{}: skipping track with wrong year {}".format(file_name, t.start_time.year))
             else:
                 t.special = (file_name in self.special_file_names)
                 filtered_tracks.append(t)
@@ -105,7 +113,7 @@ class TrackLoader:
 
     @staticmethod
     def __merge_tracks(tracks: List[track.Track]) -> List[track.Track]:
-        print("Merging tracks...")
+        log.info("Merging tracks...")
         tracks = sorted(tracks, key=lambda t1: t1.start_time)
         merged_tracks = []
         last_end_time = None
@@ -119,7 +127,7 @@ class TrackLoader:
                 else:
                     merged_tracks.append(t)
             last_end_time = t.end_time
-        print("Merged {} track(s)".format(len(tracks) - len(merged_tracks)))
+        log.info("Merged {} track(s)".format(len(tracks) - len(merged_tracks)))
         return merged_tracks
 
     @staticmethod
@@ -134,7 +142,7 @@ class TrackLoader:
             try:
                 t = future.result()
             except TrackLoadError as e:
-                print("Error while loading {}: {}".format(file_name, e))
+                log.info("Error while loading {}: {}".format(file_name, e))
             else:
                 tracks[file_name] = t
 

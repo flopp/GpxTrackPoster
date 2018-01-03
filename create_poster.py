@@ -7,12 +7,12 @@
 
 import argparse
 import appdirs
+import logging
 import os
 import sys
 from gpxtrackposter import poster, track_loader
 from gpxtrackposter import grid_drawer, calendar_drawer, circular_drawer, heatmap_drawer
 from gpxtrackposter.exceptions import ParameterError, PosterError
-
 
 __app_name__ = "create_poster"
 __app_author__ = "flopp.net"
@@ -57,7 +57,15 @@ def main():
     args_parser.add_argument('--units', dest='units', metavar='UNITS', type=str, choices=['metric', 'imperial'],
                              default='metric', help='Distance units; "metric", "imperial" (default: "metric").')
     args_parser.add_argument('--clear-cache', dest='clear_cache', action='store_true', help='Clear the track cache.')
+    args_parser.add_argument('--verbose', dest='verbose', action='store_true', help='Verbose logging.')
+    args_parser.add_argument('--logfile', dest='logfile', metavar='FILE', type=str)
     args = args_parser.parse_args()
+
+    log = logging.getLogger('gpxtrackposter')
+    log.setLevel(logging.INFO if args.verbose else logging.ERROR)
+    if args.logfile:
+        handler = logging.FileHandler(args.logfile)
+        log.addHandler(handler)
 
     loader = track_loader.TrackLoader()
     loader.cache_dir = os.path.join(appdirs.user_cache_dir(__app_name__, __app_author__), "tracks")
@@ -72,7 +80,8 @@ def main():
         print('No tracks found.')
         return
 
-    print("Creating poster of type '{}' and storing it in file '{}'...".format(args.type, args.output))
+    print("Creating poster of type '{}' with {} tracks and storing it in file '{}'...".format(args.type, len(tracks),
+                                                                                              args.output))
     p.athlete = args.athlete
     p.title = args.title
     p.colors = {'background': args.background_color,
