@@ -9,15 +9,16 @@ import datetime
 import math
 import svgwrite
 from typing import List
-from . import poster
-from . import track
-from . import tracks_drawer
+from .poster import Poster
+from .track import Track
+from .tracks_drawer import TracksDrawer
+from .value_range import ValueRange
+from .xy import XY
 from . import utils
-from . import value_range
 
 
-class CircularDrawer(tracks_drawer.TracksDrawer):
-    def __init__(self, the_poster: poster.Poster):
+class CircularDrawer(TracksDrawer):
+    def __init__(self, the_poster: Poster):
         super().__init__(the_poster)
         self._rings = False
         self._ring_color = 'darkgrey'
@@ -32,43 +33,40 @@ class CircularDrawer(tracks_drawer.TracksDrawer):
         self._rings = args.circular_rings
         self._ring_color = args.circular_ring_color
 
-    def draw(self, d: svgwrite.Drawing, w: float, h: float, offset_x: float, offset_y: float):
+    def draw(self, d: svgwrite.Drawing, size: XY, offset: XY):
         if self.poster.length_range_by_date is None:
             return
 
         years = self.poster.years.count()
-        _, (count_x, count_y) = utils.compute_grid(years, w, h)
+        _, (count_x, count_y) = utils.compute_grid(years, size)
         x, y = 0, 0
-        ww, hh = w / count_x, h / count_y
-        margin_x, margin_y = 4, 4
+        cell_size = size * XY(1 / count_x, 1 / count_y)
+        margin = XY(4, 4)
         if count_x <= 1:
-            margin_x = 0
+            margin.x = 0
         if count_y <= 1:
-            margin_y = 0
-        www = ww - 2 * margin_x
-        hhh = hh - 2 * margin_y
+            margin.y = 0
+        sub_size = cell_size - 2 * margin
         for year in range(self.poster.years.from_year, self.poster.years.to_year + 1):
-            self._draw_year(d, www, hhh,
-                            offset_x + ww * x + margin_x, offset_y + hh * y + margin_y,
-                            year)
+            self._draw_year(d, sub_size, offset + margin + cell_size * XY(x, y), year)
             x += 1
             if x >= count_x:
                 x = 0
                 y += 1
 
-    def _draw_year(self, d: svgwrite.Drawing, w: float, h: float, offset_x: float, offset_y: float, year: int):
-        outer_radius = 0.5 * min(w, h) - 6
-        radius_range = value_range.ValueRange.from_pair(outer_radius / 4, outer_radius)
-        c_x = offset_x + 0.5 * w
-        c_y = offset_y + 0.5 * h
+    def _draw_year(self, d: svgwrite.Drawing, size: XY, offset: XY, year: int):
+        min_size = min(size.x, size.y)
+        outer_radius = 0.5 * min_size - 6
+        radius_range = ValueRange.from_pair(outer_radius / 4, outer_radius)
+        center = offset + 0.5 * size
 
         if self._rings:
-            self._draw_rings(d, c_x, c_y, radius_range)
+            self._draw_rings(d, center, radius_range)
 
-        year_style = 'dominant-baseline: central; font-size:{}px; font-family:Arial;'.format(min(w, h) * 4.0 / 80.0)
-        month_style = 'font-size:{}px; font-family:Arial;'.format(min(w, h) * 3.0 / 80.0)
+        year_style = 'dominant-baseline: central; font-size:{}px; font-family:Arial;'.format(min_size * 4.0 / 80.0)
+        month_style = 'font-size:{}px; font-family:Arial;'.format(min_size * 3.0 / 80.0)
 
-        d.add(d.text('{}'.format(year), insert=(c_x, c_y), fill=self.poster.colors['text'], text_anchor="middle",
+        d.add(d.text('{}'.format(year), insert=center.tuple(), fill=self.poster.colors['text'], text_anchor="middle",
                      alignment_baseline="middle", style=year_style))
         df = 360.0 / (366 if calendar.isleap(year) else 365)
         day = 0
@@ -86,11 +84,11 @@ class CircularDrawer(tracks_drawer.TracksDrawer):
                 r2 = outer_radius + 6
                 r3 = outer_radius + 2
                 d.add(d.line(
-                    start=(c_x + r1 * sin_a1, c_y - r1 * cos_a1),
-                    end=(c_x + r2 * sin_a1, c_y - r2 * cos_a1),
+                    start=(center + r1 * XY(sin_a1, -cos_a1)).tuple(),
+                    end=(center + r2 * XY(sin_a1, -cos_a1)).tuple(),
                     stroke=self.poster.colors['text'],
                     stroke_width=0.3))
-                path = d.path(d=('M', c_x + r3 * sin_a1, c_y - r3 * cos_a1), fill='none', stroke='none')
+                path = d.path(d=('M', center.x + r3 * sin_a1, center.y - r3 * cos_a1), fill='none', stroke='none')
                 path.push('a{},{} 0 0,1 {},{}'.format(r3, r3, r3 * (sin_a3 - sin_a1), r3 * (cos_a1 - cos_a3)))
                 d.add(path)
                 tpath = svgwrite.text.TextPath(path, date.strftime("%B"), startOffset=(0.5 * r3 * (a3 - a1)))
@@ -98,19 +96,21 @@ class CircularDrawer(tracks_drawer.TracksDrawer):
                 text.add(tpath)
                 d.add(text)
             if text_date in self.poster.tracks_by_date:
-                self._draw_circle_segment(d, self.poster.tracks_by_date[text_date], a1, a2, radius_range, c_x, c_y)
+                self._draw_circle_segment(d, self.poster.tracks_by_date[text_date], a1, a2, radius_range, center)
 
             day += 1
             date += datetime.timedelta(1)
 
-    def _draw_rings(self, d: svgwrite.Drawing, c_x: float, c_y: float, radius_range: value_range.ValueRange):
+    def _draw_rings(self, d: svgwrite.Drawing, center: XY, radius_range: ValueRange):
         length_range = self.poster.length_range_by_date
-        # todo: support for non-metric units
         ring_distance = None
-        for distance in [1000, 5000, 10000, 50000]:
+        for distance in [1, 5, 10, 50]:
             if self.poster.units != 'metric':
-                # convert to miles
-                distance *= 1.609344
+                # convert from miles to meters
+                distance *= 1609.344
+            else:
+                # convert from km to meters
+                distance *= 1000
             if length_range.upper() < distance:
                 continue
             ring_distance = distance
@@ -121,19 +121,19 @@ class CircularDrawer(tracks_drawer.TracksDrawer):
         distance = ring_distance
         while distance < length_range.upper():
             radius = radius_range.lower() + radius_range.diameter() * distance / length_range.upper()
-            d.add(d.circle(center=(c_x, c_y), r=radius, stroke=self._ring_color, stroke_opacity='0.2', fill='none',
-                           stroke_width=0.3))
+            d.add(d.circle(center=center.tuple(), r=radius, stroke=self._ring_color, stroke_opacity='0.2',
+                           fill='none', stroke_width=0.3))
             distance += ring_distance
 
-    def _draw_circle_segment(self, d: svgwrite.Drawing, tracks: List[track.Track], a1: float, a2: float,
-                             rr: value_range.ValueRange, c_x: float, c_y: float):
+    def _draw_circle_segment(self, d: svgwrite.Drawing, tracks: List[Track], a1: float, a2: float,
+                             rr: ValueRange, center: XY):
         length = sum([t.length for t in tracks])
         color = self.color(self.poster.length_range_by_date, length, [t for t in tracks if t.special])
         r1 = rr.lower()
         r2 = rr.lower() + rr.diameter() * length / self.poster.length_range_by_date.upper()
         sin_a1, cos_a1 = math.sin(a1), math.cos(a1)
         sin_a2, cos_a2 = math.sin(a2), math.cos(a2)
-        path = d.path(d=('M', c_x + r1 * sin_a1, c_y - r1 * cos_a1), fill=color, stroke='none')
+        path = d.path(d=('M', center.x + r1 * sin_a1, center.y - r1 * cos_a1), fill=color, stroke='none')
         path.push('l', (r2 - r1) * sin_a1, (r1 - r2) * cos_a1)
         path.push('a{},{} 0 0,0 {},{}'.format(r2, r2, r2 * (sin_a2 - sin_a1), r2 * (cos_a1 - cos_a2)))
         path.push('l', (r1 - r2) * sin_a2, (r2 - r1) * cos_a2)

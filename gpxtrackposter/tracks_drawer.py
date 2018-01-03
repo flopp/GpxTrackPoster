@@ -5,13 +5,14 @@
 
 import argparse
 import svgwrite
-from . import poster
+from .poster import Poster
+from .value_range import ValueRange
+from .xy import XY
 from . import utils
-from . import value_range
 
 
 class TracksDrawer:
-    def __init__(self, the_poster: poster.Poster):
+    def __init__(self, the_poster: Poster):
         self.poster = the_poster
 
     def create_args(self, args_parser: argparse.ArgumentParser):
@@ -20,10 +21,10 @@ class TracksDrawer:
     def fetch_args(self, args):
         pass
 
-    def draw(self, d: svgwrite.Drawing, w: float, h: float, offset_x: float, offset_y: float):
+    def draw(self, d: svgwrite.Drawing, size: XY, offset: XY):
         pass
 
-    def color(self, length_range: value_range.ValueRange, length: float, is_special: bool=False) -> str:
+    def color(self, length_range: ValueRange, length: float, is_special: bool=False) -> str:
         assert length_range.is_valid()
         assert length_range.contains(length)
 

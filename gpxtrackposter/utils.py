@@ -5,38 +5,40 @@
 
 import colour
 import math
-from typing import List, Tuple
+from typing import List, Optional, Tuple
 import s2sphere as s2
-from . import value_range
+from .value_range import ValueRange
+from .xy import XY
 
 
 # mercator projection
-def latlng2xy(latlng: s2.LatLng) -> Tuple[float, float]:
-    return latlng.lng().degrees/180+1, 0.5-math.log(math.tan(math.pi/4*(1 + latlng.lat().degrees/90)))/math.pi
+def latlng2xy(latlng: s2.LatLng) -> XY:
+    return XY(latlng.lng().degrees / 180 + 1,
+              0.5 - math.log(math.tan(math.pi / 4 * (1 + latlng.lat().degrees / 90))) / math.pi)
 
 
-def compute_bounds_xy(polylines: List[Tuple[float, float]]) -> Tuple[value_range.ValueRange, value_range.ValueRange]:
-    range_x = value_range.ValueRange()
-    range_y = value_range.ValueRange()
-    for line in polylines:
-        for (x, y) in line:
-            range_x.extend(x)
-            range_y.extend(y)
+def compute_bounds_xy(lines: List[List[XY]]) -> Tuple[ValueRange, ValueRange]:
+    range_x = ValueRange()
+    range_y = ValueRange()
+    for line in lines:
+        for xy in line:
+            range_x.extend(xy.x)
+            range_y.extend(xy.y)
     return range_x, range_y
 
 
-def compute_grid(count: int, width: float, height: float) -> Tuple[float, Tuple[int, int]]:
+def compute_grid(count: int, dimensions: XY) -> Tuple[Optional[float], Optional[Tuple[int, int]]]:
     # this is somehow suboptimal O(count^2). I guess it's possible in O(count)
     min_waste = -1
     best_counts = None
     best_size = None
     for count_x in range(1, count+1):
-        size_x = width/count_x
+        size_x = dimensions.x / count_x
         for count_y in range(1, count+1):
             if count_x * count_y >= count:
-                size_y = height/count_y
+                size_y = dimensions.y / count_y
                 size = min(size_x, size_y)
-                waste = width*height - count*size*size
+                waste = dimensions.x * dimensions.y - count * size * size
                 if waste < 0:
                     continue
                 elif best_size is None or waste < min_waste:

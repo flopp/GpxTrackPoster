@@ -4,8 +4,8 @@
 # license that can be found in the LICENSE file.
 
 import re
-import typing
-from . import track
+from typing import Optional
+from .track import Track
 
 
 class YearRange:
@@ -32,7 +32,7 @@ class YearRange:
                 return True
         return False
 
-    def add(self, t: track.Track):
+    def add(self, t: Track):
         if self.from_year is None:
             self.from_year = t.year
             self.to_year = t.year
@@ -41,12 +41,12 @@ class YearRange:
         elif t.year > self.to_year:
             self.to_year = t.year
 
-    def contains(self, t: track.Track) -> bool:
+    def contains(self, t: Track) -> bool:
         if self.from_year is None:
             return True
-        return (self.from_year <= t.year <= self.to_year)
+        return self.from_year <= t.year <= self.to_year
 
-    def count(self) -> typing.Optional[int]:
+    def count(self) -> Optional[int]:
         if self.from_year is None:
             return None
         return 1 + self.to_year - self.from_year

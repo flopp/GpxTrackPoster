@@ -4,8 +4,9 @@
 # license that can be found in the LICENSE file.
 
 import svgwrite
-from . import value_range
-from . import year_range
+from .value_range import ValueRange
+from .xy import XY
+from .year_range import YearRange
 
 
 class Poster:
@@ -14,8 +15,8 @@ class Poster:
         self.title = "My Poster"
         self.tracks_by_date = {}
         self.tracks = []
-        self.length_range = value_range.ValueRange()
-        self.length_range_by_date = value_range.ValueRange()
+        self.length_range = None
+        self.length_range_by_date = None
         self.units = "metric"
         self.colors = {"background": "#222222", "text": "#FFFFFF", "special": "#FFFF00", "track": "#4DD2FF"}
         self.width = 200
@@ -26,8 +27,8 @@ class Poster:
     def set_tracks(self, tracks):
         self.tracks = tracks
         self.tracks_by_date = {}
-        self.length_range = value_range.ValueRange()
-        self.length_range_by_date = value_range.ValueRange()
+        self.length_range = ValueRange()
+        self.length_range_by_date = ValueRange()
         self.__compute_years(tracks)
         for track in tracks:
             if not self.years.contains(track.start_time):
@@ -49,7 +50,7 @@ class Poster:
         d.add(d.rect((0, 0), (self.width, self.height), fill=self.colors['background']))
         self.__draw_header(d)
         self.__draw_footer(d)
-        self.__draw_tracks(d, self.width - 20, self.height - 30 - 30, 10, 30)
+        self.__draw_tracks(d, XY(self.width - 20, self.height - 30 - 30), XY(10, 30))
         d.save()
 
     def m2u(self, m):
@@ -64,8 +65,8 @@ class Poster:
         else:
             return "mi"
 
-    def __draw_tracks(self, d, w, h, offset_x, offset_y):
-        self.tracks_drawer.draw(d, w, h, offset_x, offset_y)
+    def __draw_tracks(self, d, size: XY, offset: XY):
+        self.tracks_drawer.draw(d, size, offset)
 
     def __draw_header(self, d):
         text_color = self.colors["text"]
@@ -97,7 +98,7 @@ class Poster:
                      fill=text_color, style=small_value_style))
 
     def __compute_track_statistics(self):
-        length_range = value_range.ValueRange()
+        length_range = ValueRange()
         total_length = 0
         weeks = {}
         for t in self.tracks:
@@ -110,6 +111,6 @@ class Poster:
     def __compute_years(self, tracks):
         if self.years is not None:
             return
-        self.years = year_range.YearRange()
+        self.years = YearRange()
         for t in tracks:
             self.years.add(t.start_time)

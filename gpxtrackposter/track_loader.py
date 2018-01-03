@@ -9,23 +9,23 @@ import os
 import shutil
 from typing import Dict, Generator, List
 import concurrent.futures
-from . import track
-from . import year_range
 from .exceptions import ParameterError, TrackLoadError
+from .track import Track
+from .year_range import YearRange
 
 log = logging.getLogger(__name__)
 
 
-def load_gpx_file(file_name: str) -> track.Track:
+def load_gpx_file(file_name: str) -> Track:
     log.info("Loading track {}...".format(os.path.basename(file_name)))
-    t = track.Track()
+    t = Track()
     t.load_gpx(file_name)
     return t
 
 
-def load_cached_track_file(cache_file_name: str, file_name: str) -> track.Track:
+def load_cached_track_file(cache_file_name: str, file_name: str) -> Track:
     try:
-        t = track.Track()
+        t = Track()
         t.load_cache(cache_file_name)
         t.file_names = [os.path.basename(file_name)]
         log.info('Loaded track {} from cache file {}'.format(file_name, cache_file_name))
@@ -38,7 +38,7 @@ class TrackLoader:
     def __init__(self):
         self.min_length = 1000
         self.special_file_names = []
-        self.year_range = year_range.YearRange()
+        self.year_range = YearRange()
         self.cache_dir = None
         self._cache_file_names = {}
 
@@ -50,14 +50,14 @@ class TrackLoader:
             except OSError as e:
                 log.info("Failed: {}".format(e))
 
-    def load_tracks(self, base_dir: str) -> List[track.Track]:
+    def load_tracks(self, base_dir: str) -> List[Track]:
         file_names = [x for x in self._list_gpx_files(base_dir)]
         log.info("GPX files: {}".format(len(file_names)))
 
-        tracks = []
+        tracks = []  # type: List[Track]
 
         # load track from cache
-        cached_tracks = []
+        cached_tracks = {}  # type: Dict[str, Track]
         if self.cache_dir:
             log.info("Trying to load {} track(s) from cache...".format(len(file_names)))
             cached_tracks = self._load_tracks_from_cache(file_names)
@@ -81,7 +81,7 @@ class TrackLoader:
         # filter out tracks with length < min_length
         return [t for t in tracks if t.length >= self.min_length]
 
-    def _filter_tracks(self, tracks: List[track.Track]) -> List[track.Track]:
+    def _filter_tracks(self, tracks: List[Track]) -> List[Track]:
         filtered_tracks = []
         for t in tracks:
             file_name = t.file_names[0]
@@ -97,7 +97,7 @@ class TrackLoader:
         return filtered_tracks
 
     @staticmethod
-    def _merge_tracks(tracks: List[track.Track]) -> List[track.Track]:
+    def _merge_tracks(tracks: List[Track]) -> List[Track]:
         log.info("Merging tracks...")
         tracks = sorted(tracks, key=lambda t1: t1.start_time)
         merged_tracks = []
@@ -116,7 +116,7 @@ class TrackLoader:
         return merged_tracks
 
     @staticmethod
-    def _load_tracks(file_names: List[str]) -> List[track.Track]:
+    def _load_tracks(file_names: List[str]) -> Dict[str, Track]:
         tracks = {}
         with concurrent.futures.ProcessPoolExecutor() as executor:
             future_to_file_name = {
@@ -133,7 +133,7 @@ class TrackLoader:
 
         return tracks
 
-    def _load_tracks_from_cache(self, file_names: List[str]) -> List[track.Track]:
+    def _load_tracks_from_cache(self, file_names: List[str]) -> Dict[str, Track]:
         tracks = {}
         with concurrent.futures.ProcessPoolExecutor() as executor:
             future_to_file_name = {
@@ -151,7 +151,7 @@ class TrackLoader:
                 tracks[file_name] = t
         return tracks
 
-    def _store_tracks_to_cache(self, tracks: Dict[str, track.Track]):
+    def _store_tracks_to_cache(self, tracks: Dict[str, Track]):
         if (not tracks) or (not self.cache_dir):
             return
 

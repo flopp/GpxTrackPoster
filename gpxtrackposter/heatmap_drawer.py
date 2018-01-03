@@ -4,16 +4,17 @@
 # license that can be found in the LICENSE file.
 
 import svgwrite
-from . import poster
-from . import tracks_drawer
+from .poster import Poster
+from .tracks_drawer import TracksDrawer
+from .xy import XY
 from . import utils
 
 
-class HeatmapDrawer(tracks_drawer.TracksDrawer):
-    def __init__(self, the_poster: poster.Poster):
+class HeatmapDrawer(TracksDrawer):
+    def __init__(self, the_poster: Poster):
         super().__init__(the_poster)
 
-    def draw(self, d: svgwrite.Drawing, w: float, h: float, offset_x: float, offset_y: float):
+    def draw(self, dr: svgwrite.Drawing, size: XY, offset: XY):
         xy_polylines = []
         xy_polylines_special = []
         for track in self.poster.tracks:
@@ -26,27 +27,20 @@ class HeatmapDrawer(tracks_drawer.TracksDrawer):
                 xy_polylines_special.extend(track_xy)
 
         range_x, range_y = utils.compute_bounds_xy(xy_polylines)
-        d_x = range_x.diameter()
-        d_y = range_y.diameter()
+        d = XY(range_x.diameter(), range_y.diameter())
 
         # compute scale
-        scale = w/d_x if w/h <= d_x/d_y else h/d_y
+        scale = size.x/d.x if size.x/size.y <= d.x/d.y else size.y/d.y
 
         # compute offsets such that projected track is centered in its rect
-        offset_x += 0.5 * w - 0.5 * scale * d_x
-        offset_y += 0.5 * h - 0.5 * scale * d_y
+        offset = offset + 0.5 * (size - scale * d) - scale * XY(range_x.lower(), range_y.lower())
 
         for lines, color in [(xy_polylines, self.poster.colors['track']),
                              (xy_polylines_special, self.poster.colors['special'])]:
             scaled_lines = []
             for line in lines:
-                scaled_line = []
-                for (x, y) in line:
-                    scaled_x = offset_x + scale * (x - range_x.lower())
-                    scaled_y = offset_y + scale * (y - range_y.lower())
-                    scaled_line.append((scaled_x, scaled_y))
-                scaled_lines.append(scaled_line)
+                scaled_lines.append([(offset + scale * xy).tuple() for xy in line])
             for opacity, width in [(0.1, 5.0), (0.2, 2.0), (1.0, 0.3)]:
                 for line in scaled_lines:
-                    d.add(d.polyline(points=line, stroke=color, stroke_opacity=opacity, fill='none',
-                                     stroke_width=width, stroke_linejoin='round', stroke_linecap='round'))
+                    dr.add(dr.polyline(points=line, stroke=color, stroke_opacity=opacity, fill='none',
+                                       stroke_width=width, stroke_linejoin='round', stroke_linecap='round'))
