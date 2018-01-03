@@ -4,7 +4,7 @@
 # license that can be found in the LICENSE file.
 
 import datetime
-import gpxpy
+import gpxpy as mod_gpxpy
 import json
 import os
 import s2sphere as s2
@@ -24,31 +24,30 @@ class Track:
         try:
             self.file_names = [os.path.basename(file_name)]
             with open(file_name, 'r') as file:
-                try:
-                    gpx = gpxpy.parse(file)
-                except gpxpy.gpx.GPXXMLSyntaxException as e:
-                    raise TrackLoadError("Failed to parse GPX.") from e
-                b = gpx.get_time_bounds()
-                self.start_time = b[0]
-                self.end_time = b[1]
-                if self.start_time is None:
-                    raise TrackLoadError("Track has no start time.")
-                if self.end_time is None:
-                    raise TrackLoadError("Track has no end time.")
-                self.length = gpx.length_2d()
-                if self.length == 0:
-                    raise TrackLoadError("Track is empty.")
-                gpx.simplify()
-                for t in gpx.tracks:
-                    for s in t.segments:
-                        line = [s2.LatLng.from_degrees(p.latitude, p.longitude) for p in s.points]
-                        self.polylines.append(line)
+                self._load_gpx_data(mod_gpxpy.parse(file))
         except TrackLoadError as e:
             raise e
+        except mod_gpxpy.gpx.GPXXMLSyntaxException as e:
+            raise TrackLoadError("Failed to parse GPX.") from e
         except PermissionError as e:
             raise TrackLoadError('Cannot load GPX (bad permissions)') from e
         except Exception as e:
             raise TrackLoadError("Something went wrong when loading GPX.") from e
+
+    def _load_gpx_data(self, gpx: 'mod_gpxpy.gpx.GPX'):
+        self.start_time, self.end_time = gpx.get_time_bounds()
+        if self.start_time is None:
+            raise TrackLoadError("Track has no start time.")
+        if self.end_time is None:
+            raise TrackLoadError("Track has no end time.")
+        self.length = gpx.length_2d()
+        if self.length == 0:
+            raise TrackLoadError("Track is empty.")
+        gpx.simplify()
+        for t in gpx.tracks:
+            for s in t.segments:
+                line = [s2.LatLng.from_degrees(p.latitude, p.longitude) for p in s.points]
+                self.polylines.append(line)
 
     def append(self, other: 'Track'):
         self.end_time = other.end_time

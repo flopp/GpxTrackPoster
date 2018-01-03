@@ -7,12 +7,11 @@ import hashlib
 import logging
 import os
 import shutil
-from typing import List, Generator
+from typing import Dict, Generator, List
 import concurrent.futures
 from . import track
 from . import year_range
 from .exceptions import ParameterError, TrackLoadError
-
 
 log = logging.getLogger(__name__)
 
@@ -24,19 +23,12 @@ def load_gpx_file(file_name: str) -> track.Track:
     return t
 
 
-def load_cached_track_file(file_name: str, cache_dir: str) -> track.Track:
+def load_cached_track_file(cache_file_name: str, file_name: str) -> track.Track:
     try:
-        checksum = hashlib.sha256(open(file_name, 'rb').read()).hexdigest()
-    except PermissionError as e:
-        raise TrackLoadError('Failed to compute checksum (bad permissions).') from e
-    except Exception as e:
-        raise TrackLoadError('Failed to compute checksum.') from e
-    try:
-        cache_file = os.path.join(cache_dir, checksum + ".json")
         t = track.Track()
-        t.load_cache(cache_file)
+        t.load_cache(cache_file_name)
         t.file_names = [os.path.basename(file_name)]
-        log.info('Loaded track {} from cache file {}'.format(file_name, cache_file))
+        log.info('Loaded track {} from cache file {}'.format(file_name, cache_file_name))
         return t
     except Exception as e:
         raise TrackLoadError('Failed to load track from cache.') from e
@@ -48,6 +40,7 @@ class TrackLoader:
         self.special_file_names = []
         self.year_range = year_range.YearRange()
         self.cache_dir = None
+        self._cache_file_names = {}
 
     def clear_cache(self):
         if os.path.isdir(self.cache_dir):
@@ -58,7 +51,7 @@ class TrackLoader:
                 log.info("Failed: {}".format(e))
 
     def load_tracks(self, base_dir: str) -> List[track.Track]:
-        file_names = [x for x in self.__list_gpx_files(base_dir)]
+        file_names = [x for x in self._list_gpx_files(base_dir)]
         log.info("GPX files: {}".format(len(file_names)))
 
         tracks = []
@@ -67,7 +60,7 @@ class TrackLoader:
         cached_tracks = []
         if self.cache_dir:
             log.info("Trying to load {} track(s) from cache...".format(len(file_names)))
-            cached_tracks = self.__load_tracks_from_cache(file_names, self.cache_dir)
+            cached_tracks = self._load_tracks_from_cache(file_names)
             log.info("Loaded tracks from cache:  {}".format(len(cached_tracks)))
             tracks = list(cached_tracks.values())
 
@@ -76,27 +69,19 @@ class TrackLoader:
         if remaining_file_names:
             log.info(
                 "Trying to load {} track(s) from GPX files; this may take a while...".format(len(remaining_file_names)))
-            loaded_tracks = self.__load_tracks(remaining_file_names)
-            log.info("Conventionally loaded tracks: {}".format(len(loaded_tracks)))
-
-            # store non-cached tracks in cache
-            if loaded_tracks and self.cache_dir:
-                log.info("Storing {} track(s) in cache...".format(len(loaded_tracks)))
-                for (file_name, t) in loaded_tracks.items():
-                    checksum = hashlib.sha256(open(file_name, 'rb').read()).hexdigest()
-                    cache_file = os.path.join(self.cache_dir, checksum + ".json")
-                    t.store_cache(cache_file)
+            loaded_tracks = self._load_tracks(remaining_file_names)
             tracks.extend(loaded_tracks.values())
+            log.info("Conventionally loaded tracks: {}".format(len(loaded_tracks)))
+            self._store_tracks_to_cache(loaded_tracks)
 
-        tracks = self.__filter_tracks(tracks)
+        tracks = self._filter_tracks(tracks)
 
         # merge tracks that took place within one hour
-        tracks = self.__merge_tracks(tracks)
-
+        tracks = self._merge_tracks(tracks)
         # filter out tracks with length < min_length
         return [t for t in tracks if t.length >= self.min_length]
 
-    def __filter_tracks(self, tracks: List[track.Track]) -> List[track.Track]:
+    def _filter_tracks(self, tracks: List[track.Track]) -> List[track.Track]:
         filtered_tracks = []
         for t in tracks:
             file_name = t.file_names[0]
@@ -112,7 +97,7 @@ class TrackLoader:
         return filtered_tracks
 
     @staticmethod
-    def __merge_tracks(tracks: List[track.Track]) -> List[track.Track]:
+    def _merge_tracks(tracks: List[track.Track]) -> List[track.Track]:
         log.info("Merging tracks...")
         tracks = sorted(tracks, key=lambda t1: t1.start_time)
         merged_tracks = []
@@ -131,7 +116,7 @@ class TrackLoader:
         return merged_tracks
 
     @staticmethod
-    def __load_tracks(file_names: List[str]) -> List[track.Track]:
+    def _load_tracks(file_names: List[str]) -> List[track.Track]:
         tracks = {}
         with concurrent.futures.ProcessPoolExecutor() as executor:
             future_to_file_name = {
@@ -148,26 +133,39 @@ class TrackLoader:
 
         return tracks
 
-    @staticmethod
-    def __load_tracks_from_cache(file_names: List[str], cache_dir: str) -> List[track.Track]:
+    def _load_tracks_from_cache(self, file_names: List[str]) -> List[track.Track]:
         tracks = {}
-        failed_loads = []
         with concurrent.futures.ProcessPoolExecutor() as executor:
             future_to_file_name = {
-                executor.submit(load_cached_track_file, file_name, cache_dir): file_name for file_name in file_names
+                executor.submit(load_cached_track_file, self._get_cache_file_name(file_name), file_name):
+                    file_name for file_name in file_names
             }
         for future in concurrent.futures.as_completed(future_to_file_name):
             file_name = future_to_file_name[future]
             try:
                 t = future.result()
-            except TrackLoadError as e:
-                failed_loads.append((file_name, e))
+            except Exception:
+                # silently ignore failed cache load attempts
+                pass
             else:
                 tracks[file_name] = t
         return tracks
 
+    def _store_tracks_to_cache(self, tracks: Dict[str, track.Track]):
+        if (not tracks) or (not self.cache_dir):
+            return
+
+        log.info('Storing {} track(s) to cache...'.format(len(tracks)))
+        for (file_name, t) in tracks.items():
+            try:
+                t.store_cache(self._get_cache_file_name(file_name))
+            except Exception as e:
+                log.warning('Failed to store track {} to cache: {}'.format(file_name, e))
+            else:
+                log.info('Stored track {} to cache'.format(file_name))
+
     @staticmethod
-    def __list_gpx_files(base_dir: str) -> Generator[str, None, None]:
+    def _list_gpx_files(base_dir: str) -> Generator[str, None, None]:
         base_dir = os.path.abspath(base_dir)
         if not os.path.isdir(base_dir):
             raise ParameterError("Not a directory: {}".format(base_dir))
@@ -175,3 +173,20 @@ class TrackLoader:
             path_name = os.path.join(base_dir, name)
             if name.endswith(".gpx") and os.path.isfile(path_name):
                 yield path_name
+
+    def _get_cache_file_name(self, file_name: str) -> str:
+        assert self.cache_dir
+
+        if file_name in self._cache_file_names:
+            return self._cache_file_names[file_name]
+
+        try:
+            checksum = hashlib.sha256(open(file_name, 'rb').read()).hexdigest()
+        except PermissionError as e:
+            raise TrackLoadError('Failed to compute checksum (bad permissions).') from e
+        except Exception as e:
+            raise TrackLoadError('Failed to compute checksum.') from e
+
+        cache_file_name = os.path.join(self.cache_dir, checksum + '.json')
+        self._cache_file_names[file_name] = cache_file_name
+        return cache_file_name

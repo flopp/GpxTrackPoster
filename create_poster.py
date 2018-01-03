@@ -74,10 +74,13 @@ def main():
 
     loader.special_file_names = args.special
     if args.clear_cache:
+        print('Clearing cache...')
         loader.clear_cache()
+
     tracks = loader.load_tracks(args.gpx_dir)
     if not tracks:
-        print('No tracks found.')
+        if not args.clear_cache:
+            print('No tracks found.')
         return
 
     print("Creating poster of type '{}' with {} tracks and storing it in file '{}'...".format(args.type, len(tracks),
