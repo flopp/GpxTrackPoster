@@ -5,8 +5,7 @@ build:
         before:
             - pip install -r requirements.txt
             - pip install -r requirements-dev.txt
-    build:
-        tests:
-            override:
-                - make lint
-                - make test
+    tests:
+        override:
+            - make lint
+            - make test
