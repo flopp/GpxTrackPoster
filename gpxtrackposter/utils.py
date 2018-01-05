@@ -13,8 +13,35 @@ from .xy import XY
 
 # mercator projection
 def latlng2xy(latlng: s2.LatLng) -> XY:
-    return XY(latlng.lng().degrees / 180 + 1,
-              0.5 - math.log(math.tan(math.pi / 4 * (1 + latlng.lat().degrees / 90))) / math.pi)
+    return XY(lng2x(latlng.lng().degrees), lat2y(latlng.lat().degrees))
+
+
+def lng2x(lng_deg: float) -> float:
+    return lng_deg / 180 + 1
+
+
+def lat2y(lat_deg: float) -> float:
+    return 0.5 - math.log(math.tan(math.pi / 4 * (1 + lat_deg / 90))) / math.pi
+
+
+def project(bbox: s2.LatLngRect, size: XY, offset: XY, latlnglines: List[List[s2.LatLng]]) \
+        -> List[List[Tuple[float, float]]]:
+    min_x = lng2x(bbox.lng_lo().degrees)
+    d_x = lng2x(bbox.lng_hi().degrees) - min_x
+    while d_x >= 2:
+        d_x -= 2
+    while d_x < 0:
+        d_x += 2
+    min_y = lat2y(bbox.lat_lo().degrees)
+    max_y = lat2y(bbox.lat_hi().degrees)
+    d_y = abs(max_y - min_y)
+
+    scale = size.x / d_x if size.x / size.y <= d_x / d_y else size.y / d_y
+    offset = offset + 0.5 * (size - scale * XY(d_x, -d_y)) - scale * XY(min_x, min_y)
+    lines = []
+    for latlngline in latlnglines:
+        lines.append([(offset + scale * latlng2xy(latlng)).tuple() for latlng in latlngline])
+    return lines
 
 
 def compute_bounds_xy(lines: List[List[XY]]) -> Tuple[ValueRange, ValueRange]:

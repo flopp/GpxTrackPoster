@@ -28,22 +28,7 @@ class GridDrawer(TracksDrawer):
                              offset + 0.05 * XY(cell_size, cell_size) + p)
 
     def _draw_track(self, dr: svgwrite.Drawing, tr: Track, size: XY, offset: XY):
-        # compute mercator projection of track segments
-        lines = []
-        for polyline in tr.polylines:
-            lines.append([utils.latlng2xy(latlng) for latlng in polyline])
-
-        # compute bounds
-        range_x, range_y = utils.compute_bounds_xy(lines)
-        d = XY(range_x.diameter(), range_y.diameter())
-
-        # compute scale
-        scale = size.x / d.x if size.x / size.y <= d.x / d.y else size.y / d.y
-        offset = offset + 0.5 * (size - scale * d) - scale * XY(range_x.lower(), range_y.lower())
-
         color = self.color(self.poster.length_range, tr.length, tr.special)
-
-        for line in lines:
-            scaled_line = [(offset + scale * xy).tuple() for xy in line]
-            dr.add(dr.polyline(points=scaled_line, stroke=color, fill='none',
+        for line in utils.project(tr.bbox(), size, offset, tr.polylines):
+            dr.add(dr.polyline(points=line, stroke=color, fill='none',
                                stroke_width=0.5, stroke_linejoin='round', stroke_linecap='round'))

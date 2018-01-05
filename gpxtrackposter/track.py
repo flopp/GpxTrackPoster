@@ -34,6 +34,13 @@ class Track:
         except Exception as e:
             raise TrackLoadError("Something went wrong when loading GPX.") from e
 
+    def bbox(self) -> s2.LatLngRect:
+        bbox = s2.LatLngRect()
+        for line in self.polylines:
+            for latlng in line:
+                bbox = bbox.union(s2.LatLngRect.from_point(latlng.normalized()))
+        return bbox
+
     def _load_gpx_data(self, gpx: 'mod_gpxpy.gpx.GPX'):
         self.start_time, self.end_time = gpx.get_time_bounds()
         if self.start_time is None:
