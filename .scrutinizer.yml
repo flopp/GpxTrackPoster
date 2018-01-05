@@ -1,0 +1,12 @@
+build:
+    environment:
+        python: 3.5.0
+    dependencies:
+        before:
+            - pip install -r requirements.txt
+            - pip install -r requirements-dev.txt
+    build:
+        tests:
+            override:
+                - make lint
+                - make test
