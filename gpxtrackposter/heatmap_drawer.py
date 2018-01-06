@@ -42,18 +42,32 @@ class HeatmapDrawer(TracksDrawer):
                 raise ParameterError('Not a valid LAT,LNG pair: {}'.format(args.heatmap_center))
             self._center = s2.LatLng.from_degrees(lat, lng)
 
-    def draw(self, dr: svgwrite.Drawing, size: XY, offset: XY):
-        bbox = s2.LatLngRect()
-        for tr in self.poster.tracks:
-            bbox = bbox.union(tr.bbox())
-
+    def _determine_bbox(self) -> s2.LatLngRect:
         if self._center:
             log.info('Forcing heatmap center to {}'.format(self._center))
-            bbox_size = s2.LatLng.from_radians(bbox.lat().get_length(), bbox.lng().get_length())
-            bbox = s2.LatLngRect.from_center_size(self._center, bbox_size)
+            dlat, dlng = 0, 0
+            for tr in self.poster.tracks:
+                for line in tr.polylines:
+                    for latlng in line:
+                        d = abs(self._center.lat().degrees - latlng.lat().degrees)
+                        dlat = max(dlat, d)
+                        d = abs(self._center.lng().degrees - latlng.lng().degrees)
+                        while d > 360:
+                            d -= 360
+                        if d > 180:
+                            d = 360 - d
+                        dlng = max(dlng, d)
+            return s2.LatLngRect.from_center_size(self._center, s2.LatLng.from_degrees(2 * dlat, 2 * dlng))
 
+        tracks_bbox = s2.LatLngRect()
+        for tr in self.poster.tracks:
+            tracks_bbox = tracks_bbox.union(tr.bbox())
+        return tracks_bbox
+
+    def draw(self, dr: svgwrite.Drawing, size: XY, offset: XY):
         normal_lines = []
         special_lines = []
+        bbox = self._determine_bbox()
         for tr in self.poster.tracks:
             for line in utils.project(bbox, size, offset, tr.polylines):
                 if tr.special:

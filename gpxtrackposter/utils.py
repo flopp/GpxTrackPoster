@@ -40,7 +40,16 @@ def project(bbox: s2.LatLngRect, size: XY, offset: XY, latlnglines: List[List[s2
     offset = offset + 0.5 * (size - scale * XY(d_x, -d_y)) - scale * XY(min_x, min_y)
     lines = []
     for latlngline in latlnglines:
-        lines.append([(offset + scale * latlng2xy(latlng)).tuple() for latlng in latlngline])
+        line = []
+        for latlng in latlngline:
+            if bbox.contains(latlng):
+                line.append((offset + scale * latlng2xy(latlng)).tuple())
+            else:
+                if len(line) > 0:
+                    lines.append(line)
+                    line = []
+        if len(line) > 0:
+            lines.append(line)
     return lines
 
 
