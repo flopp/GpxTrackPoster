@@ -19,7 +19,8 @@ usage: create_poster.py [-h] [--gpx-dir DIR] [--output FILE] [--year YEAR]
                         [--text-color COLOR] [--special-color COLOR]
                         [--special-color2 COLOR] [--units UNITS]
                         [--clear-cache] [--verbose] [--logfile FILE]
-                        [--circular-rings] [--circular-ring-color COLOR]
+                        [--heatmap-center LAT,LNG] [--circular-rings]
+                        [--circular-ring-color COLOR]
 
 optional arguments:
   -h, --help            show this help message and exit
@@ -49,6 +50,10 @@ optional arguments:
   --clear-cache         Clear the track cache.
   --verbose             Verbose logging.
   --logfile FILE
+
+Heatmap Type Options:
+  --heatmap-center LAT,LNG
+                        Center of the heatmap (default: automatic).
 
 Circular Type Options:
   --circular-rings      Draw distance rings.
