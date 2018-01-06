@@ -8,7 +8,7 @@ import calendar
 import datetime
 import math
 import svgwrite
-from typing import List
+from typing import List, Optional
 from .poster import Poster
 from .track import Track
 from .tracks_drawer import TracksDrawer
@@ -101,7 +101,7 @@ class CircularDrawer(TracksDrawer):
             day += 1
             date += datetime.timedelta(1)
 
-    def _draw_rings(self, d: svgwrite.Drawing, center: XY, radius_range: ValueRange):
+    def _determine_ring_distance(self) -> Optional[float]:
         length_range = self.poster.length_range_by_date
         ring_distance = None
         for distance in [1, 5, 10, 50]:
@@ -116,6 +116,11 @@ class CircularDrawer(TracksDrawer):
             ring_distance = distance
             if (length_range.upper() / distance) <= 5:
                 break
+        return ring_distance
+
+    def _draw_rings(self, d: svgwrite.Drawing, center: XY, radius_range: ValueRange):
+        length_range = self.poster.length_range_by_date
+        ring_distance = self._determine_ring_distance()
         if ring_distance is None:
             return
         distance = ring_distance
