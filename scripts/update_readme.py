@@ -1,5 +1,10 @@
 #!/usr/bin/env python
 
+# Copyright 2018 Florian Pigorsch & Contributors. All rights reserved.
+#
+# Use of this source code is governed by a MIT-style
+# license that can be found in the LICENSE file.
+
 import sys
 
 #

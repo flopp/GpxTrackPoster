@@ -125,4 +125,4 @@ If you have found a bug or have a feature request, please create a new issue. I'
 Or even better: clone the repo, fix the bug/implement the feature yourself, and file a pull request. Contributions are always welcome!
 
 ## License
-[MIT](https://github.com/flopp/GpxTrackPoster/blob/master/LICENSE) &copy; 2016-2017 Florian Pigorsch
+[MIT](https://github.com/flopp/GpxTrackPoster/blob/master/LICENSE) &copy; 2016-2018 Florian Pigorsch
