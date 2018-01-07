@@ -19,7 +19,8 @@ usage: create_poster.py [-h] [--gpx-dir DIR] [--output FILE] [--year YEAR]
                         [--text-color COLOR] [--special-color COLOR]
                         [--special-color2 COLOR] [--units UNITS]
                         [--clear-cache] [--verbose] [--logfile FILE]
-                        [--heatmap-center LAT,LNG] [--circular-rings]
+                        [--heatmap-center LAT,LNG]
+                        [--heatmap-radius RADIUS_KM] [--circular-rings]
                         [--circular-ring-color COLOR]
 
 optional arguments:
@@ -54,6 +55,9 @@ optional arguments:
 Heatmap Type Options:
   --heatmap-center LAT,LNG
                         Center of the heatmap (default: automatic).
+  --heatmap-radius RADIUS_KM
+                        Scale the heatmap such that at least a circle with
+                        radius=RADIUS_KM is visible (default: automatic).
 
 Circular Type Options:
   --circular-rings      Draw distance rings.
