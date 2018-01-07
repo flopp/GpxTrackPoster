@@ -5,6 +5,7 @@
 
 import argparse
 import logging
+import math
 import svgwrite
 import s2sphere as s2
 from .exceptions import ParameterError
@@ -21,11 +22,15 @@ class HeatmapDrawer(TracksDrawer):
     def __init__(self, the_poster: Poster):
         super().__init__(the_poster)
         self._center = None
+        self._radius = None
 
     def create_args(self, args_parser: argparse.ArgumentParser):
         group = args_parser.add_argument_group('Heatmap Type Options')
         group.add_argument('--heatmap-center', dest='heatmap_center', metavar='LAT,LNG', type=str,
                            help='Center of the heatmap (default: automatic).')
+        group.add_argument('--heatmap-radius', dest='heatmap_radius', metavar='RADIUS_KM', type=float,
+                           help='Scale the heatmap such that at least a circle with radius=RADIUS_KM is visible '
+                                '(default: automatic).')
 
     def fetch_args(self, args: argparse.Namespace):
         self._center = None
@@ -41,22 +46,35 @@ class HeatmapDrawer(TracksDrawer):
             if not (-90 <= lat <= 90) or not (-180 <= lng <= 180):
                 raise ParameterError('Not a valid LAT,LNG pair: {}'.format(args.heatmap_center))
             self._center = s2.LatLng.from_degrees(lat, lng)
+        if args.heatmap_radius:
+            if args.heatmap_radius <= 0:
+                raise ParameterError('Not a valid radius: {} (must be > 0)'.format(args.heatmap_radius))
+            if not args.heatmap_center:
+                raise ParameterError('--heatmap-radius needs --heatmap-center')
+            self._radius = args.heatmap_radius
 
     def _determine_bbox(self) -> s2.LatLngRect:
         if self._center:
             log.info('Forcing heatmap center to {}'.format(self._center))
             dlat, dlng = 0, 0
-            for tr in self.poster.tracks:
-                for line in tr.polylines:
-                    for latlng in line:
-                        d = abs(self._center.lat().degrees - latlng.lat().degrees)
-                        dlat = max(dlat, d)
-                        d = abs(self._center.lng().degrees - latlng.lng().degrees)
-                        while d > 360:
-                            d -= 360
-                        if d > 180:
-                            d = 360 - d
-                        dlng = max(dlng, d)
+            if self._radius:
+                er = 6378.1
+                quarter = er * math.pi / 2
+                dlat = 90 * self._radius / quarter
+                scale = 1 / math.cos(self._center.lat().radians)
+                dlng = scale * 90 * self._radius / quarter
+            else:
+                for tr in self.poster.tracks:
+                    for line in tr.polylines:
+                        for latlng in line:
+                            d = abs(self._center.lat().degrees - latlng.lat().degrees)
+                            dlat = max(dlat, d)
+                            d = abs(self._center.lng().degrees - latlng.lng().degrees)
+                            while d > 360:
+                                d -= 360
+                            if d > 180:
+                                d = 360 - d
+                            dlng = max(dlng, d)
             return s2.LatLngRect.from_center_size(self._center, s2.LatLng.from_degrees(2 * dlat, 2 * dlng))
 
         tracks_bbox = s2.LatLngRect()
