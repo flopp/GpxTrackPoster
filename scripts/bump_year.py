@@ -13,8 +13,7 @@ this_year = str(datetime.datetime.now().year)
 re_year = re.compile('\s(\d\d\d\d) Florian Pigorsch')
 re_year_range = re.compile('\s(\d\d\d\d)-(\d\d\d\d) Florian Pigorsch')
 
-
-def bump_year(file_name):
+for file_name in sys.argv:
     lines = []
     with open(file_name, 'r') as f:
         for line in f.readlines():
@@ -34,7 +33,3 @@ def bump_year(file_name):
 
     with open(file_name, 'w') as f:
         f.writelines(lines)
-
-
-for file_name in sys.argv:
-    bump_year(file_name)

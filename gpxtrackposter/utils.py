@@ -34,7 +34,7 @@ def project(bbox: s2.LatLngRect, size: XY, offset: XY, latlnglines: List[List[s2
         d_x += 2
     min_y = lat2y(bbox.lat_lo().degrees)
     max_y = lat2y(bbox.lat_hi().degrees)
-    d_y = abs(max_y - min_y)
+    d_y = math.fabs(max_y - min_y)
 
     scale = size.x / d_x if size.x / size.y <= d_x / d_y else size.y / d_y
     offset = offset + 0.5 * (size - scale * XY(d_x, -d_y)) - scale * XY(min_x, min_y)
