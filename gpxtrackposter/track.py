@@ -23,6 +23,10 @@ class Track:
     def load_gpx(self, file_name: str):
         try:
             self.file_names = [os.path.basename(file_name)]
+            # Handle empty gpx files 
+            # (for example, treadmill runs pulled via garmin-connect-export)
+            if os.path.getsize(file_name) == 0:
+                raise TrackLoadError("Empty GPX file")
             with open(file_name, 'r') as file:
                 self._load_gpx_data(mod_gpxpy.parse(file))
         except TrackLoadError as e:
