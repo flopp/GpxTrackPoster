@@ -1,6 +1,7 @@
 lint: check-copyright flake8 spell
 
 test:
+	@python -m compileall create_poster.py gpxtrackposter
 	@python -m pytest tests
 
 flake8:
