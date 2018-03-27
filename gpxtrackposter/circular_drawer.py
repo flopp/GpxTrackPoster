@@ -1,3 +1,4 @@
+"""Draw a circular Poster."""
 # Copyright 2016-2018 Florian Pigorsch & Contributors. All rights reserved.
 #
 # Use of this source code is governed by a MIT-style
@@ -18,22 +19,40 @@ from . import utils
 
 
 class CircularDrawer(TracksDrawer):
+    """Draw a circular Poster for each of the Poster's tracks.
+    
+    Attributes:
+        _rings: True if distance rings should be drawn, else False.
+        _ring_color: Color of distance rings.
+
+    Methods:
+        create_args: Set up an argparser for circular poster options. 
+        fetch_args: Get args from argparser.
+        draw: Draw each year on the Poster.
+    """
+
     def __init__(self, the_poster: Poster):
+        """Init the CircularDrawer with default values for _rings and _ring_color
+
+        Note that these can be overriden via arguments when calling."""
         super().__init__(the_poster)
         self._rings = False
         self._ring_color = 'darkgrey'
 
     def create_args(self, args_parser: argparse.ArgumentParser):
+        """Add arguments to the parser"""
         group = args_parser.add_argument_group('Circular Type Options')
         group.add_argument('--circular-rings', dest='circular_rings', action='store_true', help='Draw distance rings.')
         group.add_argument('--circular-ring-color', dest='circular_ring_color', metavar='COLOR', type=str,
                            default='darkgrey', help='Color of distance rings.')
 
     def fetch_args(self, args):
+        """Get arguments from the parser"""
         self._rings = args.circular_rings
         self._ring_color = args.circular_ring_color
 
     def draw(self, d: svgwrite.Drawing, size: XY, offset: XY):
+        """Draw the circular Poster using distances broken down by time"""
         if self.poster.length_range_by_date is None:
             return
 

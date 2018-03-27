@@ -1,3 +1,4 @@
+"""Draw a calendar poster."""
 # Copyright 2016-2018 Florian Pigorsch & Contributors. All rights reserved.
 #
 # Use of this source code is governed by a MIT-style
@@ -13,10 +14,12 @@ from . import utils
 
 
 class CalendarDrawer(TracksDrawer):
+    """Draw a calendar poster."""
     def __init__(self, the_poster: Poster):
         super().__init__(the_poster)
 
     def draw(self, d: svgwrite.Drawing, size: XY, offset: XY):
+        """Iterate through the Poster's years, creating a calendar for each."""
         years = self.poster.years.count()
         _, (count_x, count_y) = utils.compute_grid(years, size)
         x, y = 0, 0

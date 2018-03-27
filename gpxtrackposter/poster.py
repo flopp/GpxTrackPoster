@@ -1,3 +1,4 @@
+"""Create a poster from track data."""
 # Copyright 2016-2018 Florian Pigorsch & Contributors. All rights reserved.
 #
 # Use of this source code is governed by a MIT-style
@@ -10,6 +11,29 @@ from .year_range import YearRange
 
 
 class Poster:
+    """Create a poster from track data.
+
+    Attributes:
+        athlete: Name of athlete to be displayed on poster.
+        title: Title of poster.
+        tracks_by_date: Tracks organized temporally if needed.
+        tracks: List of tracks to be used in the poster.
+        length_range: Range of lengths of tracks in poster.
+        length_range_by_date: Range of lengths organized temporally.
+        units: Length units to be used in poster.
+        colors: Colors for various components of the poster.
+        width: Poster width.
+        height: Poster height.
+        years: Years included in the poster.
+        tracks_drawer: drawer used to draw the poster.
+
+    Methods:
+        set_tracks: Associate the Poster with a set of tracks
+        draw: Draw the tracks on the poster.
+        m2u: Convert meters to kilometers or miles based on units
+        u: Return distance unit (km or mi)
+    """
+
     def __init__(self):
         self.athlete = None
         self.title = "My Poster"
@@ -25,6 +49,11 @@ class Poster:
         self.tracks_drawer = None
 
     def set_tracks(self, tracks):
+        """Associate the set of tracks with this poster.
+
+        In addition to setting self.tracks, also compute the necessary attributes for the Poster
+        based on this set of tracks. 
+        """    
         self.tracks = tracks
         self.tracks_by_date = {}
         self.length_range = ValueRange()
@@ -44,6 +73,7 @@ class Poster:
             self.length_range_by_date.extend(length)
 
     def draw(self, drawer, output):
+        """Set the Poster's drawer and draw the tracks."""
         self.tracks_drawer = drawer
         d = svgwrite.Drawing(output, ('{}mm'.format(self.width), '{}mm'.format(self.height)))
         d.viewbox(0, 0, self.width, self.height)
@@ -54,12 +84,14 @@ class Poster:
         d.save()
 
     def m2u(self, m):
+        """Convert meters to kilomters or miles, according to units."""
         if self.units == "metric":
             return 0.001 * m
         else:
             return 0.001 * m / 1.609344
 
     def u(self):
+        """Return the unit of distance being used on the Poster."""
         if self.units == "metric":
             return "km"
         else:

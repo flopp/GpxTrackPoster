@@ -1,3 +1,4 @@
+"""Create and maintain info about a given activity track (corresponding to one GPX file)."""
 # Copyright 2016-2018 Florian Pigorsch & Contributors. All rights reserved.
 #
 # Use of this source code is governed by a MIT-style
@@ -12,6 +13,24 @@ from .exceptions import TrackLoadError
 
 
 class Track:
+    """Create and maintain info about a given activity track (corresponding to one GPX file).
+
+    Attributes:
+        file_names: Basename of a given file passed in load_gpx.
+        polylines: Lines interpolated between each coordinate.
+        start_time: Activity start time.
+        end_time: Activity end time.
+        length: Length of the track (2-dimensional).
+        self.special: True if track is special, else False.
+
+    Methods:
+        load_gpx: Load a GPX file into the current track.
+        bbox: Compute the border box of the track.
+        append: Append other track to current track.
+        load_cache: Load track from cached json data.
+        store_cache: Cache the current track.
+    """
+
     def __init__(self):
         self.file_names = []
         self.polylines = []
@@ -21,6 +40,15 @@ class Track:
         self.special = False
 
     def load_gpx(self, file_name: str):
+        """Load the GPX file into self.
+
+        Args:
+            Filename: GPX file to be loaded .
+
+        Raises:
+            TrackLoadError: An error occurred while parsing the GPX file (empty or bad format).
+            PermissionError: An error occurred while opening the GPX file.
+        """
         try:
             self.file_names = [os.path.basename(file_name)]
             # Handle empty gpx files
@@ -39,6 +67,7 @@ class Track:
             raise TrackLoadError("Something went wrong when loading GPX.") from e
 
     def bbox(self) -> s2.LatLngRect:
+        """Compute the smallest rectangle that contains the entire track (border box)."""
         bbox = s2.LatLngRect()
         for line in self.polylines:
             for latlng in line:
@@ -61,6 +90,7 @@ class Track:
                 self.polylines.append(line)
 
     def append(self, other: 'Track'):
+        """Append other track to self."""
         self.end_time = other.end_time
         self.polylines.extend(other.polylines)
         self.length += other.length
@@ -68,6 +98,14 @@ class Track:
         self.special = self.special or other.special
 
     def load_cache(self, cache_file_name: str):
+        """Load the track from a previously cached track
+        
+        Args:
+            cache_file_name: Filename of the cached track to be loaded.
+
+        Raises:
+            TrackLoadError: An error occurred while loading the track data from the cache file.    
+        """
         try:
             with open(cache_file_name) as data_file:
                 data = json.load(data_file)
@@ -81,6 +119,7 @@ class Track:
             raise TrackLoadError('Failed to load track data from cache.') from e
 
     def store_cache(self, cache_file_name: str):
+        """Cache the current track"""
         dir_name = os.path.dirname(cache_file_name)
         if not os.path.isdir(dir_name):
             os.makedirs(dir_name)

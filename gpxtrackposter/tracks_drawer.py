@@ -1,3 +1,4 @@
+"""Contains the base class TracksDrawer, which other Drawers inherit from."""
 # Copyright 2016-2018 Florian Pigorsch & Contributors. All rights reserved.
 #
 # Use of this source code is governed by a MIT-style
@@ -12,6 +13,7 @@ from . import utils
 
 
 class TracksDrawer:
+    """Base class that other drawer clases inherit from."""
     def __init__(self, the_poster: Poster):
         self.poster = the_poster
 

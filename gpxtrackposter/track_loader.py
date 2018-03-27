@@ -1,3 +1,6 @@
+"""Handle parsing of GPX files and writing/loading of cached data"""
+
+
 # Copyright 2016-2018 Florian Pigorsch & Contributors. All rights reserved.
 #
 # Use of this source code is governed by a MIT-style
@@ -17,6 +20,7 @@ log = logging.getLogger(__name__)
 
 
 def load_gpx_file(file_name: str) -> Track:
+    """Load an individual GPX file as a track by using Track.load_gpx()"""
     log.info("Loading track {}...".format(os.path.basename(file_name)))
     t = Track()
     t.load_gpx(file_name)
@@ -24,6 +28,7 @@ def load_gpx_file(file_name: str) -> Track:
 
 
 def load_cached_track_file(cache_file_name: str, file_name: str) -> Track:
+    """Load an individual track from cache files"""
     try:
         t = Track()
         t.load_cache(cache_file_name)
@@ -35,6 +40,19 @@ def load_cached_track_file(cache_file_name: str, file_name: str) -> Track:
 
 
 class TrackLoader:
+    """Handle the loading of tracks from cache and/or GPX files
+
+    Attributes:
+        min_length: All tracks shorter than this value are filtered out.
+        special_file_names: Tracks marked as special in command line args
+        year_range: All tracks outside of this range will be filtered out.
+        cache_dir: Directory used to store cached tracks
+
+    Methods:
+        clear_cache: Remove cache directory
+        load_tracks: Load all data from cache and GPX files
+    """
+
     def __init__(self):
         self.min_length = 1000
         self.special_file_names = []
@@ -43,6 +61,7 @@ class TrackLoader:
         self._cache_file_names = {}
 
     def clear_cache(self):
+        """Remove cache directory, if it exists"""
         if os.path.isdir(self.cache_dir):
             log.info("Removing cache dir: {}".format(self.cache_dir))
             try:
@@ -51,6 +70,7 @@ class TrackLoader:
                 log.info("Failed: {}".format(e))
 
     def load_tracks(self, base_dir: str) -> List[Track]:
+        """Load tracks base_dir and return as a List of tracks"""
         file_names = [x for x in self._list_gpx_files(base_dir)]
         log.info("GPX files: {}".format(len(file_names)))
 

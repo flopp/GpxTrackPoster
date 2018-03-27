@@ -1,3 +1,4 @@
+"""Represent a range of years, with ability to upate based on a track"""
 # Copyright 2016-2018 Florian Pigorsch & Contributors. All rights reserved.
 #
 # Use of this source code is governed by a MIT-style
@@ -9,11 +10,37 @@ from .track import Track
 
 
 class YearRange:
+    """Represent a range of years, with ability to udpate based on a track
+
+    Attributes:
+        from_year: First year in range (lower)
+        to_year: Last year in range (higher)
+
+    Methods:
+        parse: Parse a string into lower and upper bounds
+        add: Adjust bounds based on a track
+        contains: If track is contained in the range
+        count: Number of years in range
+    """
+
     def __init__(self):
+        """Inits YearRange with empty bounds -- to be built after init"""
         self.from_year = None
         self.to_year = None
 
     def parse(self, s: str) -> bool:
+        """Parse a plaintext range of years into a pair of years
+        
+        Attempt to turn the input string into a pair of year values, from_year and to_year. If one
+        year is passed, both from_year and to_year will be set to that year. If a range like 
+        '2016-2018' is passed, from_year will be set to 2016, and to_year will be set to 2018. 
+
+        Args:
+            s: A string representing a range of years or a single year
+
+        Returns:
+            True if the range was succesfully parsed, False if not.
+        """
         if s == 'all':
             self.from_year = None
             self.to_year = None
@@ -33,6 +60,7 @@ class YearRange:
         return False
 
     def add(self, t: Track):
+        """For a given track, update from_year and to_year to include that track"""
         if self.from_year is None:
             self.from_year = t.year
             self.to_year = t.year
@@ -42,11 +70,13 @@ class YearRange:
             self.to_year = t.year
 
     def contains(self, t: Track) -> bool:
+        """Return True if current year range contains the track, False if not"""
         if self.from_year is None:
             return True
         return self.from_year <= t.year <= self.to_year
 
     def count(self) -> Optional[int]:
+        """Return number of years contained in the current range"""
         if self.from_year is None:
             return None
         return 1 + self.to_year - self.from_year

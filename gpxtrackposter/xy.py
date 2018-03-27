@@ -1,3 +1,4 @@
+"""Represent x,y coords with properly overloaded operations."""
 # Copyright 2016-2018 Florian Pigorsch & Contributors. All rights reserved.
 #
 # Use of this source code is governed by a MIT-style
@@ -7,6 +8,7 @@ from typing import Tuple, Union
 
 
 class XY:
+    """Represent x,y coords with properly overloaded operations."""
     def __init__(self, x: float=0, y: float=0) -> None:
         self.x = x
         self.y = y

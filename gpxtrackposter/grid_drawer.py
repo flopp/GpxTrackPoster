@@ -1,3 +1,4 @@
+"""Draw a grid poster."""
 # Copyright 2016-2018 Florian Pigorsch & Contributors. All rights reserved.
 #
 # Use of this source code is governed by a MIT-style
@@ -12,10 +13,17 @@ from . import utils
 
 
 class GridDrawer(TracksDrawer):
+    """Drawer used to draw a grid poster
+    
+    Methods:
+        draw: For each track, draw it on the poster.
+    """
+    
     def __init__(self, the_poster: Poster):
         super().__init__(the_poster)
 
     def draw(self, dr: svgwrite.Drawing, size: XY, offset: XY):
+        """For each track, draw it on the poster."""
         cell_size, (count_x, count_y) = utils.compute_grid(len(self.poster.tracks), size)
         spacing_x = 0 if count_x <= 1 else (size.x - cell_size * count_x) / (count_x - 1)
         spacing_y = 0 if count_y <= 1 else (size.y - cell_size * count_y) / (count_y - 1)
