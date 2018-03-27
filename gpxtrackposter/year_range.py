@@ -33,7 +33,7 @@ class YearRange:
 
         Attempt to turn the input string into a pair of year values, from_year and to_year. If one
         year is passed, both from_year and to_year will be set to that year. If a range like
-        '2016-2018' is passed, from_year will be set to 2016, and to_year will be set to 2018. 
+        '2016-2018' is passed, from_year will be set to 2016, and to_year will be set to 2018.
 
         Args:
             s: A string representing a range of years or a single year
