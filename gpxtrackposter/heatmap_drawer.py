@@ -1,3 +1,4 @@
+"""Draw a heatmap poster."""
 # Copyright 2016-2018 Florian Pigorsch & Contributors. All rights reserved.
 #
 # Use of this source code is governed by a MIT-style
@@ -19,6 +20,18 @@ log = logging.getLogger(__name__)
 
 
 class HeatmapDrawer(TracksDrawer):
+    """Draw a heatmap Poster based on the tracks.
+
+    Attributes:
+        center: Center of the heatmap.
+        radius: Scale the heatmap so that a circle with radius (in KM) is visible.
+
+    Methods:
+        Create_args: Create arguments for heatmap.
+        fetch_args: Get arguments passed.
+        draw: Draw the heatmap based on the Poster's tracks.
+
+    """
     def __init__(self, the_poster: Poster):
         super().__init__(the_poster)
         self._center = None
@@ -33,6 +46,14 @@ class HeatmapDrawer(TracksDrawer):
                                 '(default: automatic).')
 
     def fetch_args(self, args: argparse.Namespace):
+        """Get arguments that were passed, and also perform basic validation on them.
+
+        For example, make sure the center is an actual lat, lng , and make sure the radius is a
+        positive number. Also, if radius is passed, then center must also be passed.
+
+        Raises:
+            ParamterError: Center was not a valid lat, lng coordinate, or radius was not positive.
+        """
         self._center = None
         if args.heatmap_center:
             latlng_str = args.heatmap_center.split(',')
@@ -83,6 +104,7 @@ class HeatmapDrawer(TracksDrawer):
         return tracks_bbox
 
     def draw(self, dr: svgwrite.Drawing, size: XY, offset: XY):
+        """Draw the heatmap based on tracks."""
         normal_lines = []
         special_lines = []
         bbox = self._determine_bbox()

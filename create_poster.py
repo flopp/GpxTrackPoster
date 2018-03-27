@@ -1,5 +1,59 @@
 #!/usr/bin/env python
+"""Create a variety of poster-style visualizations from GPX data
 
+usage: create_poster.py [-h] [--gpx-dir DIR] [--output FILE] [--year YEAR]
+                        [--title TITLE] [--athlete NAME] [--special FILE]
+                        [--type TYPE] [--background-color COLOR]
+                        [--track-color COLOR] [--track-color2 COLOR]
+                        [--text-color COLOR] [--special-color COLOR]
+                        [--special-color2 COLOR] [--units UNITS]
+                        [--clear-cache] [--verbose] [--logfile FILE]
+                        [--heatmap-center LAT,LNG]
+                        [--heatmap-radius RADIUS_KM] [--circular-rings]
+                        [--circular-ring-color COLOR]
+
+optional arguments:
+  -h, --help            show this help message and exit
+  --gpx-dir DIR         Directory containing GPX files (default: current
+                        directory).
+  --output FILE         Name of generated SVG image file (default:
+                        "poster.svg").
+  --year YEAR           Filter tracks by year; "NUM", "NUM-NUM", "all"
+                        (default: all years)
+  --title TITLE         Title to display (default: "My Tracks").
+  --athlete NAME        Athlete name to display (default: "John Doe").
+  --special FILE        Mark track file from the GPX directory as special; use
+                        multiple times to mark multiple tracks.
+  --type TYPE           Type of poster to create (default: "grid", available:
+                        "grid", "calendar", "heatmap", "circular").
+  --background-color COLOR
+                        Background color of poster (default: "#222222").
+  --track-color COLOR   Color of tracks (default: "#4DD2FF").
+  --track-color2 COLOR  Secondary color of tracks (default: none).
+  --text-color COLOR    Color of text (default: "#FFFFFF").
+  --special-color COLOR
+                        Special track color (default: "#FFFF00").
+  --special-color2 COLOR
+                        Secondary color of special tracks (default: none).
+  --units UNITS         Distance units; "metric", "imperial" (default:
+                        "metric").
+  --clear-cache         Clear the track cache.
+  --verbose             Verbose logging.
+  --logfile FILE
+
+Heatmap Type Options:
+  --heatmap-center LAT,LNG
+                        Center of the heatmap (default: automatic).
+  --heatmap-radius RADIUS_KM
+                        Scale the heatmap such that at least a circle with
+                        radius=RADIUS_KM is visible (default: automatic).
+
+Circular Type Options:
+  --circular-rings      Draw distance rings.
+  --circular-ring-color COLOR
+                        Color of distance rings.
+
+"""
 # Copyright 2016-2018 Florian Pigorsch & Contributors. All rights reserved.
 #
 # Use of this source code is governed by a MIT-style
@@ -19,6 +73,8 @@ __app_author__ = "flopp.net"
 
 
 def main():
+    """Handle command line arguments and call other modules as needed."""
+
     p = poster.Poster()
     drawers = {"grid": grid_drawer.GridDrawer(p),
                "calendar": calendar_drawer.CalendarDrawer(p),
