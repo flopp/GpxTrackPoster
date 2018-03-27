@@ -1,4 +1,4 @@
-"""Represent a range of years, with ability to upate based on a track"""
+"""Represent a range of years, with ability to update based on a track"""
 # Copyright 2016-2018 Florian Pigorsch & Contributors. All rights reserved.
 #
 # Use of this source code is governed by a MIT-style
@@ -10,7 +10,7 @@ from .track import Track
 
 
 class YearRange:
-    """Represent a range of years, with ability to udpate based on a track
+    """Represent a range of years, with ability to update based on a track
 
     Attributes:
         from_year: First year in range (lower)
@@ -39,7 +39,7 @@ class YearRange:
             s: A string representing a range of years or a single year
 
         Returns:
-            True if the range was succesfully parsed, False if not.
+            True if the range was successfully parsed, False if not.
         """
         if s == 'all':
             self.from_year = None

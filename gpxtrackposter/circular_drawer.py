@@ -34,7 +34,7 @@ class CircularDrawer(TracksDrawer):
     def __init__(self, the_poster: Poster):
         """Init the CircularDrawer with default values for _rings and _ring_color
 
-        Note that these can be overriden via arguments when calling."""
+        Note that these can be overridden via arguments when calling."""
         super().__init__(the_poster)
         self._rings = False
         self._ring_color = 'darkgrey'
