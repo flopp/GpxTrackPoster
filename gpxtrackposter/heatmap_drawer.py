@@ -23,13 +23,13 @@ class HeatmapDrawer(TracksDrawer):
     """Draw a heatmap Poster based on the tracks.
 
     Attributes:
-        center: Center of the heatmap. 
+        center: Center of the heatmap.
         radius: Scale the heatmap so that a circle with radius (in KM) is visible.
 
     Methods:
-        Create_args: Create arguments for heatmap. 
+        Create_args: Create arguments for heatmap.
         fetch_args: Get arguments passed.
-        draw: Draw the heatmap based on the Poster's tracks. 
+        draw: Draw the heatmap based on the Poster's tracks.
 
     """
     def __init__(self, the_poster: Poster):
@@ -48,11 +48,11 @@ class HeatmapDrawer(TracksDrawer):
     def fetch_args(self, args: argparse.Namespace):
         """Get arguments that were passed, and also perform basic validation on them.
 
-        For example, make sure the center is an actual lat, lng , and make sure the radius is a 
+        For example, make sure the center is an actual lat, lng , and make sure the radius is a
         positive number. Also, if radius is passed, then center must also be passed.
 
         Raises:
-            ParamterError: Center was not a valid lat, lng coordinate, or radius was not positive. 
+            ParamterError: Center was not a valid lat, lng coordinate, or radius was not positive.
         """
         self._center = None
         if args.heatmap_center:

@@ -30,9 +30,9 @@ class YearRange:
 
     def parse(self, s: str) -> bool:
         """Parse a plaintext range of years into a pair of years
-        
+
         Attempt to turn the input string into a pair of year values, from_year and to_year. If one
-        year is passed, both from_year and to_year will be set to that year. If a range like 
+        year is passed, both from_year and to_year will be set to that year. If a range like
         '2016-2018' is passed, from_year will be set to 2016, and to_year will be set to 2018. 
 
         Args:

@@ -52,8 +52,8 @@ class Poster:
         """Associate the set of tracks with this poster.
 
         In addition to setting self.tracks, also compute the necessary attributes for the Poster
-        based on this set of tracks. 
-        """    
+        based on this set of tracks.
+        """
         self.tracks = tracks
         self.tracks_by_date = {}
         self.length_range = ValueRange()

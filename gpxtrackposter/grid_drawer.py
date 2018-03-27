@@ -14,11 +14,11 @@ from . import utils
 
 class GridDrawer(TracksDrawer):
     """Drawer used to draw a grid poster
-    
+
     Methods:
         draw: For each track, draw it on the poster.
     """
-    
+
     def __init__(self, the_poster: Poster):
         super().__init__(the_poster)
 

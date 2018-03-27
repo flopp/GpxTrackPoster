@@ -99,12 +99,12 @@ class Track:
 
     def load_cache(self, cache_file_name: str):
         """Load the track from a previously cached track
-        
+
         Args:
             cache_file_name: Filename of the cached track to be loaded.
 
         Raises:
-            TrackLoadError: An error occurred while loading the track data from the cache file.    
+            TrackLoadError: An error occurred while loading the track data from the cache file.
         """
         try:
             with open(cache_file_name) as data_file:

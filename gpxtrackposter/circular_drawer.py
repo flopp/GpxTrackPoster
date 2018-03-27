@@ -20,13 +20,13 @@ from . import utils
 
 class CircularDrawer(TracksDrawer):
     """Draw a circular Poster for each of the Poster's tracks.
-    
+
     Attributes:
         _rings: True if distance rings should be drawn, else False.
         _ring_color: Color of distance rings.
 
     Methods:
-        create_args: Set up an argparser for circular poster options. 
+        create_args: Set up an argparser for circular poster options.
         fetch_args: Get args from argparser.
         draw: Draw each year on the Poster.
     """
