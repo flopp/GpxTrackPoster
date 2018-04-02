@@ -5,3 +5,4 @@ gpx_dir/*
 output/*
 .env
 .idea
+*.svg

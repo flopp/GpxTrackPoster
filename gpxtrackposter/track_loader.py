@@ -67,7 +67,7 @@ class TrackLoader:
             try:
                 shutil.rmtree(self.cache_dir)
             except OSError as e:
-                log.info("Failed: {}".format(e))
+                log.error("Failed: {}".format(e))
 
     def load_tracks(self, base_dir: str) -> List[Track]:
         """Load tracks base_dir and return as a List of tracks"""
@@ -147,7 +147,7 @@ class TrackLoader:
             try:
                 t = future.result()
             except TrackLoadError as e:
-                log.info("Error while loading {}: {}".format(file_name, e))
+                log.error("Error while loading {}: {}".format(file_name, e))
             else:
                 tracks[file_name] = t
 
@@ -180,7 +180,7 @@ class TrackLoader:
             try:
                 t.store_cache(self._get_cache_file_name(file_name))
             except Exception as e:
-                log.warning('Failed to store track {} to cache: {}'.format(file_name, e))
+                log.error('Failed to store track {} to cache: {}'.format(file_name, e))
             else:
                 log.info('Stored track {} to cache'.format(file_name))
 
