@@ -43,10 +43,11 @@ class Poster:
         self.length_range_by_date = None
         self.units = "metric"
         self.colors = {"background": "#222222", "text": "#FFFFFF", "special": "#FFFF00", "track": "#4DD2FF"}
-        self.statistics = {"label": "Activities", "num": 0, "total": 0.0, "min": 0.0, "max": 0.0, "weeks": 0}
+        self.statistics = {"label": "Activities", "num": 0, "total": 0.0, "min": 0.0, "max": 0.0}
         self.width = 200
         self.height = 300
         self.years = None
+        self.year = None
         self.tracks_drawer = None
 
     def set_tracks(self, tracks):
@@ -142,7 +143,7 @@ class Poster:
         self.statistics['total'] = 0.001*total_length if self.statistics['total'] == 0 else self.statistics['total']
         self.statistics['min'] = 0.001*min_length if self.statistics['min'] == 0 else self.statistics['min']
         self.statistics['max'] = 0.001*max_length if self.statistics['max'] == 0 else self.statistics['max']
-        self.statistics['weeks'] = len(weeks) if self.statistics['weeks'] == 0 else self.statistics['weeks']
+        self.statistics['weeks'] = len(weeks)
 
     def __compute_years(self, tracks):
         if self.years is not None:

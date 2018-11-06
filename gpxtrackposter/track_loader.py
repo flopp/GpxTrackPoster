@@ -72,6 +72,7 @@ class TrackLoader:
     def load_tracks(self, base_dir: str, load_json = False) -> List[Track]:
         """Load tracks base_dir and return as a List of tracks"""
         if load_json:
+            self.cache_dir = os.path.abspath(base_dir)
             file_names = [x for x in self._list_json_files(base_dir)]
             log.info("JSON files: {}".format(len(file_names)))
         else:
@@ -84,7 +85,7 @@ class TrackLoader:
         cached_tracks = {}  # type: Dict[str, Track]
         if self.cache_dir:
             log.info("Trying to load {} track(s) from cache...".format(len(file_names)))
-            cached_tracks = self._load_tracks_from_cache(file_names)
+            cached_tracks = self._load_tracks_from_cache(file_names, load_json)
             log.info("Loaded tracks from cache:  {}".format(len(cached_tracks)))
             tracks = list(cached_tracks.values())
 
@@ -157,11 +158,11 @@ class TrackLoader:
 
         return tracks
 
-    def _load_tracks_from_cache(self, file_names: List[str]) -> Dict[str, Track]:
+    def _load_tracks_from_cache(self, file_names: List[str], load_json = False) -> Dict[str, Track]:
         tracks = {}
         with concurrent.futures.ProcessPoolExecutor() as executor:
             future_to_file_name = {
-                executor.submit(load_cached_track_file, self._get_cache_file_name(file_name), file_name):
+                executor.submit(load_cached_track_file, self._get_cache_file_name(file_name, load_json), file_name):
                     file_name for file_name in file_names
             }
         for future in concurrent.futures.as_completed(future_to_file_name):
@@ -208,19 +209,23 @@ class TrackLoader:
             if name.endswith(".json") and os.path.isfile(path_name):
                 yield path_name
 
-    def _get_cache_file_name(self, file_name: str) -> str:
+    def _get_cache_file_name(self, file_name: str, load_json = False) -> str:
         assert self.cache_dir
 
         if file_name in self._cache_file_names:
             return self._cache_file_names[file_name]
 
-        try:
-            checksum = hashlib.sha256(open(file_name, 'rb').read()).hexdigest()
-        except PermissionError as e:
-            raise TrackLoadError('Failed to compute checksum (bad permissions).') from e
-        except Exception as e:
-            raise TrackLoadError('Failed to compute checksum.') from e
+        if load_json:
+            cache_file_name = os.path.join(self.cache_dir, file_name)
+        else:
+            try:
+                checksum = hashlib.sha256(open(file_name, 'rb').read()).hexdigest()
+            except PermissionError as e:
+                raise TrackLoadError('Failed to compute checksum (bad permissions).') from e
+            except Exception as e:
+                raise TrackLoadError('Failed to compute checksum.') from e
 
-        cache_file_name = os.path.join(self.cache_dir, checksum + '.json')
+            cache_file_name = os.path.join(self.cache_dir, checksum + '.json')
+
         self._cache_file_names[file_name] = cache_file_name
         return cache_file_name
