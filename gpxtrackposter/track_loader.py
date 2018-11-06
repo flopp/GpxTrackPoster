@@ -69,7 +69,7 @@ class TrackLoader:
             except OSError as e:
                 log.error("Failed: {}".format(e))
 
-    def load_tracks(self, base_dir: str, load_json: FALSE) -> List[Track]:
+    def load_tracks(self, base_dir: str, load_json = False) -> List[Track]:
         """Load tracks base_dir and return as a List of tracks"""
         if load_json:
             file_names = [x for x in self._list_json_files(base_dir)]
@@ -199,7 +199,7 @@ class TrackLoader:
                 yield path_name
 
     @staticmethod
-    def __list_json_files(base_dir: str) -> Generator[str, None, None]:
+    def _list_json_files(base_dir: str) -> Generator[str, None, None]:
         base_dir = os.path.abspath(base_dir)
         if not os.path.isdir(base_dir):
             raise ParameterError("Not a directory: {}".format(base_dir))
