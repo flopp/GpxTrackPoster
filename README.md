@@ -54,7 +54,6 @@ optional arguments:
   --clear-cache         Clear the track cache.
   --verbose             Verbose logging.
   --logfile FILE
-  --stat-label LABEL    Label for number of activities (default: "Runs").
   --stat-num NUMBER     Number of activities (default: automatically calculated).
   --stat-total KM       Total distance (default: automatically calculated).
   --stat-min KM         Minimal distance (default: automatically calculated).

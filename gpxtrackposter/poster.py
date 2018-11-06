@@ -121,11 +121,10 @@ class Poster:
         d.add(d.text("{}".format(self.year),                                                   insert=(10, self.height-10),  fill=text_color, style=value_style))
         d.add(d.text(self.athlete,                                                             insert=(40, self.height-10),  fill=text_color, style=value_style))
         d.add(d.text("STATISTICS",                                                             insert=(120, self.height-20), fill=text_color, style=header_style))
-        d.add(d.text("{}: {}".format(self.statistics['label'], self.statistics['num']),        insert=(120, self.height-15), fill=text_color, style=small_value_style))
-        d.add(d.text("Weekly: {:.1f}".format(self.statistics['num']/self.statistics['weeks']),                     insert=(120, self.height-10), fill=text_color, style=small_value_style))
-        d.add(d.text("Total: {:.1f} {}".format(self.m2u(self.statistics['total']), self.u()),                      insert=(139, self.height-15), fill=text_color, style=small_value_style))
-        d.add(d.text("Avg: {:.1f} {}".format(self.m2u(self.statistics['total']/self.statistics['num']), self.u()), insert=(139, self.height-10), fill=text_color, style=small_value_style))
-        d.add(d.text("Min: {:.1f} {}".format(self.m2u(self.statistics['min']), self.u()),                          insert=(167, self.height-15), fill=text_color, style=small_value_style))
+        d.add(d.text("Total: {:.1f} {}, {}x".format(self.m2u(self.statistics['total']), self.u(), self.statistics['num']), insert=(120, self.height-15), fill=text_color, style=small_value_style))
+        d.add(d.text("Weekly: {:.1f}x".format(self.statistics['num']/self.statistics['weeks']),                    insert=(167, self.height-15), fill=text_color, style=small_value_style))
+        d.add(d.text("Avg: {:.1f} {}".format(self.m2u(self.statistics['total']/self.statistics['num']), self.u()), insert=(120, self.height-10), fill=text_color, style=small_value_style))
+        d.add(d.text("Min: {:.1f} {}".format(self.m2u(self.statistics['min']), self.u()),                          insert=(143, self.height-10), fill=text_color, style=small_value_style))
         d.add(d.text("Max: {:.1f} {}".format(self.m2u(self.statistics['max']), self.u()),                          insert=(167, self.height-10), fill=text_color, style=small_value_style))
         d.add(d.image("img/athlete.svg", insert=(35, self.height-26.7), size=(77,9.2448)))
 
@@ -140,9 +139,9 @@ class Poster:
             weeks[(t.start_time.year, t.start_time.isocalendar()[1])] = 1
 
         self.statistics['num'] = len(self.tracks) if self.statistics['num'] == 0 else self.statistics['num']
-        self.statistics['total'] = 0.001*total_length if self.statistics['total'] == 0 else self.statistics['total']
-        self.statistics['min'] = 0.001*min_length if self.statistics['min'] == 0 else self.statistics['min']
-        self.statistics['max'] = 0.001*max_length if self.statistics['max'] == 0 else self.statistics['max']
+        self.statistics['total'] = total_length if self.statistics['total'] == 0 else 1000*self.statistics['total']
+        self.statistics['min'] = min_length if self.statistics['min'] == 0 else 1000*self.statistics['min']
+        self.statistics['max'] = max_length if self.statistics['max'] == 0 else 1000*self.statistics['max']
         self.statistics['weeks'] = len(weeks)
 
     def __compute_years(self, tracks):

@@ -43,7 +43,6 @@ optional arguments:
   --clear-cache         Clear the track cache.
   --verbose             Verbose logging.
   --logfile FILE
-  --stat-label LABEL    Label for number of activities (default: "Runs").
   --stat-num NUMBER     Number of activities (default: automatically calculated).
   --stat-total KM       Total distance (default: automatically calculated).
   --stat-min KM         Minimal distance (default: automatically calculated).
@@ -125,8 +124,6 @@ def main():
     args_parser.add_argument('--clear-cache', dest='clear_cache', action='store_true', help='Clear the track cache.')
     args_parser.add_argument('--verbose', dest='verbose', action='store_true', help='Verbose logging.')
     args_parser.add_argument('--logfile', dest='logfile', metavar='FILE', type=str)
-    args_parser.add_argument('--stat-label', dest='stat_label', metavar='LABEL', type=str, default="Activities",
-                             help='Statistics: label for number of activities')
     args_parser.add_argument('--stat-num', dest='stat_num', metavar='NUMBER', type=int, default=0,
                              help='Statistics: number of activities')
     args_parser.add_argument('--stat-total', dest='stat_total', metavar='KM', type=float, default=0.0,
@@ -171,6 +168,8 @@ def main():
 
     print("Creating poster of type '{}' with {} tracks and storing it in file '{}'...".format(args.type, len(tracks),
                                                                                               args.output))
+
+    p.year = args.year
     p.athlete = args.athlete
     p.title = args.title
     p.colors = {'background': args.background_color,
@@ -180,8 +179,7 @@ def main():
                 'special2': args.special_color2 if args.special_color2 is not None else args.special_color,
                 'text': args.text_color}
     p.units = args.units
-    p.statistics = {'label': args.stat_label,
-                    'num': args.stat_num,
+    p.statistics = {'num': args.stat_num,
                     'total': args.stat_total,
                     'min': args.stat_min,
                     'max': args.stat_max}
