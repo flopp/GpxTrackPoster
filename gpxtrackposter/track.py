@@ -87,7 +87,8 @@ class Track:
         for t in gpx.tracks:
             for s in t.segments:
                 line = [s2.LatLng.from_degrees(p.latitude, p.longitude) for p in s.points]
-                self.polylines.append(line)
+                if line:
+                    self.polylines.append(line)
 
     def append(self, other: 'Track'):
         """Append other track to self."""
@@ -114,7 +115,8 @@ class Track:
                 self.length = float(data["length"])
                 self.polylines = []
                 for data_line in data["segments"]:
-                    self.polylines.append([s2.LatLng.from_degrees(float(d["lat"]), float(d["lng"])) for d in data_line])
+                    if data_line:
+                        self.polylines.append([s2.LatLng.from_degrees(float(d["lat"]), float(d["lng"])) for d in data_line])
         except Exception as e:
             raise TrackLoadError('Failed to load track data from cache.') from e
 

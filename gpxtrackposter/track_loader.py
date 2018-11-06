@@ -69,10 +69,14 @@ class TrackLoader:
             except OSError as e:
                 log.error("Failed: {}".format(e))
 
-    def load_tracks(self, base_dir: str) -> List[Track]:
+    def load_tracks(self, base_dir: str, load_json: FALSE) -> List[Track]:
         """Load tracks base_dir and return as a List of tracks"""
-        file_names = [x for x in self._list_gpx_files(base_dir)]
-        log.info("GPX files: {}".format(len(file_names)))
+        if load_json:
+            file_names = [x for x in self._list_json_files(base_dir)]
+            log.info("JSON files: {}".format(len(file_names)))
+        else:
+            file_names = [x for x in self._list_gpx_files(base_dir)]
+            log.info("GPX files: {}".format(len(file_names)))
 
         tracks = []  # type: List[Track]
 
@@ -192,6 +196,16 @@ class TrackLoader:
         for name in os.listdir(base_dir):
             path_name = os.path.join(base_dir, name)
             if name.endswith(".gpx") and os.path.isfile(path_name):
+                yield path_name
+
+    @staticmethod
+    def __list_json_files(base_dir: str) -> Generator[str, None, None]:
+        base_dir = os.path.abspath(base_dir)
+        if not os.path.isdir(base_dir):
+            raise ParameterError("Not a directory: {}".format(base_dir))
+        for name in os.listdir(base_dir):
+            path_name = os.path.join(base_dir, name)
+            if name.endswith(".json") and os.path.isfile(path_name):
                 yield path_name
 
     def _get_cache_file_name(self, file_name: str) -> str:

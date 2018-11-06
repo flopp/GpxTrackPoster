@@ -22,11 +22,14 @@ usage: create_poster.py [-h] [--gpx-dir DIR] [--output FILE] [--year YEAR]
                         [--heatmap-center LAT,LNG]
                         [--heatmap-radius RADIUS_KM] [--circular-rings]
                         [--circular-ring-color COLOR]
+                        [--json-dir DIR]  [--stat-label LABEL] [--stat-num NUMBER]
+                        [--stat-total KM] [--stat-min KM] [--stat-max KM]
 
 optional arguments:
   -h, --help            show this help message and exit
   --gpx-dir DIR         Directory containing GPX files (default: current
                         directory).
+  --json-dir DIR        Directory containing JSON files (default: none).
   --output FILE         Name of generated SVG image file (default:
                         "poster.svg").
   --year YEAR           Filter tracks by year; "NUM", "NUM-NUM", "all"
@@ -51,6 +54,11 @@ optional arguments:
   --clear-cache         Clear the track cache.
   --verbose             Verbose logging.
   --logfile FILE
+  --stat-label LABEL    Label for number of activities (default: "Runs").
+  --stat-num NUMBER     Number of activities (default: automatically calculated).
+  --stat-total KM       Total distance (default: automatically calculated).
+  --stat-min KM         Minimal distance (default: automatically calculated).
+  --stat-max KM         Maximale distance (default: automatically calculated).
 
 Heatmap Type Options:
   --heatmap-center LAT,LNG
