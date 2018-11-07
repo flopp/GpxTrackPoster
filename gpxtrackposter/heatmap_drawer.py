@@ -25,6 +25,7 @@ class HeatmapDrawer(TracksDrawer):
     Attributes:
         center: Center of the heatmap.
         radius: Scale the heatmap so that a circle with radius (in KM) is visible.
+        stroke_width: Stroke width for main line
 
     Methods:
         Create_args: Create arguments for heatmap.
@@ -36,6 +37,7 @@ class HeatmapDrawer(TracksDrawer):
         super().__init__(the_poster)
         self._center = None
         self._radius = None
+        self._stroke_width = 0.3
 
     def create_args(self, args_parser: argparse.ArgumentParser):
         group = args_parser.add_argument_group('Heatmap Type Options')
@@ -44,6 +46,8 @@ class HeatmapDrawer(TracksDrawer):
         group.add_argument('--heatmap-radius', dest='heatmap_radius', metavar='RADIUS_KM', type=float,
                            help='Scale the heatmap such that at least a circle with radius=RADIUS_KM is visible '
                                 '(default: automatic).')
+        group.add_argument('--heatmap-stroke-width', dest='heatmap_stroke_width', metavar='NUM', type=float,
+                           help='Stroke width for main lines in heatmap (default: 0.3).')
 
     def fetch_args(self, args: argparse.Namespace):
         """Get arguments that were passed, and also perform basic validation on them.
@@ -73,6 +77,10 @@ class HeatmapDrawer(TracksDrawer):
             if not args.heatmap_center:
                 raise ParameterError('--heatmap-radius needs --heatmap-center')
             self._radius = args.heatmap_radius
+        if args.heatmap_stroke_width:
+            if args.heatmap_stroke_width <= 0:
+                raise ParameterError('Not a valid stroke width: {} (must be > 0)'.format(args.heatmap_stroke_width))
+            self._stroke_width = args.heatmap_stroke_width
 
     def _determine_bbox(self) -> s2.LatLngRect:
         if self._center:
@@ -108,6 +116,9 @@ class HeatmapDrawer(TracksDrawer):
         normal_lines = []
         special_lines = []
         bbox = self._determine_bbox()
+        strokeStyles = [(min(0.1, self._stroke_width / 3.0), self._stroke_width * 5.0 / 0.3),
+                        (min(0.2, self._stroke_width * 2.0 / 3.0), self._stroke_width * 2.0 / 0.3),
+                        (1.0, self._stroke_width)]
         for tr in self.poster.tracks:
             for line in utils.project(bbox, size, offset, tr.polylines):
                 if line:
@@ -117,7 +128,7 @@ class HeatmapDrawer(TracksDrawer):
                         normal_lines.append(line)
         for lines, color in [(normal_lines, self.poster.colors['track']),
                              (special_lines, self.poster.colors['special'])]:
-            for opacity, width in [(0.1, 5.0), (0.2, 2.0), (1.0, 0.3)]:
+            for opacity, width in strokeStyles:
                 for line in lines:
                     if line:
                         dr.add(dr.polyline(points=line, stroke=color, stroke_opacity=opacity, fill='none',
