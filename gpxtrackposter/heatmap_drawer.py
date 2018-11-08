@@ -113,23 +113,14 @@ class HeatmapDrawer(TracksDrawer):
 
     def draw(self, dr: svgwrite.Drawing, size: XY, offset: XY):
         """Draw the heatmap based on tracks."""
-        normal_lines = []
-        special_lines = []
         bbox = self._determine_bbox()
         strokeStyles = [(min(0.1, self._stroke_width / 3.0), self._stroke_width * 5.0 / 0.3),
                         (min(0.2, self._stroke_width * 2.0 / 3.0), self._stroke_width * 2.0 / 0.3),
                         (1.0, self._stroke_width)]
         for tr in self.poster.tracks:
+            color = self.color(self.poster.length_range, tr.length, tr.special)
             for line in utils.project(bbox, size, offset, tr.polylines):
                 if line:
-                    if tr.special:
-                        special_lines.append(line)
-                    else:
-                        normal_lines.append(line)
-        for lines, color in [(normal_lines, self.poster.colors['track']),
-                             (special_lines, self.poster.colors['special'])]:
-            for opacity, width in strokeStyles:
-                for line in lines:
-                    if line:
+                    for opacity, width in strokeStyles:
                         dr.add(dr.polyline(points=line, stroke=color, stroke_opacity=opacity, fill='none',
                                            stroke_width=width, stroke_linejoin='round', stroke_linecap='round'))
