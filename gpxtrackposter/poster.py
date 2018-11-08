@@ -113,20 +113,20 @@ class Poster:
 
         (total_length, average_length, min_length, max_length, weeks) = self.__compute_track_statistics()
 
-        d.add(d.text("ATHLETE", insert=(10, self.height-20), fill=text_color, style=header_style))
+        d.add(d.text(_("ATHLETE"), insert=(10, self.height-20), fill=text_color, style=header_style))
         d.add(d.text(self.athlete, insert=(10, self.height-10), fill=text_color, style=value_style))
-        d.add(d.text("STATISTICS", insert=(120, self.height-20), fill=text_color, style=header_style))
-        d.add(d.text("Number: {}".format(len(self.tracks)), insert=(120, self.height - 15), fill=text_color,
+        d.add(d.text(_("STATISTICS"), insert=(120, self.height-20), fill=text_color, style=header_style))
+        d.add(d.text(_("Number") + ": {}".format(len(self.tracks)), insert=(120, self.height - 15), fill=text_color,
                      style=small_value_style))
-        d.add(d.text("Weekly: {:.1f}".format(len(self.tracks) / weeks), insert=(120, self.height - 10), fill=text_color,
+        d.add(d.text(_("Weekly") + ": {:.1f}".format(len(self.tracks) / weeks), insert=(120, self.height - 10), fill=text_color,
                      style=small_value_style))
-        d.add(d.text("Total: {:.1f} {}".format(self.m2u(total_length), self.u()), insert=(139, self.height-15),
+        d.add(d.text(_("Total") + ": {:.1f} {}".format(self.m2u(total_length), self.u()), insert=(139, self.height-15),
                      fill=text_color, style=small_value_style))
-        d.add(d.text("Avg: {:.1f} {}".format(self.m2u(average_length), self.u()), insert=(139, self.height-10),
+        d.add(d.text(_("Avg") +": {:.1f} {}".format(self.m2u(average_length), self.u()), insert=(139, self.height-10),
                      fill=text_color, style=small_value_style))
-        d.add(d.text("Min: {:.1f} {}".format(self.m2u(min_length), self.u()), insert=(167, self.height-15),
+        d.add(d.text(_("Min") + ": {:.1f} {}".format(self.m2u(min_length), self.u()), insert=(167, self.height-15),
                      fill=text_color, style=small_value_style))
-        d.add(d.text("Max: {:.1f} {}".format(self.m2u(max_length), self.u()), insert=(167, self.height-10),
+        d.add(d.text(_("Max") + ": {:.1f} {}".format(self.m2u(max_length), self.u()), insert=(167, self.height-10),
                      fill=text_color, style=small_value_style))
 
     def __compute_track_statistics(self):

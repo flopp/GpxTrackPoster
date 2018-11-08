@@ -1,0 +1,52 @@
+# German translations for PACKAGE package.
+# Copyright (C) 2018 ORGANIZATION
+# root <root@v22016051268834452.quicksrv.de>, 2018.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"POT-Creation-Date: 2017-01-21 13:30+0100\n"
+"PO-Revision-Date: 2018-11-08 19:07+0100\n"
+"Last-Translator: root <root@v22016051268834452.quicksrv.de>\n"
+"Language-Team: German\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: pygettext.py 1.5\n"
+"Language: de_DE\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: src/poster.py:50
+msgid "YEAR"
+msgstr "JAHR"
+
+#: src/poster.py:52
+msgid "ATHLETE"
+msgstr "ATHLET"
+
+#: src/poster.py:54
+msgid "STATISTICS"
+msgstr "STATISTIKEN"
+
+#: src/poster.py:56
+msgid "Weekly"
+msgstr "Wl"
+
+#: src/poster.py:57
+msgid "Total"
+msgstr "Gesamt"
+
+#: src/poster.py:58
+msgid "Avg"
+msgstr "Durchschn."
+
+#: src/poster.py:59
+msgid "Min"
+msgstr "Min"
+
+#: src/poster.py:60
+msgid "Max"
+msgstr "Max"
+
+msgid "Number"
+msgstr "Anzahl"

@@ -12,7 +12,7 @@ First of all, you need directory with a bunch of GPX files (e.g. you can export 
 You will need a little experience running things from the command line to use this script. That said, here are the usage details from the `--help` flag:
 
 ```
-usage: create_poster.py [-h] [--gpx-dir DIR] [--output FILE] [--year YEAR]
+usage: create_poster.py [-h] [--gpx-dir DIR] [--output FILE] [--language LANG] [--year YEAR]
                         [--title TITLE] [--athlete NAME] [--special FILE]
                         [--type TYPE] [--background-color COLOR]
                         [--track-color COLOR] [--track-color2 COLOR]
@@ -29,6 +29,7 @@ optional arguments:
                         directory).
   --output FILE         Name of generated SVG image file (default:
                         "poster.svg").
+  --language LANG       Language (default: en)
   --year YEAR           Filter tracks by year; "NUM", "NUM-NUM", "all"
                         (default: all years)
   --title TITLE         Title to display (default: "My Tracks").
@@ -67,7 +68,7 @@ Circular Type Options:
 
 Example:
 ```
-create_poster.py --type grid --gpx-dir "my-tracks" --year 2015 --title "Running" \
+create_poster.py --type grid --gpx-dir "my-tracks" --language "de" --year 2015 --title "Running" \
     --athlete "Florian Pigorsch" --special race1.gpx --special race2.gpx --special race3.gpx
 ```
 creates a nice poster (`poster.svg`) of the GPX tracks in the directory `my-tracks` (see above).
@@ -123,6 +124,9 @@ The *Heatmap Poster* displays all tracks within one "map". The more often a loca
 If you have found a bug or have a feature request, please create a new issue. I'm always happy improve the implementation!
 
 Or even better: clone the repo, fix the bug/implement the feature yourself, and file a pull request. Contributions are always welcome!
+
+## Translation
+TODO
 
 ## License
 [MIT](https://github.com/flopp/GpxTrackPoster/blob/master/LICENSE) &copy; 2016-2018 Florian Pigorsch
