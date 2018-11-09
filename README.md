@@ -126,7 +126,22 @@ If you have found a bug or have a feature request, please create a new issue. I'
 Or even better: clone the repo, fix the bug/implement the feature yourself, and file a pull request. Contributions are always welcome!
 
 ## Translation
-TODO
+The translation is based on GNUs 'gettext'. 
+For the translation of the month names to work, the language must be installed.
+
+Use `locale -a` to check if the language is installed.
+
+Use `locale-gen ru_RU.UTF-8` to install another language and update the locale `update-locale`
+
+### Add new translation
+Example:
+`msginit --input=gpxposter.pot --locale=de_DE --output=locale/de_DE/LC_MESSAGES/gpxposter.po`
+
+### Update a translation
+E.g. use [Poedit](https://poedit.net/) or [Localise Online Editor]](https://localise.biz/free/poeditor) to edit the "po" files.  Afterwards compile that files
+
+### Create compiled translation file
+``msgfmt gpxposter.po -o gpxposter.mo`
 
 ## License
 [MIT](https://github.com/flopp/GpxTrackPoster/blob/master/LICENSE) &copy; 2016-2018 Florian Pigorsch
