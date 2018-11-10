@@ -58,25 +58,25 @@ class HeatmapDrawer(TracksDrawer):
         if args.heatmap_center:
             latlng_str = args.heatmap_center.split(',')
             if len(latlng_str) != 2:
-                raise ParameterError('Not a valid LAT,LNG pair: {}'.format(args.heatmap_center))
+                raise ParameterError(f'Not a valid LAT,LNG pair: {args.heatmap_center}')
             try:
                 lat = float(latlng_str[0].strip())
                 lng = float(latlng_str[1].strip())
             except ValueError as e:
-                raise ParameterError('Not a valid LAT,LNG pair: {}'.format(args.heatmap_center)) from e
+                raise ParameterError(f'Not a valid LAT,LNG pair: {args.heatmap_center}') from e
             if not (-90 <= lat <= 90) or not (-180 <= lng <= 180):
-                raise ParameterError('Not a valid LAT,LNG pair: {}'.format(args.heatmap_center))
+                raise ParameterError(f'Not a valid LAT,LNG pair: {args.heatmap_center}')
             self._center = s2.LatLng.from_degrees(lat, lng)
         if args.heatmap_radius:
             if args.heatmap_radius <= 0:
-                raise ParameterError('Not a valid radius: {} (must be > 0)'.format(args.heatmap_radius))
+                raise ParameterError(f'Not a valid radius: {args.heatmap_radius} (must be > 0)')
             if not args.heatmap_center:
                 raise ParameterError('--heatmap-radius needs --heatmap-center')
             self._radius = args.heatmap_radius
 
     def _determine_bbox(self) -> s2.LatLngRect:
         if self._center:
-            log.info('Forcing heatmap center to {}'.format(self._center))
+            log.info(f'Forcing heatmap center to {self._center}')
             dlat, dlng = 0, 0
             if self._radius:
                 er = 6378.1
