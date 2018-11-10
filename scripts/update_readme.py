@@ -12,13 +12,13 @@ import sys
 #
 
 readme_file = sys.argv[1]
-readme = []
+readme_lines = []
 with open(readme_file, 'r') as f:
-    readme = f.readlines()
+    readme_lines = f.readlines()
 
 with open(readme_file, 'w') as f:
     state = 0
-    for line in readme:
+    for line in readme_lines:
         if state == 0:
             f.write(line)
             if line.startswith('## Usage'):

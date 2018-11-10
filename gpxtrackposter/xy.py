@@ -9,7 +9,7 @@ from typing import Tuple, Union
 
 class XY:
     """Represent x,y coords with properly overloaded operations."""
-    def __init__(self, x: float=0, y: float=0) -> None:
+    def __init__(self, x: float = 0, y: float = 0) -> None:
         self.x = x
         self.y = y
 

@@ -7,6 +7,7 @@
 import calendar
 import datetime
 import svgwrite
+from .exceptions import PosterError
 from .poster import Poster
 from .tracks_drawer import TracksDrawer
 from .xy import XY
@@ -20,8 +21,13 @@ class CalendarDrawer(TracksDrawer):
 
     def draw(self, d: svgwrite.Drawing, size: XY, offset: XY):
         """Iterate through the Poster's years, creating a calendar for each."""
+        if self.poster.tracks is None:
+            raise PosterError('No tracks to draw.')
         years = self.poster.years.count()
-        _, (count_x, count_y) = utils.compute_grid(years, size)
+        _, counts = utils.compute_grid(years, size)
+        if counts is None:
+            raise PosterError('Unable to compute grid.')
+        count_x, count_y = counts[0], counts[1]
         x, y = 0, 0
         cell_size = size * XY(1 / count_x, 1 / count_y)
         margin = XY(4, 8)
@@ -77,7 +83,8 @@ class CalendarDrawer(TracksDrawer):
                 if text_date in self.poster.tracks_by_date:
                     tracks = self.poster.tracks_by_date[text_date]
                     length = sum([t.length for t in tracks])
-                    color = self.color(self.poster.length_range_by_date, length, [t for t in tracks if t.special])
+                    has_special = len([t for t in tracks if t.special]) > 0
+                    color = self.color(self.poster.length_range_by_date, length, has_special)
                     d.add(d.rect(pos, dim, fill=color))
                     d.add(d.text("{:.1f}".format(self.poster.m2u(length)),
                                  insert=(x_pos + cell_size / 2, y_pos + cell_size + cell_size / 2),

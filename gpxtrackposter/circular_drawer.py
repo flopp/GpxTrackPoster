@@ -10,6 +10,7 @@ import datetime
 import math
 import svgwrite
 from typing import List, Optional
+from .exceptions import PosterError
 from .poster import Poster
 from .track import Track
 from .tracks_drawer import TracksDrawer
@@ -53,11 +54,16 @@ class CircularDrawer(TracksDrawer):
 
     def draw(self, d: svgwrite.Drawing, size: XY, offset: XY):
         """Draw the circular Poster using distances broken down by time"""
+        if self.poster.tracks is None:
+            raise PosterError('No tracks to draw.')
         if self.poster.length_range_by_date is None:
             return
 
         years = self.poster.years.count()
-        _, (count_x, count_y) = utils.compute_grid(years, size)
+        _, counts = utils.compute_grid(years, size)
+        if counts is None:
+            raise PosterError('Unable to compute grid.')
+        count_x, count_y = counts[0], counts[1]
         x, y = 0, 0
         cell_size = size * XY(1 / count_x, 1 / count_y)
         margin = XY(4, 4)
@@ -123,13 +129,13 @@ class CircularDrawer(TracksDrawer):
     def _determine_ring_distance(self) -> Optional[float]:
         length_range = self.poster.length_range_by_date
         ring_distance = None
-        for distance in [1, 5, 10, 50]:
+        for distance in [1.0, 5.0, 10.0, 50.0]:
             if self.poster.units != 'metric':
                 # convert from miles to meters
                 distance *= 1609.344
             else:
                 # convert from km to meters
-                distance *= 1000
+                distance *= 1000.0
             if length_range.upper() < distance:
                 continue
             ring_distance = distance
@@ -152,7 +158,8 @@ class CircularDrawer(TracksDrawer):
     def _draw_circle_segment(self, d: svgwrite.Drawing, tracks: List[Track], a1: float, a2: float,
                              rr: ValueRange, center: XY):
         length = sum([t.length for t in tracks])
-        color = self.color(self.poster.length_range_by_date, length, [t for t in tracks if t.special])
+        has_special = len([t for t in tracks if t.special]) > 0
+        color = self.color(self.poster.length_range_by_date, length, has_special)
         r1 = rr.lower()
         r2 = rr.lower() + rr.diameter() * length / self.poster.length_range_by_date.upper()
         sin_a1, cos_a1 = math.sin(a1), math.cos(a1)

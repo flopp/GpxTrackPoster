@@ -1,4 +1,4 @@
-lint: check-copyright flake8 spell
+lint: check-copyright flake8 mypy spell
 
 test:
 	@python -m compileall create_poster.py gpxtrackposter
@@ -6,6 +6,9 @@ test:
 
 flake8:
 	@flake8 gpxtrackposter create_poster.py tests scripts
+
+mypy:
+	@mypy --ignore-missing-imports create_poster.py gpxtrackposter/*.py
 
 spell:
 	@codespell gpxtrackposter/*.py create_poster.py tests/*.py scripts/*.py

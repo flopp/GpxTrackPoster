@@ -52,7 +52,7 @@ class HeatmapDrawer(TracksDrawer):
         positive number. Also, if radius is passed, then center must also be passed.
 
         Raises:
-            ParamterError: Center was not a valid lat, lng coordinate, or radius was not positive.
+            ParameterError: Center was not a valid lat, lng coordinate, or radius was not positive.
         """
         self._center = None
         if args.heatmap_center:

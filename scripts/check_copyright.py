@@ -9,8 +9,8 @@ import datetime
 import re
 import sys
 
-re_copyright = re.compile('{} Florian Pigorsch'.format(datetime.datetime.now().year))
-re_copyright_bad_year = re.compile('\d\d\d\d Florian Pigorsch')
+re_copyright = re.compile(r'{} Florian Pigorsch'.format(datetime.datetime.now().year))
+re_copyright_bad_year = re.compile(r'\d\d\d\d Florian Pigorsch')
 errors = False
 
 for file_name in sys.argv:

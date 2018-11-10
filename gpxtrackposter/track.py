@@ -43,7 +43,7 @@ class Track:
         """Load the GPX file into self.
 
         Args:
-            Filename: GPX file to be loaded .
+            file_name: GPX file to be loaded .
 
         Raises:
             TrackLoadError: An error occurred while parsing the GPX file (empty or bad format).

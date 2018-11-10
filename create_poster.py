@@ -67,7 +67,6 @@ import os
 import sys
 import gettext
 import locale
-import calendar
 from gpxtrackposter import poster, track_loader
 from gpxtrackposter import grid_drawer, calendar_drawer, circular_drawer, heatmap_drawer
 from gpxtrackposter.exceptions import ParameterError, PosterError
@@ -136,7 +135,7 @@ def main():
         handler = logging.FileHandler(args.logfile)
         log.addHandler(handler)
 
-    initTranslation(args.language)
+    init_translation(args.language)
     loader = track_loader.TrackLoader()
     loader.cache_dir = os.path.join(appdirs.user_cache_dir(__app_name__, __app_author__), "tracks")
     if not loader.year_range.parse(args.year):
@@ -167,19 +166,18 @@ def main():
     p.set_tracks(tracks)
     p.draw(drawers[args.type], args.output)
 
-def initTranslation(language):
+
+def init_translation(language):
     if language:
         try:
             locale.setlocale(locale.LC_ALL, language + '.utf8')
-        except:
+        except locale.Error:
             pass
 
-    try:
-        lang = gettext.translation('gpxposter', localedir='locale', languages=[language]) 
-        lang.install()
-    except:
-        lang = gettext.NullTranslations()
-        lang.install()
+    # Fall-back to NullTranslations, if the specified language translation cannot be found.
+    lang = gettext.translation('gpxposter', localedir='locale', languages=[language], fallback=True)
+    lang.install()
+
 
 if __name__ == '__main__':
     try:

@@ -66,9 +66,9 @@ def compute_bounds_xy(lines: List[List[XY]]) -> Tuple[ValueRange, ValueRange]:
 
 def compute_grid(count: int, dimensions: XY) -> Tuple[Optional[float], Optional[Tuple[int, int]]]:
     # this is somehow suboptimal O(count^2). I guess it's possible in O(count)
-    min_waste = -1
-    best_counts = None
+    min_waste = -1.0
     best_size = None
+    best_counts = None
     for count_x in range(1, count+1):
         size_x = dimensions.x / count_x
         for count_y in range(1, count+1):
