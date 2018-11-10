@@ -88,15 +88,13 @@ class Poster:
         """Convert meters to kilometers or miles, according to units."""
         if self.units == "metric":
             return 0.001 * m
-        else:
-            return 0.001 * m / 1.609344
+        return 0.001 * m / 1.609344
 
     def u(self):
         """Return the unit of distance being used on the Poster."""
         if self.units == "metric":
             return "km"
-        else:
-            return "mi"
+        return "mi"
 
     def __draw_tracks(self, d, size: XY, offset: XY):
         self.tracks_drawer.draw(d, size, offset)
