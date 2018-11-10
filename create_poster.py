@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 """Create a variety of poster-style visualizations from GPX data
 
-usage: create_poster.py [-h] [--gpx-dir DIR] [--output FILE] [--year YEAR]
+usage: create_poster.py [-h] [--gpx-dir DIR] [--output FILE] [--language LANG] [--year YEAR]
                         [--title TITLE] [--athlete NAME] [--special FILE]
                         [--type TYPE] [--background-color COLOR]
                         [--track-color COLOR] [--track-color2 COLOR]
@@ -18,6 +18,7 @@ optional arguments:
                         directory).
   --output FILE         Name of generated SVG image file (default:
                         "poster.svg").
+  --language LANG       Language (default: en)
   --year YEAR           Filter tracks by year; "NUM", "NUM-NUM", "all"
                         (default: all years)
   --title TITLE         Title to display (default: "My Tracks").
@@ -64,6 +65,9 @@ import appdirs
 import logging
 import os
 import sys
+import gettext
+import locale
+import calendar
 from gpxtrackposter import poster, track_loader
 from gpxtrackposter import grid_drawer, calendar_drawer, circular_drawer, heatmap_drawer
 from gpxtrackposter.exceptions import ParameterError, PosterError
@@ -86,6 +90,8 @@ def main():
                              help='Directory containing GPX files (default: current directory).')
     args_parser.add_argument('--output', metavar='FILE', type=str, default='poster.svg',
                              help='Name of generated SVG image file (default: "poster.svg").')
+    args_parser.add_argument('--language', metavar='LANGUAGE', type=str, default="",
+                             help='Language (default: english).')
     args_parser.add_argument('--year', metavar='YEAR', type=str, default='all',
                              help='Filter tracks by year; "NUM", "NUM-NUM", "all" (default: all years)')
     args_parser.add_argument('--title', metavar='TITLE', type=str, default="My Tracks",
@@ -130,6 +136,7 @@ def main():
         handler = logging.FileHandler(args.logfile)
         log.addHandler(handler)
 
+    initTranslation(args.language)
     loader = track_loader.TrackLoader()
     loader.cache_dir = os.path.join(appdirs.user_cache_dir(__app_name__, __app_author__), "tracks")
     if not loader.year_range.parse(args.year):
@@ -160,6 +167,19 @@ def main():
     p.set_tracks(tracks)
     p.draw(drawers[args.type], args.output)
 
+def initTranslation(language):
+    if language:
+        try:
+            locale.setlocale(locale.LC_ALL, language + '.utf8')
+        except:
+            pass
+
+    try:
+        lang = gettext.translation('gpxposter', localedir='locale', languages=[language]) 
+        lang.install()
+    except:
+        lang = gettext.NullTranslations()
+        lang.install()
 
 if __name__ == '__main__':
     try:
