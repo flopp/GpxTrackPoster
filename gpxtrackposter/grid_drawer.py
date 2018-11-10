@@ -5,6 +5,7 @@
 # license that can be found in the LICENSE file.
 
 import svgwrite
+from .exceptions import PosterError
 from .poster import Poster
 from .track import Track
 from .tracks_drawer import TracksDrawer
@@ -24,7 +25,12 @@ class GridDrawer(TracksDrawer):
 
     def draw(self, dr: svgwrite.Drawing, size: XY, offset: XY):
         """For each track, draw it on the poster."""
-        cell_size, (count_x, count_y) = utils.compute_grid(len(self.poster.tracks), size)
+        if self.poster.tracks is None:
+            raise PosterError('No tracks to draw.')
+        cell_size, counts = utils.compute_grid(len(self.poster.tracks), size)
+        if cell_size is None or counts is None:
+            raise PosterError('Unable to compute grid.')
+        count_x, count_y = counts[0], counts[1]
         spacing_x = 0 if count_x <= 1 else (size.x - cell_size * count_x) / (count_x - 1)
         spacing_y = 0 if count_y <= 1 else (size.y - cell_size * count_y) / (count_y - 1)
         offset.x += (size.x - count_x * cell_size - (count_x - 1) * spacing_x) / 2

@@ -119,7 +119,7 @@ The *Heatmap Poster* displays all tracks within one "map". The more often a loca
 4. Activate virtualenv: `source venv/bin/activate`
 5. Install requirements: `pip install -r requirements.txt`
 6. Run `./create_poster.py` (see above)
-7. Deactive virtualenv: `deactivate`
+7. Deactivate virtualenv: `deactivate`
 
 ## Contributing
 If you have found a bug or have a feature request, please create a new issue. I'm always happy improve the implementation!

@@ -5,8 +5,8 @@
 # license that can be found in the LICENSE file.
 
 import re
+import datetime
 from typing import Optional
-from .track import Track
 
 
 class YearRange:
@@ -59,8 +59,8 @@ class YearRange:
                 return True
         return False
 
-    def add(self, t: Track):
-        """For a given track, update from_year and to_year to include that track"""
+    def add(self, t: datetime.datetime):
+        """For the given t, update from_year and to_year to include that timestamp"""
         if self.from_year is None:
             self.from_year = t.year
             self.to_year = t.year
@@ -69,8 +69,8 @@ class YearRange:
         elif t.year > self.to_year:
             self.to_year = t.year
 
-    def contains(self, t: Track) -> bool:
-        """Return True if current year range contains the track, False if not"""
+    def contains(self, t: datetime.datetime) -> bool:
+        """Return True if current year range contains t, False if not"""
         if self.from_year is None:
             return True
         return self.from_year <= t.year <= self.to_year
