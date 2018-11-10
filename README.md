@@ -12,7 +12,8 @@ First of all, you need directory with a bunch of GPX files (e.g. you can export 
 You will need a little experience running things from the command line to use this script. That said, here are the usage details from the `--help` flag:
 
 ```
-usage: create_poster.py [-h] [--gpx-dir DIR] [--output FILE] [--language LANG] [--year YEAR]
+usage: create_poster.py [-h] [--gpx-dir DIR] [--output FILE] [--language LANG]
+                        [--year YEAR]
                         [--title TITLE] [--athlete NAME] [--special FILE]
                         [--type TYPE] [--background-color COLOR]
                         [--track-color COLOR] [--track-color2 COLOR]
@@ -131,17 +132,17 @@ For the translation of the month names to work, the language must be installed.
 
 Use `locale -a` to check if the language is installed.
 
-Use `locale-gen ru_RU.UTF-8` to install another language and update the locale `update-locale`
+Use `locale-gen ru_RU.UTF-8` to install another language and update the locale `update-locale`.
 
 ### Add new translation
 Example:
 `msginit --input=gpxposter.pot --locale=de_DE --output=locale/de_DE/LC_MESSAGES/gpxposter.po`
 
 ### Update a translation
-E.g. use [Poedit](https://poedit.net/) or [Localise Online Editor]](https://localise.biz/free/poeditor) to edit the "po" files.  Afterwards compile that files
+E.g. use [Poedit](https://poedit.net/) or [Localise Online Editor](https://localise.biz/free/poeditor) to edit the "po" files.  Afterwards compile that files.
 
 ### Create compiled translation file
-``msgfmt gpxposter.po -o gpxposter.mo`
+`msgfmt gpxposter.po -o gpxposter.mo`
 
 ## License
 [MIT](https://github.com/flopp/GpxTrackPoster/blob/master/LICENSE) &copy; 2016-2018 Florian Pigorsch
