@@ -21,13 +21,13 @@ def bump_year(file_name):
             m = re_year.search(line)
             if m and (m.group(1) != this_year):
                 start, end = m.span(1)
-                lines.append('{}-{}{}'.format(line[:end], this_year, line[end:]))
+                lines.append(f'{line[:end]}-{this_year}{line[end:]}')
                 continue
 
             m = re_year_range.search(line)
             if m and (m.group(2) != this_year):
                 start, end = m.span(2)
-                lines.append('{}{}{}'.format(line[:start], this_year, line[end:]))
+                lines.append(f'{line[:start]}{this_year}{line[end:]}')
                 continue
 
             lines.append(line)

@@ -71,38 +71,38 @@ from gpxtrackposter import poster, track_loader
 from gpxtrackposter import grid_drawer, calendar_drawer, circular_drawer, heatmap_drawer
 from gpxtrackposter.exceptions import ParameterError, PosterError
 
-__app_name__ = "create_poster"
-__app_author__ = "flopp.net"
+__app_name__ = 'create_poster'
+__app_author__ = 'flopp.net'
 
 
 def main():
     """Handle command line arguments and call other modules as needed."""
 
     p = poster.Poster()
-    drawers = {"grid": grid_drawer.GridDrawer(p),
-               "calendar": calendar_drawer.CalendarDrawer(p),
-               "heatmap": heatmap_drawer.HeatmapDrawer(p),
-               "circular": circular_drawer.CircularDrawer(p)}
+    drawers = {'grid': grid_drawer.GridDrawer(p),
+               'calendar': calendar_drawer.CalendarDrawer(p),
+               'heatmap': heatmap_drawer.HeatmapDrawer(p),
+               'circular': circular_drawer.CircularDrawer(p)}
 
     args_parser = argparse.ArgumentParser()
     args_parser.add_argument('--gpx-dir', dest='gpx_dir', metavar='DIR', type=str, default='.',
                              help='Directory containing GPX files (default: current directory).')
     args_parser.add_argument('--output', metavar='FILE', type=str, default='poster.svg',
                              help='Name of generated SVG image file (default: "poster.svg").')
-    args_parser.add_argument('--language', metavar='LANGUAGE', type=str, default="",
+    args_parser.add_argument('--language', metavar='LANGUAGE', type=str, default='',
                              help='Language (default: english).')
     args_parser.add_argument('--year', metavar='YEAR', type=str, default='all',
                              help='Filter tracks by year; "NUM", "NUM-NUM", "all" (default: all years)')
-    args_parser.add_argument('--title', metavar='TITLE', type=str, default="My Tracks",
+    args_parser.add_argument('--title', metavar='TITLE', type=str, default='My Tracks',
                              help='Title to display (default: "My Tracks").')
-    args_parser.add_argument('--athlete', metavar='NAME', type=str, default="John Doe",
+    args_parser.add_argument('--athlete', metavar='NAME', type=str, default='John Doe',
                              help='Athlete name to display (default: "John Doe").')
     args_parser.add_argument('--special', metavar='FILE', action='append', default=[],
                              help='Mark track file from the GPX directory as special; use multiple times to mark '
                                   'multiple tracks.')
+    types = '", "'.join(drawers.keys())
     args_parser.add_argument('--type', metavar='TYPE', default='grid', choices=drawers.keys(),
-                             help='Type of poster to create (default: "grid", available: "{}").'
-                             .format('", "'.join(drawers.keys())))
+                             help=f'Type of poster to create (default: "grid", available: "{types}").')
     args_parser.add_argument('--background-color', dest='background_color', metavar='COLOR', type=str,
                              default='#222222', help='Background color of poster (default: "#222222").')
     args_parser.add_argument('--track-color', dest='track_color', metavar='COLOR', type=str, default='#4DD2FF',
@@ -137,9 +137,9 @@ def main():
 
     init_translation(args.language)
     loader = track_loader.TrackLoader()
-    loader.cache_dir = os.path.join(appdirs.user_cache_dir(__app_name__, __app_author__), "tracks")
+    loader.cache_dir = os.path.join(appdirs.user_cache_dir(__app_name__, __app_author__), 'tracks')
     if not loader.year_range.parse(args.year):
-        raise ParameterError('Bad year range: {}.'.format(args.year))
+        raise ParameterError(f'Bad year range: {args.year}.')
 
     loader.special_file_names = args.special
     if args.clear_cache:
@@ -152,8 +152,7 @@ def main():
             print('No tracks found.')
         return
 
-    print("Creating poster of type '{}' with {} tracks and storing it in file '{}'...".format(args.type, len(tracks),
-                                                                                              args.output))
+    print(f'Creating poster of type {args.type} with {len(tracks)} tracks and storing it in file {args.output}...')
     p.athlete = args.athlete
     p.title = args.title
     p.colors = {'background': args.background_color,
@@ -170,7 +169,7 @@ def main():
 def init_translation(language):
     if language:
         try:
-            locale.setlocale(locale.LC_ALL, language + '.utf8')
+            locale.setlocale(locale.LC_ALL, f'{language}.utf8')
         except locale.Error:
             pass
 

@@ -30,7 +30,7 @@ class XY:
         return XY(self.x - other.x, self.y - other.y)
 
     def __repr__(self):
-        return 'XY: {}/{}'.format(self.x, self.y)
+        return f'XY: {self.x}/{self.y}'
 
     def tuple(self) -> Tuple[float, float]:
         return self.x, self.y

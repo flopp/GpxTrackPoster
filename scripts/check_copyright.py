@@ -9,7 +9,7 @@ import datetime
 import re
 import sys
 
-re_copyright = re.compile(r'{} Florian Pigorsch'.format(datetime.datetime.now().year))
+re_copyright = re.compile(rf'{datetime.datetime.now().year} Florian Pigorsch')
 re_copyright_bad_year = re.compile(r'\d\d\d\d Florian Pigorsch')
 errors = False
 
@@ -30,10 +30,10 @@ for file_name in sys.argv:
 
     if not empty:
         if copyright_bad_year_found:
-            print('{}: copyright with bad year'.format(file_name))
+            print(f'{file_name}: copyright with bad year')
             errors = True
         elif not copyright_found:
-            print('{}: no copyright'.format(file_name))
+            print(f'{file_name}: no copyright')
             errors = True
 
 if errors:

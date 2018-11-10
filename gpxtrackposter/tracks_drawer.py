@@ -23,7 +23,7 @@ class TracksDrawer:
     def fetch_args(self, args):
         pass
 
-    def draw(self, d: svgwrite.Drawing, size: XY, offset: XY):
+    def draw(self, dr: svgwrite.Drawing, size: XY, offset: XY):
         pass
 
     def color(self, length_range: ValueRange, length: float, is_special: bool = False) -> str:

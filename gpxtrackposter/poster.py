@@ -37,13 +37,13 @@ class Poster:
 
     def __init__(self):
         self.athlete = None
-        self.title = "My Poster"
+        self.title = 'My Poster'
         self.tracks_by_date = {}
         self.tracks = []
         self.length_range = None
         self.length_range_by_date = None
-        self.units = "metric"
-        self.colors = {"background": "#222222", "text": "#FFFFFF", "special": "#FFFF00", "track": "#4DD2FF"}
+        self.units = 'metric'
+        self.colors = {'background': '#222222', 'text': '#FFFFFF', 'special': '#FFFF00', 'track': '#4DD2FF'}
         self.width = 200
         self.height = 300
         self.years = None
@@ -63,7 +63,7 @@ class Poster:
         for track in tracks:
             if not self.years.contains(track.start_time):
                 continue
-            text_date = track.start_time.strftime("%Y-%m-%d")
+            text_date = track.start_time.strftime('%Y-%m-%d')
             if text_date in self.tracks_by_date:
                 self.tracks_by_date[text_date].append(track)
             else:
@@ -76,7 +76,7 @@ class Poster:
     def draw(self, drawer, output):
         """Set the Poster's drawer and draw the tracks."""
         self.tracks_drawer = drawer
-        d = svgwrite.Drawing(output, ('{}mm'.format(self.width), '{}mm'.format(self.height)))
+        d = svgwrite.Drawing(output, (f'{self.width}mm', f'{self.height}mm'))
         d.viewbox(0, 0, self.width, self.height)
         d.add(d.rect((0, 0), (self.width, self.height), fill=self.colors['background']))
         self.__draw_header(d)
@@ -86,49 +86,47 @@ class Poster:
 
     def m2u(self, m):
         """Convert meters to kilometers or miles, according to units."""
-        if self.units == "metric":
+        if self.units == 'metric':
             return 0.001 * m
-        else:
-            return 0.001 * m / 1.609344
+        return 0.001 * m / 1.609344
 
     def u(self):
         """Return the unit of distance being used on the Poster."""
-        if self.units == "metric":
-            return "km"
-        else:
-            return "mi"
+        if self.units == 'metric':
+            return 'km'
+        return 'mi'
 
     def __draw_tracks(self, d, size: XY, offset: XY):
         self.tracks_drawer.draw(d, size, offset)
 
     def __draw_header(self, d):
-        text_color = self.colors["text"]
-        title_style = "font-size:12px; font-family:Arial; font-weight:bold;"
+        text_color = self.colors['text']
+        title_style = 'font-size:12px; font-family:Arial; font-weight:bold;'
         d.add(d.text(self.title, insert=(10, 20), fill=text_color, style=title_style))
 
     def __draw_footer(self, d):
-        text_color = self.colors["text"]
-        header_style = "font-size:4px; font-family:Arial"
-        value_style = "font-size:9px; font-family:Arial"
-        small_value_style = "font-size:3px; font-family:Arial"
+        text_color = self.colors['text']
+        header_style = 'font-size:4px; font-family:Arial'
+        value_style = 'font-size:9px; font-family:Arial'
+        small_value_style = 'font-size:3px; font-family:Arial'
 
         (total_length, average_length, min_length, max_length, weeks) = self.__compute_track_statistics()
 
         _ = gettext.gettext
-        d.add(d.text(_("ATHLETE"), insert=(10, self.height-20), fill=text_color, style=header_style))
+        d.add(d.text(_('ATHLETE'), insert=(10, self.height-20), fill=text_color, style=header_style))
         d.add(d.text(self.athlete, insert=(10, self.height-10), fill=text_color, style=value_style))
-        d.add(d.text(_("STATISTICS"), insert=(120, self.height-20), fill=text_color, style=header_style))
-        d.add(d.text(_("Number") + ": {}".format(len(self.tracks)), insert=(120, self.height - 15), fill=text_color,
+        d.add(d.text(_('STATISTICS'), insert=(120, self.height-20), fill=text_color, style=header_style))
+        d.add(d.text(_('Number') + f': {len(self.tracks)}', insert=(120, self.height - 15), fill=text_color,
                      style=small_value_style))
-        d.add(d.text(_("Weekly") + ": {:.1f}".format(len(self.tracks) / weeks), insert=(120, self.height - 10),
+        d.add(d.text(_('Weekly') + f': {len(self.tracks) / weeks:.1f}', insert=(120, self.height - 10),
                      fill=text_color, style=small_value_style))
-        d.add(d.text(_("Total") + ": {:.1f} {}".format(self.m2u(total_length), self.u()), insert=(139, self.height-15),
+        d.add(d.text(_('Total') + f': {self.m2u(total_length):.1f} {self.u()}', insert=(139, self.height-15),
                      fill=text_color, style=small_value_style))
-        d.add(d.text(_("Avg") + ": {:.1f} {}".format(self.m2u(average_length), self.u()), insert=(139, self.height-10),
+        d.add(d.text(_('Avg') + f': {self.m2u(average_length):.1f} {self.u()}', insert=(139, self.height-10),
                      fill=text_color, style=small_value_style))
-        d.add(d.text(_("Min") + ": {:.1f} {}".format(self.m2u(min_length), self.u()), insert=(167, self.height-15),
+        d.add(d.text(_('Min') + f': {self.m2u(min_length):.1f} {self.u()}', insert=(167, self.height-15),
                      fill=text_color, style=small_value_style))
-        d.add(d.text(_("Max") + ": {:.1f} {}".format(self.m2u(max_length), self.u()), insert=(167, self.height-10),
+        d.add(d.text(_('Max') + f': {self.m2u(max_length):.1f} {self.u()}', insert=(167, self.height-10),
                      fill=text_color, style=small_value_style))
 
     def __compute_track_statistics(self):
