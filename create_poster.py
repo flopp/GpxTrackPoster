@@ -1,14 +1,14 @@
 #!/usr/bin/env python
 """Create a variety of poster-style visualizations from GPX data
 
-usage: create_poster.py [-h] [--gpx-dir DIR] [--output FILE] [--language LANG] [--year YEAR]
-                        [--title TITLE] [--athlete NAME] [--special FILE]
-                        [--type TYPE] [--background-color COLOR]
-                        [--track-color COLOR] [--track-color2 COLOR]
-                        [--text-color COLOR] [--special-color COLOR]
-                        [--special-color2 COLOR] [--units UNITS]
-                        [--clear-cache] [--verbose] [--logfile FILE]
-                        [--heatmap-center LAT,LNG]
+usage: create_poster.py [-h] [--gpx-dir DIR] [--output FILE]
+                        [--language LANGUAGE] [--year YEAR] [--title TITLE]
+                        [--athlete NAME] [--special FILE] [--type TYPE]
+                        [--background-color COLOR] [--track-color COLOR]
+                        [--track-color2 COLOR] [--text-color COLOR]
+                        [--special-color COLOR] [--special-color2 COLOR]
+                        [--units UNITS] [--clear-cache] [--verbose]
+                        [--logfile FILE] [--heatmap-center LAT,LNG]
                         [--heatmap-radius RADIUS_KM] [--circular-rings]
                         [--circular-ring-color COLOR]
 
@@ -18,7 +18,7 @@ optional arguments:
                         directory).
   --output FILE         Name of generated SVG image file (default:
                         "poster.svg").
-  --language LANG       Language (default: en)
+  --language LANGUAGE   Language (default: english).
   --year YEAR           Filter tracks by year; "NUM", "NUM-NUM", "all"
                         (default: all years)
   --title TITLE         Title to display (default: "My Tracks").
@@ -53,7 +53,6 @@ Circular Type Options:
   --circular-rings      Draw distance rings.
   --circular-ring-color COLOR
                         Color of distance rings.
-
 """
 # Copyright 2016-2018 Florian Pigorsch & Contributors. All rights reserved.
 #

@@ -12,15 +12,14 @@ First of all, you need directory with a bunch of GPX files (e.g. you can export 
 You will need a little experience running things from the command line to use this script. That said, here are the usage details from the `--help` flag:
 
 ```
-usage: create_poster.py [-h] [--gpx-dir DIR] [--output FILE] [--language LANG]
-                        [--year YEAR]
-                        [--title TITLE] [--athlete NAME] [--special FILE]
-                        [--type TYPE] [--background-color COLOR]
-                        [--track-color COLOR] [--track-color2 COLOR]
-                        [--text-color COLOR] [--special-color COLOR]
-                        [--special-color2 COLOR] [--units UNITS]
-                        [--clear-cache] [--verbose] [--logfile FILE]
-                        [--heatmap-center LAT,LNG]
+usage: create_poster.py [-h] [--gpx-dir DIR] [--output FILE]
+                        [--language LANGUAGE] [--year YEAR] [--title TITLE]
+                        [--athlete NAME] [--special FILE] [--type TYPE]
+                        [--background-color COLOR] [--track-color COLOR]
+                        [--track-color2 COLOR] [--text-color COLOR]
+                        [--special-color COLOR] [--special-color2 COLOR]
+                        [--units UNITS] [--clear-cache] [--verbose]
+                        [--logfile FILE] [--heatmap-center LAT,LNG]
                         [--heatmap-radius RADIUS_KM] [--circular-rings]
                         [--circular-ring-color COLOR]
 
@@ -30,7 +29,7 @@ optional arguments:
                         directory).
   --output FILE         Name of generated SVG image file (default:
                         "poster.svg").
-  --language LANG       Language (default: en)
+  --language LANGUAGE   Language (default: english).
   --year YEAR           Filter tracks by year; "NUM", "NUM-NUM", "all"
                         (default: all years)
   --title TITLE         Title to display (default: "My Tracks").
