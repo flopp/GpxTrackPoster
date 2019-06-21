@@ -1,5 +1,9 @@
 black
 codespell
+coverage
+flake8
 flake8
 mypy
+pylama
+pylint
 pytest
