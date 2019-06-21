@@ -6,6 +6,7 @@
 
 import calendar
 import datetime
+import locale
 import svgwrite
 from .exceptions import PosterError
 from .poster import Poster
@@ -65,7 +66,10 @@ class CalendarDrawer(TracksDrawer):
         cell_size = min(size.x / count_x, size.y / 36)
         spacing = XY((size.x - cell_size * count_x) / (count_x - 1), (size.y - cell_size * 3 * 12) / 11)
 
-        dow = ['M', 'T', 'W', 'T', 'F', 'S', 'S']
+        # first character of localized day names, starting with Monday.
+        dow = [locale.nl_langinfo(day)[0].upper() for day in [
+            locale.DAY_2, locale.DAY_3, locale.DAY_4, locale.DAY_5, locale.DAY_6, locale.DAY_7, locale.DAY_1]]
+
         for month in range(1, 13):
             date = datetime.date(year, month, 1)
             y = month - 1
@@ -86,7 +90,7 @@ class CalendarDrawer(TracksDrawer):
                     has_special = len([t for t in tracks if t.special]) > 0
                     color = self.color(self.poster.length_range_by_date, length, has_special)
                     dr.add(dr.rect(pos, dim, fill=color))
-                    dr.add(dr.text(f'{self.poster.m2u(length):.1f}',
+                    dr.add(dr.text(utils.format_float(self.poster.m2u(length)),
                                    insert=(x_pos + cell_size / 2, y_pos + cell_size + cell_size / 2),
                                    text_anchor='middle',
                                    style=day_length_style, fill=self.poster.colors['text']))

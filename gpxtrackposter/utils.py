@@ -5,6 +5,7 @@
 # license that can be found in the LICENSE file.
 
 import colour
+import locale
 import math
 from typing import List, Optional, Tuple
 import s2sphere as s2
@@ -96,3 +97,7 @@ def interpolate_color(color1: str, color2: str, ratio: float) -> str:
                       saturation=((1 - ratio) * c1.saturation + ratio * c2.saturation),
                       luminance=((1 - ratio) * c1.luminance + ratio * c2.luminance))
     return c3.hex_l
+
+
+def format_float(f) -> str:
+    return locale.format_string('%.1f', f)

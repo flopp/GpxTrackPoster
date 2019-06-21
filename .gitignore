@@ -3,6 +3,7 @@ __pycache__
 venv
 gpx_dir/*
 output/*
+data
 .env
 .idea
 .mypy_cache

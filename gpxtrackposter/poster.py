@@ -7,6 +7,7 @@
 import gettext
 import locale
 import svgwrite
+from .utils import format_float
 from .value_range import ValueRange
 from .xy import XY
 from .year_range import YearRange
@@ -115,6 +116,10 @@ class Poster:
             return 'km'
         return 'mi'
 
+    def format_distance(self, d: float) -> str:
+        """Formats a distance using the locale specific float format and the selected unit."""
+        return format_float(self.m2u(d)) + ' ' + self.u()
+
     def __draw_tracks(self, d, size: XY, offset: XY):
         self.tracks_drawer.draw(d, size, offset)
 
@@ -136,15 +141,16 @@ class Poster:
         d.add(d.text(self.trans('STATISTICS'), insert=(120, self.height-20), fill=text_color, style=header_style))
         d.add(d.text(self.trans('Number') + f': {len(self.tracks)}', insert=(120, self.height - 15), fill=text_color,
                      style=small_value_style))
-        d.add(d.text(self.trans('Weekly') + f': {len(self.tracks) / weeks:.1f}', insert=(120, self.height - 10),
+        d.add(d.text(self.trans('Weekly') + ': ' + format_float(len(self.tracks) / weeks),
+                     insert=(120, self.height - 10),
                      fill=text_color, style=small_value_style))
-        d.add(d.text(self.trans('Total') + f': {self.m2u(total_length):.1f} {self.u()}', insert=(139, self.height-15),
+        d.add(d.text(self.trans('Total') + ': ' + self.format_distance(total_length), insert=(139, self.height-15),
                      fill=text_color, style=small_value_style))
-        d.add(d.text(self.trans('Avg') + f': {self.m2u(average_length):.1f} {self.u()}', insert=(139, self.height-10),
+        d.add(d.text(self.trans('Avg') + ': ' + self.format_distance(average_length), insert=(139, self.height-10),
                      fill=text_color, style=small_value_style))
-        d.add(d.text(self.trans('Min') + f': {self.m2u(min_length):.1f} {self.u()}', insert=(167, self.height-15),
+        d.add(d.text(self.trans('Min') + ': ' + self.format_distance(min_length), insert=(167, self.height-15),
                      fill=text_color, style=small_value_style))
-        d.add(d.text(self.trans('Max') + f': {self.m2u(max_length):.1f} {self.u()}', insert=(167, self.height-10),
+        d.add(d.text(self.trans('Max') + ': ' + self.format_distance(max_length), insert=(167, self.height-10),
                      fill=text_color, style=small_value_style))
 
     def __compute_track_statistics(self):
