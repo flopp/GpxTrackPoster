@@ -26,8 +26,9 @@ def lat2y(lat_deg: float) -> float:
     return 0.5 - math.log(math.tan(math.pi / 4 * (1 + lat_deg / 90))) / math.pi
 
 
-def project(bbox: s2.LatLngRect, size: XY, offset: XY, latlnglines: List[List[s2.LatLng]]) \
-        -> List[List[Tuple[float, float]]]:
+def project(
+    bbox: s2.LatLngRect, size: XY, offset: XY, latlnglines: List[List[s2.LatLng]]
+) -> List[List[Tuple[float, float]]]:
     min_x = lng2x(bbox.lng_lo().degrees)
     d_x = lng2x(bbox.lng_hi().degrees) - min_x
     while d_x >= 2:
@@ -65,14 +66,16 @@ def compute_bounds_xy(lines: List[List[XY]]) -> Tuple[ValueRange, ValueRange]:
     return range_x, range_y
 
 
-def compute_grid(count: int, dimensions: XY) -> Tuple[Optional[float], Optional[Tuple[int, int]]]:
+def compute_grid(
+    count: int, dimensions: XY
+) -> Tuple[Optional[float], Optional[Tuple[int, int]]]:
     # this is somehow suboptimal O(count^2). I guess it's possible in O(count)
     min_waste = -1.0
     best_size = None
     best_counts = None
-    for count_x in range(1, count+1):
+    for count_x in range(1, count + 1):
         size_x = dimensions.x / count_x
-        for count_y in range(1, count+1):
+        for count_y in range(1, count + 1):
             if count_x * count_y >= count:
                 size_y = dimensions.y / count_y
                 size = min(size_x, size_y)
@@ -93,11 +96,13 @@ def interpolate_color(color1: str, color2: str, ratio: float) -> str:
         ratio = 1
     c1 = colour.Color(color1)
     c2 = colour.Color(color2)
-    c3 = colour.Color(hue=((1 - ratio) * c1.hue + ratio * c2.hue),
-                      saturation=((1 - ratio) * c1.saturation + ratio * c2.saturation),
-                      luminance=((1 - ratio) * c1.luminance + ratio * c2.luminance))
+    c3 = colour.Color(
+        hue=((1 - ratio) * c1.hue + ratio * c2.hue),
+        saturation=((1 - ratio) * c1.saturation + ratio * c2.saturation),
+        luminance=((1 - ratio) * c1.luminance + ratio * c2.luminance),
+    )
     return c3.hex_l
 
 
 def format_float(f) -> str:
-    return locale.format_string('%.1f', f)
+    return locale.format_string("%.1f", f)

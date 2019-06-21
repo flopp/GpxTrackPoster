@@ -127,13 +127,16 @@ We currently support
 3. Create virtualenv: `virtualenv -p /usr/bin/python3 venv`
 4. Activate virtualenv: `source venv/bin/activate`
 5. Install requirements: `pip install -r requirements.txt`
-6. Run `./create_poster.py` (see above)
-7. Deactivate virtualenv: `deactivate`
+6. Install development requirements (only if you want to contribute code!): `pip install -r requirements-dev.txt`
+7. Run `./create_poster.py` (see above)
+8. Deactivate virtualenv: `deactivate`
 
 ## Contributing
 If you have found a bug or have a feature request, please create a new issue. I'm always happy improve the implementation!
 
 Or even better: clone the repo, fix the bug/implement the feature yourself, and file a pull request. Contributions are always welcome!
+
+Important: If you want to contribute via a pull request, make sure you run `make test`, `make lint`, and possibly `make format` before pushing code.
 
 ## Translation
 The translation is based on GNUs 'gettext'. 

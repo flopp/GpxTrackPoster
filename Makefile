@@ -1,4 +1,6 @@
-lint: check-copyright flake8 mypy spell
+.PHONY: lint test flake8 mypy spell check-format check-copyright bump-year update-readme format
+
+lint: check-copyright flake8 mypy spell format-check
 
 test:
 	@python -m compileall create_poster.py gpxtrackposter
@@ -13,6 +15,9 @@ mypy:
 spell:
 	@codespell gpxtrackposter/*.py create_poster.py tests/*.py scripts/*.py
 
+format-check:
+	@black --check gpxtrackposter/*.py create_poster.py tests/*.py scripts/*.py
+
 COPYRIGHT_FILES = README.md LICENSE create_poster.py gpxtrackposter/*.py tests/*.py scripts/*.py
 
 check-copyright:
@@ -23,3 +28,6 @@ bump-year:
 
 update-readme:
 	@./create_poster.py --help | ./scripts/update_readme.py README.md
+
+format:
+	@black gpxtrackposter/*.py create_poster.py tests/*.py scripts/*.py

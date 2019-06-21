@@ -22,12 +22,13 @@ class ValueRange:
         extend: Adjust the range to include value.
 
     """
+
     def __init__(self):
         self._lower = None
         self._upper = None
 
     @classmethod
-    def from_pair(cls, value1: float, value2: float) -> 'ValueRange':
+    def from_pair(cls, value1: float, value2: float) -> "ValueRange":
         r = cls()
         r.extend(value1)
         r.extend(value2)

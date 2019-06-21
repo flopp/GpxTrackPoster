@@ -38,14 +38,25 @@ class CircularDrawer(TracksDrawer):
         Note that these can be overridden via arguments when calling."""
         super().__init__(the_poster)
         self._rings = False
-        self._ring_color = 'darkgrey'
+        self._ring_color = "darkgrey"
 
     def create_args(self, args_parser: argparse.ArgumentParser):
         """Add arguments to the parser"""
-        group = args_parser.add_argument_group('Circular Type Options')
-        group.add_argument('--circular-rings', dest='circular_rings', action='store_true', help='Draw distance rings.')
-        group.add_argument('--circular-ring-color', dest='circular_ring_color', metavar='COLOR', type=str,
-                           default='darkgrey', help='Color of distance rings.')
+        group = args_parser.add_argument_group("Circular Type Options")
+        group.add_argument(
+            "--circular-rings",
+            dest="circular_rings",
+            action="store_true",
+            help="Draw distance rings.",
+        )
+        group.add_argument(
+            "--circular-ring-color",
+            dest="circular_ring_color",
+            metavar="COLOR",
+            type=str,
+            default="darkgrey",
+            help="Color of distance rings.",
+        )
 
     def fetch_args(self, args):
         """Get arguments from the parser"""
@@ -55,14 +66,14 @@ class CircularDrawer(TracksDrawer):
     def draw(self, dr: svgwrite.Drawing, size: XY, offset: XY):
         """Draw the circular Poster using distances broken down by time"""
         if self.poster.tracks is None:
-            raise PosterError('No tracks to draw.')
+            raise PosterError("No tracks to draw.")
         if self.poster.length_range_by_date is None:
             return
 
         years = self.poster.years.count()
         _, counts = utils.compute_grid(years, size)
         if counts is None:
-            raise PosterError('Unable to compute grid.')
+            raise PosterError("Unable to compute grid.")
         count_x, count_y = counts[0], counts[1]
         x, y = 0, 0
         cell_size = size * XY(1 / count_x, 1 / count_y)
@@ -88,20 +99,24 @@ class CircularDrawer(TracksDrawer):
         if self._rings:
             self._draw_rings(dr, center, radius_range)
 
-        year_style = f'dominant-baseline: central; font-size:{min_size * 4.0 / 80.0}px; font-family:Arial;'
-        month_style = f'font-size:{min_size * 3.0 / 80.0}px; font-family:Arial;'
+        year_style = f"dominant-baseline: central; font-size:{min_size * 4.0 / 80.0}px; font-family:Arial;"
+        month_style = f"font-size:{min_size * 3.0 / 80.0}px; font-family:Arial;"
 
-        dr.add(dr.text(f'{year}',
-                       insert=center.tuple(),
-                       fill=self.poster.colors['text'],
-                       text_anchor='middle',
-                       alignment_baseline='middle',
-                       style=year_style))
+        dr.add(
+            dr.text(
+                f"{year}",
+                insert=center.tuple(),
+                fill=self.poster.colors["text"],
+                text_anchor="middle",
+                alignment_baseline="middle",
+                style=year_style,
+            )
+        )
         df = 360.0 / (366 if calendar.isleap(year) else 365)
         day = 0
         date = datetime.date(year, 1, 1)
         while date.year == year:
-            text_date = date.strftime('%Y-%m-%d')
+            text_date = date.strftime("%Y-%m-%d")
             a1 = math.radians(day * df)
             a2 = math.radians((day + 1) * df)
             if date.day == 1:
@@ -112,20 +127,43 @@ class CircularDrawer(TracksDrawer):
                 r1 = outer_radius + 1
                 r2 = outer_radius + 6
                 r3 = outer_radius + 2
-                dr.add(dr.line(
+                dr.add(
+                    dr.line(
                         start=(center + r1 * XY(sin_a1, -cos_a1)).tuple(),
                         end=(center + r2 * XY(sin_a1, -cos_a1)).tuple(),
-                        stroke=self.poster.colors['text'],
-                        stroke_width=0.3))
-                path = dr.path(d=('M', center.x + r3 * sin_a1, center.y - r3 * cos_a1), fill='none', stroke='none')
-                path.push(f'a{r3},{r3} 0 0,1 {r3 * (sin_a3 - sin_a1)},{r3 * (cos_a1 - cos_a3)}')
+                        stroke=self.poster.colors["text"],
+                        stroke_width=0.3,
+                    )
+                )
+                path = dr.path(
+                    d=("M", center.x + r3 * sin_a1, center.y - r3 * cos_a1),
+                    fill="none",
+                    stroke="none",
+                )
+                path.push(
+                    f"a{r3},{r3} 0 0,1 {r3 * (sin_a3 - sin_a1)},{r3 * (cos_a1 - cos_a3)}"
+                )
                 dr.add(path)
-                tpath = svgwrite.text.TextPath(path, date.strftime('%B'), startOffset=(0.5 * r3 * (a3 - a1)))
-                text = dr.text('', fill=self.poster.colors['text'], text_anchor='middle', style=month_style)
+                tpath = svgwrite.text.TextPath(
+                    path, date.strftime("%B"), startOffset=(0.5 * r3 * (a3 - a1))
+                )
+                text = dr.text(
+                    "",
+                    fill=self.poster.colors["text"],
+                    text_anchor="middle",
+                    style=month_style,
+                )
                 text.add(tpath)
                 dr.add(text)
             if text_date in self.poster.tracks_by_date:
-                self._draw_circle_segment(dr, self.poster.tracks_by_date[text_date], a1, a2, radius_range, center)
+                self._draw_circle_segment(
+                    dr,
+                    self.poster.tracks_by_date[text_date],
+                    a1,
+                    a2,
+                    radius_range,
+                    center,
+                )
 
             day += 1
             date += datetime.timedelta(1)
@@ -134,7 +172,7 @@ class CircularDrawer(TracksDrawer):
         length_range = self.poster.length_range_by_date
         ring_distance = None
         for distance in [1.0, 5.0, 10.0, 50.0]:
-            if self.poster.units != 'metric':
+            if self.poster.units != "metric":
                 # convert from miles to meters
                 distance *= 1609.344
             else:
@@ -154,22 +192,47 @@ class CircularDrawer(TracksDrawer):
             return
         distance = ring_distance
         while distance < length_range.upper():
-            radius = radius_range.lower() + radius_range.diameter() * distance / length_range.upper()
-            dr.add(dr.circle(center=center.tuple(), r=radius, stroke=self._ring_color, stroke_opacity='0.2',
-                             fill='none', stroke_width=0.3))
+            radius = (
+                radius_range.lower()
+                + radius_range.diameter() * distance / length_range.upper()
+            )
+            dr.add(
+                dr.circle(
+                    center=center.tuple(),
+                    r=radius,
+                    stroke=self._ring_color,
+                    stroke_opacity="0.2",
+                    fill="none",
+                    stroke_width=0.3,
+                )
+            )
             distance += ring_distance
 
-    def _draw_circle_segment(self, dr: svgwrite.Drawing, tracks: List[Track], a1: float, a2: float,
-                             rr: ValueRange, center: XY):
+    def _draw_circle_segment(
+        self,
+        dr: svgwrite.Drawing,
+        tracks: List[Track],
+        a1: float,
+        a2: float,
+        rr: ValueRange,
+        center: XY,
+    ):
         length = sum([t.length for t in tracks])
         has_special = len([t for t in tracks if t.special]) > 0
         color = self.color(self.poster.length_range_by_date, length, has_special)
         r1 = rr.lower()
-        r2 = rr.lower() + rr.diameter() * length / self.poster.length_range_by_date.upper()
+        r2 = (
+            rr.lower()
+            + rr.diameter() * length / self.poster.length_range_by_date.upper()
+        )
         sin_a1, cos_a1 = math.sin(a1), math.cos(a1)
         sin_a2, cos_a2 = math.sin(a2), math.cos(a2)
-        path = dr.path(d=('M', center.x + r1 * sin_a1, center.y - r1 * cos_a1), fill=color, stroke='none')
-        path.push('l', (r2 - r1) * sin_a1, (r1 - r2) * cos_a1)
-        path.push(f'a{r2},{r2} 0 0,0 {r2 * (sin_a2 - sin_a1)},{r2 * (cos_a1 - cos_a2)}')
-        path.push('l', (r1 - r2) * sin_a2, (r2 - r1) * cos_a2)
+        path = dr.path(
+            d=("M", center.x + r1 * sin_a1, center.y - r1 * cos_a1),
+            fill=color,
+            stroke="none",
+        )
+        path.push("l", (r2 - r1) * sin_a1, (r1 - r2) * cos_a1)
+        path.push(f"a{r2},{r2} 0 0,0 {r2 * (sin_a2 - sin_a1)},{r2 * (cos_a1 - cos_a2)}")
+        path.push("l", (r1 - r2) * sin_a2, (r2 - r1) * cos_a2)
         dr.add(path)

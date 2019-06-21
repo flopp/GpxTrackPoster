@@ -9,8 +9,8 @@ import datetime
 import re
 import sys
 
-re_copyright = re.compile(rf'{datetime.datetime.now().year} Florian Pigorsch')
-re_copyright_bad_year = re.compile(r'\d\d\d\d Florian Pigorsch')
+re_copyright = re.compile(rf"{datetime.datetime.now().year} Florian Pigorsch")
+re_copyright_bad_year = re.compile(r"\d\d\d\d Florian Pigorsch")
 errors = False
 
 for file_name in sys.argv:
@@ -18,7 +18,7 @@ for file_name in sys.argv:
     copyright_found = False
     copyright_bad_year_found = False
 
-    with open(file_name, 'r') as f:
+    with open(file_name, "r") as f:
         for line in f.readlines():
             empty = False
             if re_copyright.search(line):
@@ -30,10 +30,10 @@ for file_name in sys.argv:
 
     if not empty:
         if copyright_bad_year_found:
-            print(f'{file_name}: copyright with bad year')
+            print(f"{file_name}: copyright with bad year")
             errors = True
         elif not copyright_found:
-            print(f'{file_name}: no copyright')
+            print(f"{file_name}: no copyright")
             errors = True
 
 if errors:
