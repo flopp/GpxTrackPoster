@@ -5,6 +5,7 @@
 # license that can be found in the LICENSE file.
 
 import gettext
+import locale
 import svgwrite
 from .value_range import ValueRange
 from .xy import XY
@@ -48,6 +49,24 @@ class Poster:
         self.height = 300
         self.years = None
         self.tracks_drawer = None
+        self.trans = None
+        self.set_language(None)
+
+    def set_language(self, language):
+        if language:
+            try:
+                locale.setlocale(locale.LC_ALL, f'{language}.utf8')
+            except locale.Error as e:
+                print(f'Cannot set locale to "{language}": {e}')
+                language = None
+                pass
+
+        # Fall-back to NullTranslations, if the specified language translation cannot be found.
+        if language:
+            lang = gettext.translation('gpxposter', localedir='locale', languages=[language], fallback=True)
+        else:
+            lang = gettext.NullTranslations()
+        self.trans = lang.gettext
 
     def set_tracks(self, tracks):
         """Associate the set of tracks with this poster.
@@ -112,21 +131,20 @@ class Poster:
 
         (total_length, average_length, min_length, max_length, weeks) = self.__compute_track_statistics()
 
-        _ = gettext.gettext
-        d.add(d.text(_('ATHLETE'), insert=(10, self.height-20), fill=text_color, style=header_style))
+        d.add(d.text(self.trans('ATHLETE'), insert=(10, self.height-20), fill=text_color, style=header_style))
         d.add(d.text(self.athlete, insert=(10, self.height-10), fill=text_color, style=value_style))
-        d.add(d.text(_('STATISTICS'), insert=(120, self.height-20), fill=text_color, style=header_style))
-        d.add(d.text(_('Number') + f': {len(self.tracks)}', insert=(120, self.height - 15), fill=text_color,
+        d.add(d.text(self.trans('STATISTICS'), insert=(120, self.height-20), fill=text_color, style=header_style))
+        d.add(d.text(self.trans('Number') + f': {len(self.tracks)}', insert=(120, self.height - 15), fill=text_color,
                      style=small_value_style))
-        d.add(d.text(_('Weekly') + f': {len(self.tracks) / weeks:.1f}', insert=(120, self.height - 10),
+        d.add(d.text(self.trans('Weekly') + f': {len(self.tracks) / weeks:.1f}', insert=(120, self.height - 10),
                      fill=text_color, style=small_value_style))
-        d.add(d.text(_('Total') + f': {self.m2u(total_length):.1f} {self.u()}', insert=(139, self.height-15),
+        d.add(d.text(self.trans('Total') + f': {self.m2u(total_length):.1f} {self.u()}', insert=(139, self.height-15),
                      fill=text_color, style=small_value_style))
-        d.add(d.text(_('Avg') + f': {self.m2u(average_length):.1f} {self.u()}', insert=(139, self.height-10),
+        d.add(d.text(self.trans('Avg') + f': {self.m2u(average_length):.1f} {self.u()}', insert=(139, self.height-10),
                      fill=text_color, style=small_value_style))
-        d.add(d.text(_('Min') + f': {self.m2u(min_length):.1f} {self.u()}', insert=(167, self.height-15),
+        d.add(d.text(self.trans('Min') + f': {self.m2u(min_length):.1f} {self.u()}', insert=(167, self.height-15),
                      fill=text_color, style=small_value_style))
-        d.add(d.text(_('Max') + f': {self.m2u(max_length):.1f} {self.u()}', insert=(167, self.height-10),
+        d.add(d.text(self.trans('Max') + f': {self.m2u(max_length):.1f} {self.u()}', insert=(167, self.height-10),
                      fill=text_color, style=small_value_style))
 
     def __compute_track_statistics(self):

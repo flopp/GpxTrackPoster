@@ -111,6 +111,16 @@ The *Heatmap Poster* displays all tracks within one "map". The more often a loca
 ![Example Heatmap Poster](https://github.com/flopp/GpxTrackPoster/blob/master/examples/example_heatmap.png)
 [svg](https://github.com/flopp/GpxTrackPoster/blob/master/examples/example_heatmap.svg)
 
+
+## Selection a Language
+`create_poster.py` uses gettext to provide localization to other languages.
+To select a different language than the default English, use the `--language LANGUAGE` option.
+We currently support 
+
+- French (`--language fr_FR`)
+- German (`--language de_DE`)
+
+
 ## Setup
 1. Clone the repository: `git clone https://github.com/flopp/GpxTrackPoster.git`
 2. `cd GpxTrackPoster`
