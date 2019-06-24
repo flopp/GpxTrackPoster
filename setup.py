@@ -18,4 +18,9 @@ setuptools.setup(
     tests_require=_read_reqs("requirements-dev.txt"),
     data_files=[('.', ['requirements.txt', 'requirements-dev.txt'])],
     packages=setuptools.find_packages(),
+    entry_points={
+        'console_scripts': [
+            'create_poster = gpxtrackposter.cli:main',
+        ],
+    },
 )

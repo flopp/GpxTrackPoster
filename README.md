@@ -12,16 +12,16 @@ First of all, you need directory with a bunch of GPX files (e.g. you can export 
 You will need a little experience running things from the command line to use this script. That said, here are the usage details from the `--help` flag:
 
 ```
-usage: create_poster.py [-h] [--gpx-dir DIR] [--output FILE]
-                        [--language LANGUAGE] [--year YEAR] [--title TITLE]
-                        [--athlete NAME] [--special FILE] [--type TYPE]
-                        [--background-color COLOR] [--track-color COLOR]
-                        [--track-color2 COLOR] [--text-color COLOR]
-                        [--special-color COLOR] [--special-color2 COLOR]
-                        [--units UNITS] [--clear-cache] [--verbose]
-                        [--logfile FILE] [--heatmap-center LAT,LNG]
-                        [--heatmap-radius RADIUS_KM] [--circular-rings]
-                        [--circular-ring-color COLOR]
+usage: create_poster [-h] [--gpx-dir DIR] [--output FILE]
+                     [--language LANGUAGE] [--year YEAR] [--title TITLE]
+                     [--athlete NAME] [--special FILE] [--type TYPE]
+                     [--background-color COLOR] [--track-color COLOR]
+                     [--track-color2 COLOR] [--text-color COLOR]
+                     [--special-color COLOR] [--special-color2 COLOR]
+                     [--units UNITS] [--clear-cache] [--verbose]
+                     [--logfile FILE] [--heatmap-center LAT,LNG]
+                     [--heatmap-radius RADIUS_KM] [--circular-rings]
+                     [--circular-ring-color COLOR]
 
 optional arguments:
   -h, --help            show this help message and exit
@@ -68,7 +68,7 @@ Circular Type Options:
 
 Example:
 ```
-create_poster.py --type grid --gpx-dir "my-tracks" --language "de" --year 2015 --title "Running" \
+create_poster --type grid --gpx-dir "my-tracks" --language "de" --year 2015 --title "Running" \
     --athlete "Florian Pigorsch" --special race1.gpx --special race2.gpx --special race3.gpx
 ```
 creates a nice poster (`poster.svg`) of the GPX tracks in the directory `my-tracks` (see above).
@@ -76,7 +76,7 @@ creates a nice poster (`poster.svg`) of the GPX tracks in the directory `my-trac
 
 ### Selection of Tracks
 
-`create_poster.py` tries to load all GPX files in the specified directory (option `--gpx-dir`).
+`create_poster` tries to load all GPX files in the specified directory (option `--gpx-dir`).
 To speed up subsequent executions of the script, successfully loaded GPX tracks are cached in an intermediate format that allows for fast loading; use the option `--clear-cache` to delete these files.
 Tracks without time stamps and tracks recorded in the wrong year (option `--year`) are discarded.
 Tracks shorter than 1km are discarded, too
@@ -113,9 +113,9 @@ The *Heatmap Poster* displays all tracks within one "map". The more often a loca
 
 
 ## Selection a Language
-`create_poster.py` uses gettext to provide localization to other languages.
+`create_poster` uses gettext to provide localization to other languages.
 To select a different language than the default English, use the `--language LANGUAGE` option.
-We currently support 
+We currently support
 
 - French (`--language fr_FR`)
 - German (`--language de_DE`)
@@ -126,9 +126,9 @@ We currently support
 2. `cd GpxTrackPoster`
 3. Create virtualenv: `virtualenv -p /usr/bin/python3 venv`
 4. Activate virtualenv: `source venv/bin/activate`
-5. Install requirements: `pip install -r requirements.txt`
+5. Install the package: `pip install .`
 6. Install development requirements (only if you want to contribute code!): `pip install -r requirements-dev.txt`
-7. Run `./create_poster.py` (see above)
+7. Run `create_poster` (see above)
 8. Deactivate virtualenv: `deactivate`
 
 ## Contributing
@@ -136,10 +136,10 @@ If you have found a bug or have a feature request, please create a new issue. I'
 
 Or even better: clone the repo, fix the bug/implement the feature yourself, and file a pull request. Contributions are always welcome!
 
-Important: If you want to contribute via a pull request, make sure you run `make test`, `make lint`, and possibly `make format` before pushing code.
+Important: If you want to contribute via a pull request, make sure you run `tox`, `make test`, `make lint`, and possibly `make format` before pushing code.
 
 ## Translation
-The translation is based on GNUs 'gettext'. 
+The translation is based on GNUs 'gettext'.
 For the translation of the month names to work, the language must be installed.
 
 Use `locale -a` to check if the language is installed.
