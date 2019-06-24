@@ -7,10 +7,10 @@
 import gettext
 import locale
 import svgwrite
-from .utils import format_float
-from .value_range import ValueRange
-from .xy import XY
-from .year_range import YearRange
+from gpxtrackposter.utils import format_float
+from gpxtrackposter.value_range import ValueRange
+from gpxtrackposter.xy import XY
+from gpxtrackposter.year_range import YearRange
 
 
 class Poster:

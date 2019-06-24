@@ -12,9 +12,9 @@ import os
 import shutil
 from typing import Dict, Generator, List
 import concurrent.futures
-from .exceptions import ParameterError, TrackLoadError
-from .track import Track
-from .year_range import YearRange
+from gpxtrackposter.exceptions import ParameterError, TrackLoadError
+from gpxtrackposter.track import Track
+from gpxtrackposter.year_range import YearRange
 
 log = logging.getLogger(__name__)
 

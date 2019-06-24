@@ -6,10 +6,10 @@
 
 import argparse
 import svgwrite
-from .poster import Poster
-from .value_range import ValueRange
-from .xy import XY
-from . import utils
+from gpxtrackposter.poster import Poster
+from gpxtrackposter.value_range import ValueRange
+from gpxtrackposter.xy import XY
+from gpxtrackposter import utils
 
 
 class TracksDrawer:
