@@ -1,13 +1,13 @@
-.PHONY: lint test flake8 mypy spell check-format check-copyright bump-year update-readme format
+.PHONY: lint test pycodestyle mypy spell check-format check-copyright bump-year update-readme format
 
-lint: check-copyright flake8 mypy spell format-check
+lint: check-copyright pycodestyle mypy spell format-check
 
 test:
 	@python -m compileall gpxtrackposter
 	@python -m pytest tests
 
-flake8:
-	@flake8 gpxtrackposter tests scripts
+pycodestyle:
+	@pycodestyle --max-line-length=120 gpxtrackposter tests scripts
 
 mypy:
 	@mypy --ignore-missing-imports gpxtrackposter/*.py
