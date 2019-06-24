@@ -1,9 +1,8 @@
 black
 codespell
 coverage
-flake8
-flake8
 mypy
+pycodestyle
 pylama
 pylint
 pytest
