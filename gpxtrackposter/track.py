@@ -9,7 +9,7 @@ import gpxpy as mod_gpxpy
 import json
 import os
 import s2sphere as s2
-from .exceptions import TrackLoadError
+from gpxtrackposter.exceptions import TrackLoadError
 
 
 class Track:
