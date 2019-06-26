@@ -8,11 +8,12 @@ import calendar
 import datetime
 import locale
 import svgwrite
-from .exceptions import PosterError
-from .poster import Poster
-from .tracks_drawer import TracksDrawer
-from .xy import XY
-from . import utils
+
+from gpxtrackposter import utils
+from gpxtrackposter.exceptions import PosterError
+from gpxtrackposter.poster import Poster
+from gpxtrackposter.tracks_drawer import TracksDrawer
+from gpxtrackposter.xy import XY
 
 
 class CalendarDrawer(TracksDrawer):

@@ -248,13 +248,9 @@ def main():
     p.colors = {
         "background": args.background_color,
         "track": args.track_color,
-        "track2": args.track_color2
-        if args.track_color2 is not None
-        else args.track_color,
+        "track2": args.track_color2 or args.track_color,
         "special": args.special_color,
-        "special2": args.special_color2
-        if args.special_color2 is not None
-        else args.special_color,
+        "special2": args.special_color2 or args.special_color,
         "text": args.text_color,
     }
     p.units = args.units

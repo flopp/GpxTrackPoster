@@ -9,8 +9,8 @@ import locale
 import math
 from typing import List, Optional, Tuple
 import s2sphere as s2
-from .value_range import ValueRange
-from .xy import XY
+from gpxtrackposter.value_range import ValueRange
+from gpxtrackposter.xy import XY
 
 
 # mercator projection

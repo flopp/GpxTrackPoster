@@ -9,11 +9,12 @@ import logging
 import math
 import svgwrite
 import s2sphere as s2
-from .exceptions import ParameterError
-from .poster import Poster
-from .tracks_drawer import TracksDrawer
-from .xy import XY
-from . import utils
+
+from gpxtrackposter.exceptions import ParameterError
+from gpxtrackposter.poster import Poster
+from gpxtrackposter.tracks_drawer import TracksDrawer
+from gpxtrackposter.xy import XY
+from gpxtrackposter import utils
 
 
 log = logging.getLogger(__name__)

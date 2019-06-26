@@ -10,13 +10,13 @@ import datetime
 import math
 import svgwrite
 from typing import List, Optional
-from .exceptions import PosterError
-from .poster import Poster
-from .track import Track
-from .tracks_drawer import TracksDrawer
-from .value_range import ValueRange
-from .xy import XY
-from . import utils
+from gpxtrackposter.exceptions import PosterError
+from gpxtrackposter.poster import Poster
+from gpxtrackposter.track import Track
+from gpxtrackposter.tracks_drawer import TracksDrawer
+from gpxtrackposter.value_range import ValueRange
+from gpxtrackposter.xy import XY
+from gpxtrackposter import utils
 
 
 class CircularDrawer(TracksDrawer):
