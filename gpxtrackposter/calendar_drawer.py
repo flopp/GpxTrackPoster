@@ -110,7 +110,7 @@ class CalendarDrawer(TracksDrawer):
             while date.month == month:
                 x = date.day - 1
                 x_pos = offset.x + (day_offset + x) * cell_size + x * spacing.x
-                pos = (x_pos + 0.05 * cell_size, y_pos + 0.05 * cell_size)
+                pos = (x_pos + 0.05 * cell_size, y_pos + 1.15 * cell_size)
                 dim = (cell_size * 0.9, cell_size * 0.9)
                 text_date = date.strftime("%Y-%m-%d")
                 if text_date in self.poster.tracks_by_date:
@@ -125,8 +125,8 @@ class CalendarDrawer(TracksDrawer):
                         dr.text(
                             utils.format_float(self.poster.m2u(length)),
                             insert=(
-                                x_pos + cell_size / 2,
-                                y_pos + cell_size + cell_size / 2,
+                                pos[0] + cell_size / 2,
+                                pos[1] + cell_size + cell_size / 2,
                             ),
                             text_anchor="middle",
                             style=day_length_style,
@@ -141,7 +141,7 @@ class CalendarDrawer(TracksDrawer):
                         dow[date.weekday()],
                         insert=(
                             offset.x + (day_offset + x) * cell_size + cell_size / 2,
-                            y_pos + cell_size / 2,
+                            pos[1] + cell_size / 2,
                         ),
                         text_anchor="middle",
                         alignment_baseline="middle",
