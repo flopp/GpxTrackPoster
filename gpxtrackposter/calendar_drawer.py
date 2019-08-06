@@ -77,11 +77,10 @@ class CalendarDrawer(TracksDrawer):
             (size.x - cell_size * count_x) / (count_x - 1),
             (size.y - cell_size * 3 * 12) / 11,
         )
-	
-	# Chinese weekday keyword is the third.
+
         keyword_num = 0
-        if locale.getlocale()[0] == "zh_CN":
-            keyword_num = 2
+        if locale.getlocale()[0] == 'zh_CN':
+            keyword_num = 3
         # first character of localized day names, starting with Monday.
         dow = [
             locale.nl_langinfo(day)[keyword_num].upper()
