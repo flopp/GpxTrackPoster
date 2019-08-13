@@ -1,0 +1,52 @@
+# Chinese translations for PACKAGE package
+# PACKAGE 软件包的简体中文翻译.
+# Copyright (C) 2019 ORGANIZATION
+# Hong Yi <zouzou0208@gmail.com>, 2019.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"POT-Creation-Date: 2017-01-21 13:30+0100\n"
+"PO-Revision-Date: 2019-07-31 23:02+0800\n"
+"Last-Translator: Hong Yi <zouzou0208@gmail.com>\n"
+"Language-Team: Chinese (simplified)\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: pygettext.py 1.5\n"
+"Language: zh_CN\n"
+
+#: src/poster.py:50
+msgid "YEAR"
+msgstr "YEAR"
+
+#: src/poster.py:52
+msgid "ATHLETE"
+msgstr "运动员"
+
+#: src/poster.py:54
+msgid "STATISTICS"
+msgstr "数据"
+
+#: src/poster.py:56
+msgid "Weekly"
+msgstr "周"
+
+#: src/poster.py:57
+msgid "Total"
+msgstr "总"
+
+#: src/poster.py:58
+msgid "Avg"
+msgstr "平均"
+
+#: src/poster.py:59
+msgid "Min"
+msgstr "最少"
+
+#: src/poster.py:60
+msgid "Max"
+msgstr "最多"
+
+msgid "Number"
+msgstr "次数"
