@@ -118,7 +118,7 @@ We currently support
 
 - French (`--language fr_FR`)
 - German (`--language de_DE`)
-- Chinese (`--language ch_CN`)
+- Chinese (`--language zh_CN`)
 
 
 ## Setup
