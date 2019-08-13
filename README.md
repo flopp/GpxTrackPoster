@@ -6,7 +6,7 @@ Create a visually appealing poster from your GPX tracks - heavily inspired by ht
 
 
 ## Usage
-First of all, you need directory with a bunch of GPX files (e.g. you can export all your tracks from Garmin Connect with the excellent tool [garmin-connect-export](https://github.com/kjkjava/garmin-connect-export), or use [StravaExportToGPX](https://github.com/flopp/StravaExportToGPX), or use [runtastic](https://github.com/Metalnem/runtastic) to convert the activities in a Strava export zip file to GPX).
+First of all, you need directory with a bunch of GPX files (e.g. you can export all your tracks from Garmin Connect with the excellent tool [garmin-connect-export](https://github.com/kjkjava/garmin-connect-export), or use [StravaExportToGPX](https://github.com/flopp/StravaExportToGPX), or use [runtastic](https://github.com/Metalnem/runtastic) to convert the activities in a Strava or Runtastic export zip file to GPX).
 
 You will need a little experience running things from the command line to use this script. That said, here are the usage details from the `--help` flag:
 
@@ -118,6 +118,7 @@ We currently support
 
 - French (`--language fr_FR`)
 - German (`--language de_DE`)
+- Chinese (`--language ch_CN`)
 
 
 ## Setup
