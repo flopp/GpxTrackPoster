@@ -26,7 +26,7 @@ optional arguments:
   --special FILE        Mark track file from the GPX directory as special; use
                         multiple times to mark multiple tracks.
   --type TYPE           Type of poster to create (default: "grid", available:
-                        "grid", "calendar", "heatmap", "circular").
+                        "grid", "calendar", "heatmap", "circular", "github").
   --background-color COLOR
                         Background color of poster (default: "#222222").
   --track-color COLOR   Color of tracks (default: "#4DD2FF").
@@ -64,9 +64,12 @@ import appdirs
 import logging
 import os
 import sys
+
 from gpxtrackposter import poster, track_loader
-from gpxtrackposter import grid_drawer, calendar_drawer, circular_drawer, heatmap_drawer
+from gpxtrackposter import grid_drawer, circular_drawer, heatmap_drawer
+from gpxtrackposter import github_drawer, calendar_drawer
 from gpxtrackposter.exceptions import ParameterError, PosterError
+
 
 __app_name__ = "create_poster"
 __app_author__ = "flopp.net"
@@ -81,6 +84,7 @@ def main():
         "calendar": calendar_drawer.CalendarDrawer(p),
         "heatmap": heatmap_drawer.HeatmapDrawer(p),
         "circular": circular_drawer.CircularDrawer(p),
+        "github": github_drawer.GithubDrawer(p),
     }
 
     args_parser = argparse.ArgumentParser()
@@ -255,6 +259,8 @@ def main():
     }
     p.units = args.units
     p.set_tracks(tracks)
+    if args.type == "github":
+        p.height = 55 + p.years.count() * 43
     p.draw(drawers[args.type], args.output)
 
 

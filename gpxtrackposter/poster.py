@@ -4,6 +4,7 @@
 # Use of this source code is governed by a MIT-style
 # license that can be found in the LICENSE file.
 
+from collections import defaultdict
 import gettext
 import locale
 import svgwrite
@@ -225,12 +226,15 @@ class Poster:
     def __compute_track_statistics(self):
         length_range = ValueRange()
         total_length = 0
+        total_length_year_dict = defaultdict(int)
         weeks = {}
         for t in self.tracks:
             total_length += t.length
+            total_length_year_dict[t.start_time.year] += t.length
             length_range.extend(t.length)
             # time.isocalendar()[1] -> week number
             weeks[(t.start_time.year, t.start_time.isocalendar()[1])] = 1
+        self.total_length_year_dict = total_length_year_dict
         return (
             total_length,
             total_length / len(self.tracks),
