@@ -36,7 +36,7 @@ optional arguments:
   --special FILE        Mark track file from the GPX directory as special; use
                         multiple times to mark multiple tracks.
   --type TYPE           Type of poster to create (default: "grid", available:
-                        "grid", "calendar", "heatmap", "circular").
+                        "grid", "calendar", "heatmap", "circular", "github").
   --background-color COLOR
                         Background color of poster (default: "#222222").
   --track-color COLOR   Color of tracks (default: "#4DD2FF").

@@ -5,7 +5,7 @@ import svgwrite
 
 from gpxtrackposter import utils
 from gpxtrackposter.exceptions import PosterError
-from poster import Poster
+from gpxtrackposter.poster import Poster
 from gpxtrackposter.tracks_drawer import TracksDrawer
 from gpxtrackposter.xy import XY
 
@@ -23,16 +23,19 @@ class GithubDrawer(TracksDrawer):
         year_style = f"font-size:{year_size}px; font-family:Arial;"
         year_length_style = f"font-size:{110 * 3.0 / 80.0}px; font-family:Arial;"
         month_names_style = f"font-size:2.5px; font-family:Arial"
-        year_num = 0
         total_length_year_dict = self.poster.total_length_year_dict
         for year in range(self.poster.years.from_year, self.poster.years.to_year + 1):
             start_date_weekday, _ = calendar.monthrange(year, 1)
-            github_rect_day = datetime.date(year, 1, 1)
-            github_rect_day += datetime.timedelta(-start_date_weekday)
+            github_rect_first_day = datetime.date(year, 1, 1)
+            # Github profile the first day start from the last Monday fo last year or the first Monday of this year
+            # It depands on if the first day of this year is Monday or not.
+            github_rect_day = github_rect_first_day + datetime.timedelta(
+                -start_date_weekday
+            )
             year_length = total_length_year_dict.get(year, 0)
             year_length = utils.format_float(self.poster.m2u(year_length))
             month_names = [
-                locale.nl_langinfo(day)[:3]
+                locale.nl_langinfo(day)[:3]  # Get only first three letters
                 for day in [
                     locale.MON_1,
                     locale.MON_2,
@@ -70,8 +73,7 @@ class GithubDrawer(TracksDrawer):
                     style=year_length_style,
                 )
             )
-            # add month name up to the rect
-            # beacuse of svg text auto trim the spaces()
+            # add month name up to the poster one by one beacuse of svg text auto trim the spaces.
             for num, name in enumerate(month_names):
                 dr.add(
                     dr.text(
@@ -83,31 +85,35 @@ class GithubDrawer(TracksDrawer):
                 )
 
             rect_x = 10
+            dom = (2.6, 2.6)
             # add every day of this year for 53 weeks and per week has 7 days
-            for i in range(53):
+            for i in range(54):
                 rect_y = offset.y + year_size + 2
                 for j in range(7):
+                    if int(github_rect_day.year) > year:
+                        break
                     rect_y += 3.5
                     color = "#444444"
                     date_title = str(github_rect_day)
                     if date_title in self.poster.tracks_by_date:
                         tracks = self.poster.tracks_by_date[date_title]
                         length = sum([t.length for t in tracks])
-                        has_special = 10.0 < length / 1000 < 20.0
+                        distance1 = self.poster.special_distance["special_distance"]
+                        distance2 = self.poster.special_distance["special_distance2"]
+                        has_special = distance1 < length / 1000 < distance2
                         color = self.color(
                             self.poster.length_range_by_date, length, has_special
                         )
-                        if length / 1000 >= 20.0:
-                            color = "red"
+                        if length / 1000 >= distance2:
+                            color = self.poster.colors.get(
+                                "special2"
+                            ) or self.poster.get("special")
                         str_length = utils.format_float(self.poster.m2u(length))
                         date_title = f"{date_title} {str_length} {km_or_mi}"
 
-                    rect = dr.rect((rect_x, rect_y), (2.6, 2.6), fill=color)
+                    rect = dr.rect((rect_x, rect_y), dom, fill=color)
                     rect.set_desc(title=date_title)
                     dr.add(rect)
                     github_rect_day += datetime.timedelta(1)
-                    if int(github_rect_day.year) > year:
-                        break
                 rect_x += 3.5
-            year_num += 1
             offset.y += 3.5 * 9 + year_size + 1.5

@@ -11,6 +11,7 @@ usage: create_poster.py [-h] [--gpx-dir DIR] [--output FILE]
                         [--logfile FILE] [--heatmap-center LAT,LNG]
                         [--heatmap-radius RADIUS_KM] [--circular-rings]
                         [--circular-ring-color COLOR]
+                        [--special_distance DISTANCE][--special_distance2 DISTANCE]
 
 optional arguments:
   -h, --help            show this help message and exit
@@ -210,6 +211,22 @@ def main():
         "--verbose", dest="verbose", action="store_true", help="Verbose logging."
     )
     args_parser.add_argument("--logfile", dest="logfile", metavar="FILE", type=str)
+    args_parser.add_argument(
+        "--special-distance",
+        dest="special_distance",
+        metavar="DISTANCE",
+        type=float,
+        default=10.0,
+        help="Special Distance1 by km and color with the special_color",
+    )
+    args_parser.add_argument(
+        "--special-distance2",
+        dest="special_distance2",
+        metavar="DISTANCE",
+        type=float,
+        default=20.0,
+        help="Special Distance2 by km and corlor with the special_color2",
+    )
 
     for _, drawer in drawers.items():
         drawer.create_args(args_parser)
@@ -249,6 +266,12 @@ def main():
     p.set_language(args.language)
     p.athlete = args.athlete
     p.title = args.title
+
+    p.special_distance = {
+        "special_distance": args.special_distance,
+        "special_distance2": args.special_distance2,
+    }
+
     p.colors = {
         "background": args.background_color,
         "track": args.track_color,
