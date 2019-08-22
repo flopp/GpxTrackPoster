@@ -27,7 +27,7 @@ class GithubDrawer(TracksDrawer):
         for year in range(self.poster.years.from_year, self.poster.years.to_year + 1):
             start_date_weekday, _ = calendar.monthrange(year, 1)
             github_rect_first_day = datetime.date(year, 1, 1)
-            # Github profile the first day start from the last Monday fo last year or the first Monday of this year
+            # Github profile the first day start from the last Monday of the last year or the first Monday of this year
             # It depands on if the first day of this year is Monday or not.
             github_rect_day = github_rect_first_day + datetime.timedelta(
                 -start_date_weekday
@@ -73,7 +73,7 @@ class GithubDrawer(TracksDrawer):
                     style=year_length_style,
                 )
             )
-            # add month name up to the poster one by one beacuse of svg text auto trim the spaces.
+            # add month name up to the poster one by one because of svg text auto trim the spaces.
             for num, name in enumerate(month_names):
                 dr.add(
                     dr.text(
