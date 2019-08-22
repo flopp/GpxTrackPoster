@@ -84,7 +84,7 @@ class GithubDrawer(TracksDrawer):
                     )
                 )
 
-            rect_x = 10
+            rect_x = 10.0
             dom = (2.6, 2.6)
             # add every day of this year for 53 weeks and per week has 7 days
             for i in range(54):
@@ -107,7 +107,7 @@ class GithubDrawer(TracksDrawer):
                         if length / 1000 >= distance2:
                             color = self.poster.colors.get(
                                 "special2"
-                            ) or self.poster.get("special")
+                            ) or self.poster.colors.get("special")
                         str_length = utils.format_float(self.poster.m2u(length))
                         date_title = f"{date_title} {str_length} {km_or_mi}"
 
