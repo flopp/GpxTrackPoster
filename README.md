@@ -17,6 +17,7 @@ usage: create_poster [-h] [--gpx-dir DIR] [--output FILE]
                      [--background-color COLOR] [--track-color COLOR]
                      [--track-color2 COLOR] [--text-color COLOR]
                      [--special-color COLOR] [--special-color2 COLOR]
+                     [--special-distance DISTANCE] [--special-distance2 DISTANCE]
                      [--units UNITS] [--clear-cache] [--verbose]
                      [--logfile FILE] [--heatmap-center LAT,LNG]
                      [--heatmap-radius RADIUS_KM] [--circular-rings]
@@ -46,6 +47,11 @@ optional arguments:
                         Special track color (default: "#FFFF00").
   --special-color2 COLOR
                         Secondary color of special tracks (default: none).
+  --special-distance Distance
+                        Special track distance (float default: 10.0 for github drawer)
+  --special-distance2 Distance
+                        Secondary track distance (float default: 20.0 for github drawer)
+
   --units UNITS         Distance units; "metric", "imperial" (default:
                         "metric").
   --clear-cache         Clear the track cache.
@@ -69,6 +75,9 @@ Example:
 ```
 create_poster --type grid --gpx-dir "my-tracks" --language "de" --year 2015 --title "Running" \
     --athlete "Florian Pigorsch" --special race1.gpx --special race2.gpx --special race3.gpx
+
+create_poster --type github --gpx-dir "my-tracks" --language "de" --title "Running" \
+    --athlete "Florian Pigorsch" --special-distance 10 --special-distance2 10 --special-color yellow --special-color2 red
 ```
 creates a nice poster (`poster.svg`) of the GPX tracks in the directory `my-tracks` (see above).
 
@@ -88,6 +97,7 @@ Using the `--type` command line parameter, you can specify which type of poster 
 ### Grid Poster (`--type grid`)
 The *Grid Poster* layouts all tracks in a grid, starting with the earliest track in the upper left corner of the poster, continuing with the second earliest track to the left, and so on.
 *Special tracks* are drawn with the selected *special color*.
+*Special distance tracks* are drawn with the selected *special color*.
 
 ![Example Grid Poster](https://github.com/flopp/GpxTrackPoster/blob/master/examples/example_grid.png)
 [svg](https://github.com/flopp/GpxTrackPoster/blob/master/examples/example_grid.svg)
@@ -109,6 +119,13 @@ The *Heatmap Poster* displays all tracks within one "map". The more often a loca
 
 ![Example Heatmap Poster](https://github.com/flopp/GpxTrackPoster/blob/master/examples/example_heatmap.png)
 [svg](https://github.com/flopp/GpxTrackPoster/blob/master/examples/example_heatmap.svg)
+
+### Github Poster (`--type github`)
+The *Github Poster* displays all tracks like github profile. *Special distance* are drawn with the *special color*.
+
+![Example Github Poster](https://github.com/flopp/GpxTrackPoster/blob/master/examples/example_github.png)
+[svg](https://github.com/flopp/GpxTrackPoster/blob/master/examples/example_github.svg)
+
 
 
 ## Selection a Language
