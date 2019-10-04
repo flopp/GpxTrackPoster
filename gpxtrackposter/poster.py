@@ -40,7 +40,7 @@ class Poster:
 
     def __init__(self):
         self.athlete = None
-        self.title = "My Poster"
+        self.title = None
         self.tracks_by_date = {}
         self.tracks = []
         self.length_range = None

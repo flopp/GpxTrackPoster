@@ -32,7 +32,7 @@ optional arguments:
   --language LANGUAGE   Language (default: english).
   --year YEAR           Filter tracks by year; "NUM", "NUM-NUM", "all"
                         (default: all years)
-  --title TITLE         Title to display (default: "My Tracks").
+  --title TITLE         Title to display.
   --athlete NAME        Athlete name to display (default: "John Doe").
   --special FILE        Mark track file from the GPX directory as special; use
                         multiple times to mark multiple tracks.

@@ -1,51 +1,54 @@
 # SOME DESCRIPTIVE TITLE.
-# Copyright (C) YEAR ORGANIZATION
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
 #
+#, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2017-01-21 13:30+0100\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2019-10-04 13:33+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Type: text/plain; charset=CHARSET\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: pygettext.py 1.5\n"
 
-
-#: src/poster.py:50
-msgid "YEAR"
+#: gpxtrackposter/cli.py:271
+msgid "MY TRACKS"
 msgstr ""
 
-#: src/poster.py:52
+#: gpxtrackposter/poster.py:156
 msgid "ATHLETE"
 msgstr ""
 
-#: src/poster.py:54
+#: gpxtrackposter/poster.py:172
 msgid "STATISTICS"
 msgstr ""
 
-#: src/poster.py:56
+#: gpxtrackposter/poster.py:180
+msgid "Number"
+msgstr ""
+
+#: gpxtrackposter/poster.py:188
 msgid "Weekly"
 msgstr ""
 
-#: src/poster.py:57
+#: gpxtrackposter/poster.py:196
 msgid "Total"
 msgstr ""
 
-#: src/poster.py:58
+#: gpxtrackposter/poster.py:204
 msgid "Avg"
 msgstr ""
 
-#: src/poster.py:59
+#: gpxtrackposter/poster.py:212
 msgid "Min"
 msgstr ""
 
-#: src/poster.py:60
+#: gpxtrackposter/poster.py:220
 msgid "Max"
-msgstr ""
-
-msgid "Number"
 msgstr ""
