@@ -22,7 +22,7 @@ optional arguments:
   --language LANGUAGE   Language (default: english).
   --year YEAR           Filter tracks by year; "NUM", "NUM-NUM", "all"
                         (default: all years)
-  --title TITLE         Title to display (default: "My Tracks").
+  --title TITLE         Title to display.
   --athlete NAME        Athlete name to display (default: "John Doe").
   --special FILE        Mark track file from the GPX directory as special; use
                         multiple times to mark multiple tracks.
@@ -119,11 +119,7 @@ def main():
         help='Filter tracks by year; "NUM", "NUM-NUM", "all" (default: all years)',
     )
     args_parser.add_argument(
-        "--title",
-        metavar="TITLE",
-        type=str,
-        default="My Tracks",
-        help='Title to display (default: "My Tracks").',
+        "--title", metavar="TITLE", type=str, help="Title to display."
     )
     args_parser.add_argument(
         "--athlete",
@@ -265,7 +261,10 @@ def main():
     )
     p.set_language(args.language)
     p.athlete = args.athlete
-    p.title = args.title
+    if args.title:
+        p.title = args.title
+    else:
+        p.title = p.trans("MY TRACKS")
 
     p.special_distance = {
         "special_distance": args.special_distance,

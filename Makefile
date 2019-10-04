@@ -1,4 +1,4 @@
-.PHONY: check-copyright bump-year update-readme format
+.PHONY: check-copyright bump-year update-readme format extract-messages
 
 
 COPYRIGHT_FILES = README.md LICENSE gpxtrackposter/*.py tests/*.py scripts/*.py
@@ -14,3 +14,15 @@ update-readme:
 
 format:
 	@black gpxtrackposter/*.py tests/*.py scripts/*.py
+
+extract-messages:
+	xgettext --keyword="trans" -d gpxposter -o locale/gpxposter.pot gpxtrackposter/*.py
+	msgmerge --update locale/de_DE/LC_MESSAGES/gpxposter.po locale/gpxposter.pot
+	msgmerge --update locale/fr_FR/LC_MESSAGES/gpxposter.po locale/gpxposter.pot
+	msgmerge --update locale/zh_CN/LC_MESSAGES/gpxposter.po locale/gpxposter.pot
+
+compile-messages:
+	msgfmt -o locale/de_DE/LC_MESSAGES/gpxposter.mo locale/de_DE/LC_MESSAGES/gpxposter
+	msgfmt -o locale/fr_FR/LC_MESSAGES/gpxposter.mo locale/fr_FR/LC_MESSAGES/gpxposter
+	msgfmt -o locale/zh_CN/LC_MESSAGES/gpxposter.mo locale/zh_CN/LC_MESSAGES/gpxposter
+

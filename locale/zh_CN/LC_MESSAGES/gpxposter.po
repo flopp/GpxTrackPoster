@@ -6,47 +6,52 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2017-01-21 13:30+0100\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2019-10-04 13:33+0200\n"
 "PO-Revision-Date: 2019-07-31 23:02+0800\n"
 "Last-Translator: Hong Yi <zouzou0208@gmail.com>\n"
 "Language-Team: Chinese (simplified)\n"
+"Language: zh_CN\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: pygettext.py 1.5\n"
-"Language: zh_CN\n"
 
-#: src/poster.py:50
-msgid "YEAR"
-msgstr "YEAR"
+#: gpxtrackposter/cli.py:271
+msgid "MY TRACKS"
+msgstr "我的足迹"
 
-#: src/poster.py:52
+#: gpxtrackposter/poster.py:156
 msgid "ATHLETE"
 msgstr "运动员"
 
-#: src/poster.py:54
+#: gpxtrackposter/poster.py:172
 msgid "STATISTICS"
 msgstr "数据"
 
-#: src/poster.py:56
+#: gpxtrackposter/poster.py:180
+msgid "Number"
+msgstr "次数"
+
+#: gpxtrackposter/poster.py:188
 msgid "Weekly"
 msgstr "周"
 
-#: src/poster.py:57
+#: gpxtrackposter/poster.py:196
 msgid "Total"
 msgstr "总"
 
-#: src/poster.py:58
+#: gpxtrackposter/poster.py:204
 msgid "Avg"
 msgstr "平均"
 
-#: src/poster.py:59
+#: gpxtrackposter/poster.py:212
 msgid "Min"
 msgstr "最少"
 
-#: src/poster.py:60
+#: gpxtrackposter/poster.py:220
 msgid "Max"
 msgstr "最多"
 
-msgid "Number"
-msgstr "次数"
+#~ msgid "YEAR"
+#~ msgstr "YEAR"
