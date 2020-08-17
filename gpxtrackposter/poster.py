@@ -194,7 +194,7 @@ class Poster:
         d.add(
             d.text(
                 self.trans("Total") + ": " + self.format_distance(total_length),
-                insert=(139, self.height - 15),
+                insert=(141, self.height - 15),
                 fill=text_color,
                 style=small_value_style,
             )
@@ -202,7 +202,7 @@ class Poster:
         d.add(
             d.text(
                 self.trans("Avg") + ": " + self.format_distance(average_length),
-                insert=(139, self.height - 10),
+                insert=(141, self.height - 10),
                 fill=text_color,
                 style=small_value_style,
             )
