@@ -1,0 +1,54 @@
+# Finnish translations for PACKAGE package.
+# Copyright (C) 2020 ORGANIZATION
+# Nikolay Korotkiy <sikmir@gmail.com>, 2020.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2019-10-04 13:33+0200\n"
+"PO-Revision-Date: 2020-08-31 08:52+0300\n"
+"Last-Translator: Nikolay Korotkiy <sikmir@gmail.com>\n"
+"Language-Team: Finnish\n"
+"Language: fi_FI\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: pygettext.py 1.5\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: gpxtrackposter/cli.py:271
+msgid "MY TRACKS"
+msgstr "OMAT REITIT"
+
+#: gpxtrackposter/poster.py:156
+msgid "ATHLETE"
+msgstr "URHEILIJA"
+
+#: gpxtrackposter/poster.py:172
+msgid "STATISTICS"
+msgstr "TILASTO"
+
+#: gpxtrackposter/poster.py:180
+msgid "Number"
+msgstr "Määrä"
+
+#: gpxtrackposter/poster.py:188
+msgid "Weekly"
+msgstr "Vkt"
+
+#: gpxtrackposter/poster.py:196
+msgid "Total"
+msgstr "Yhteens"
+
+#: gpxtrackposter/poster.py:204
+msgid "Avg"
+msgstr "Keskim"
+
+#: gpxtrackposter/poster.py:212
+msgid "Min"
+msgstr "Min"
+
+#: gpxtrackposter/poster.py:220
+msgid "Max"
+msgstr "Maks"
