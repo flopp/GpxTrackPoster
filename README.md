@@ -137,6 +137,7 @@ We currently support
 - German (`--language de_DE`)
 - Chinese (`--language zh_CN`)
 - Russian (`--language ru_RU`)
+- Finnish (`--language fi_FI`)
 
 
 ## Setup
