@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-10-04 13:33+0200\n"
+"POT-Creation-Date: 2020-08-31 18:17+0300\n"
 "PO-Revision-Date: 2019-07-31 23:02+0800\n"
 "Last-Translator: Hong Yi <zouzou0208@gmail.com>\n"
 "Language-Team: Chinese (simplified)\n"
@@ -17,9 +17,17 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: pygettext.py 1.5\n"
 
-#: gpxtrackposter/cli.py:271
+#: gpxtrackposter/cli.py:267
 msgid "MY TRACKS"
 msgstr "我的足迹"
+
+#: gpxtrackposter/poster.py:125
+msgid "km"
+msgstr ""
+
+#: gpxtrackposter/poster.py:126
+msgid "mi"
+msgstr ""
 
 #: gpxtrackposter/poster.py:156
 msgid "ATHLETE"

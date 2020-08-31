@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-10-04 13:33+0200\n"
+"POT-Creation-Date: 2020-08-31 18:17+0300\n"
 "PO-Revision-Date: 2020-08-31 08:52+0300\n"
 "Last-Translator: Nikolay Korotkiy <sikmir@gmail.com>\n"
 "Language-Team: Finnish\n"
@@ -17,9 +17,17 @@ msgstr ""
 "Generated-By: pygettext.py 1.5\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: gpxtrackposter/cli.py:271
+#: gpxtrackposter/cli.py:267
 msgid "MY TRACKS"
 msgstr "OMAT REITIT"
+
+#: gpxtrackposter/poster.py:125
+msgid "km"
+msgstr "km"
+
+#: gpxtrackposter/poster.py:126
+msgid "mi"
+msgstr "mi"
 
 #: gpxtrackposter/poster.py:156
 msgid "ATHLETE"

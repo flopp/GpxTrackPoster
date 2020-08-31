@@ -122,8 +122,8 @@ class Poster:
     def u(self):
         """Return the unit of distance being used on the Poster."""
         if self.units == "metric":
-            return "km"
-        return "mi"
+            return self.trans("km")
+        return self.trans("mi")
 
     def format_distance(self, d: float) -> str:
         """Formats a distance using the locale specific float format and the selected unit."""
