@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-10-04 13:33+0200\n"
+"POT-Creation-Date: 2020-08-31 18:17+0300\n"
 "PO-Revision-Date: 2020-08-31 08:41+0300\n"
 "Last-Translator: Nikolay Korotkiy <sikmir@gmail.com>\n"
 "Language-Team: Russian\n"
@@ -15,11 +15,20 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: pygettext.py 1.5\n"
-"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
+"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n"
+"%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
 
-#: gpxtrackposter/cli.py:271
+#: gpxtrackposter/cli.py:267
 msgid "MY TRACKS"
 msgstr "МОИ ТРЕКИ"
+
+#: gpxtrackposter/poster.py:125
+msgid "km"
+msgstr "км"
+
+#: gpxtrackposter/poster.py:126
+msgid "mi"
+msgstr "мл"
 
 #: gpxtrackposter/poster.py:156
 msgid "ATHLETE"

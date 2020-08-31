@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-10-04 13:33+0200\n"
+"POT-Creation-Date: 2020-08-31 18:17+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,8 +17,16 @@ msgstr ""
 "Content-Type: text/plain; charset=CHARSET\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: gpxtrackposter/cli.py:271
+#: gpxtrackposter/cli.py:267
 msgid "MY TRACKS"
+msgstr ""
+
+#: gpxtrackposter/poster.py:125
+msgid "km"
+msgstr ""
+
+#: gpxtrackposter/poster.py:126
+msgid "mi"
 msgstr ""
 
 #: gpxtrackposter/poster.py:156
