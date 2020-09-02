@@ -11,6 +11,7 @@ import svgwrite
 
 from gpxtrackposter import utils
 from gpxtrackposter.exceptions import PosterError
+from gpxtrackposter.localization import localized_month_name, localized_day_of_week_name
 from gpxtrackposter.poster import Poster
 from gpxtrackposter.tracks_drawer import TracksDrawer
 from gpxtrackposter.xy import XY
@@ -78,31 +79,13 @@ class CalendarDrawer(TracksDrawer):
             (size.y - cell_size * 3 * 12) / 11,
         )
 
-        # chinese weekday key number is the third.
-        keyword_num = 0
-        if locale.getlocale()[0] == "zh_CN":
-            keyword_num = 2
-        # first character of localized day names, starting with Monday.
-        dow = [
-            locale.nl_langinfo(day)[keyword_num].upper()
-            for day in [
-                locale.DAY_2,
-                locale.DAY_3,
-                locale.DAY_4,
-                locale.DAY_5,
-                locale.DAY_6,
-                locale.DAY_7,
-                locale.DAY_1,
-            ]
-        ]
-
         for month in range(1, 13):
             date = datetime.date(year, month, 1)
             y = month - 1
             y_pos = offset.y + (y * 3 + 1) * cell_size + y * spacing.y
             dr.add(
                 dr.text(
-                    date.strftime("%B"),
+                    localized_month_name(month),
                     insert=(offset.x, y_pos - 2),
                     fill=self.poster.colors["text"],
                     alignment_baseline="hanging",
@@ -142,7 +125,7 @@ class CalendarDrawer(TracksDrawer):
 
                 dr.add(
                     dr.text(
-                        dow[date.weekday()],
+                        localized_day_of_week_name(date.weekday(), short=True),
                         insert=(
                             offset.x + (day_offset + x) * cell_size + cell_size / 2,
                             pos[1] + cell_size / 2,
