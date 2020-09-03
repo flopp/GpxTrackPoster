@@ -17,6 +17,7 @@ usage: create_poster [-h] [--gpx-dir DIR] [--output FILE]
                      [--background-color COLOR] [--track-color COLOR]
                      [--track-color2 COLOR] [--text-color COLOR]
                      [--special-color COLOR] [--special-color2 COLOR]
+                     [--min-distance DISTANCE]
                      [--special-distance DISTANCE] [--special-distance2 DISTANCE]
                      [--units UNITS] [--clear-cache] [--verbose]
                      [--logfile FILE] [--heatmap-center LAT,LNG]
@@ -51,6 +52,8 @@ optional arguments:
                         Special track distance (float default: 10.0 for github drawer)
   --special-distance2 Distance
                         Secondary track distance (float default: 20.0 for github drawer)
+  --min-distance Distance
+                        Min distance(km) to filter tracks
 
   --units UNITS         Distance units; "metric", "imperial" (default:
                         "metric").
@@ -143,7 +146,7 @@ We currently support
 ## Setup
 1. Clone the repository: `git clone https://github.com/flopp/GpxTrackPoster.git`
 2. `cd GpxTrackPoster`
-3. Create virtualenv: `virtualenv -p /usr/bin/python3 venv`
+3. Create virtualenv: `virtualenv -p /usr/bin/python3 venv` or `python -m venv venv`
 4. Activate virtualenv: `source venv/bin/activate`
 5. Install the package: `pip install .`
 6. Install development requirements (only if you want to contribute code!): `pip install -r requirements-dev.txt`
@@ -176,4 +179,4 @@ E.g. use [Poedit](https://poedit.net/) or [Localise Online Editor](https://local
 `msgfmt gpxposter.po -o gpxposter.mo`
 
 ## License
-[MIT](https://github.com/flopp/GpxTrackPoster/blob/master/LICENSE) &copy; 2016-2019 Florian Pigorsch
+[MIT](https://github.com/flopp/GpxTrackPoster/blob/master/LICENSE) &copy; 2016-2020 Florian Pigorsch

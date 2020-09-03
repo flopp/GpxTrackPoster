@@ -6,6 +6,7 @@ usage: create_poster.py [-h] [--gpx-dir DIR] [--output FILE]
                         [--athlete NAME] [--special FILE] [--type TYPE]
                         [--background-color COLOR] [--track-color COLOR]
                         [--track-color2 COLOR] [--text-color COLOR]
+                        [--min-distance distance]
                         [--special-color COLOR] [--special-color2 COLOR]
                         [--units UNITS] [--clear-cache] [--verbose]
                         [--logfile FILE] [--heatmap-center LAT,LNG]
@@ -33,6 +34,8 @@ optional arguments:
   --track-color COLOR   Color of tracks (default: "#4DD2FF").
   --track-color2 COLOR  Secondary color of tracks (default: none).
   --text-color COLOR    Color of text (default: "#FFFFFF").
+  --min-distance DISTANCE
+                        min distance to filter tracks
   --special-color COLOR
                         Special track color (default: "#FFFF00").
   --special-color2 COLOR
@@ -223,6 +226,14 @@ def main():
         default=20.0,
         help="Special Distance2 by km and corlor with the special_color2",
     )
+    args_parser.add_argument(
+        "--min-distance",
+        dest="min_distance",
+        metavar="DISTANCE",
+        type=float,
+        default=1.0,
+        help="min distance by km for track filter",
+    )
 
     for _, drawer in drawers.items():
         drawer.create_args(args_parser)
@@ -246,6 +257,7 @@ def main():
         raise ParameterError(f"Bad year range: {args.year}.")
 
     loader.special_file_names = args.special
+    loader.min_length = args.min_distance * 1000
     if args.clear_cache:
         print("Clearing cache...")
         loader.clear_cache()
