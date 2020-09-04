@@ -1,5 +1,5 @@
 """Represent x,y coords with properly overloaded operations."""
-# Copyright 2016-2019 Florian Pigorsch & Contributors. All rights reserved.
+# Copyright 2016-2020 Florian Pigorsch & Contributors. All rights reserved.
 #
 # Use of this source code is governed by a MIT-style
 # license that can be found in the LICENSE file.
@@ -30,7 +30,7 @@ class XY:
     def __sub__(self, other: "XY") -> "XY":
         return XY(self.x - other.x, self.y - other.y)
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return f"XY: {self.x}/{self.y}"
 
     def tuple(self) -> Tuple[float, float]:

@@ -1,14 +1,16 @@
 """Assorted utility methods for use in creating posters."""
-# Copyright 2016-2019 Florian Pigorsch & Contributors. All rights reserved.
+# Copyright 2016-2020 Florian Pigorsch & Contributors. All rights reserved.
 #
 # Use of this source code is governed by a MIT-style
 # license that can be found in the LICENSE file.
 
-import colour
 import locale
 import math
 from typing import List, Optional, Tuple
-import s2sphere as s2
+
+import colour  # type: ignore
+import s2sphere as s2  # type: ignore
+
 from gpxtrackposter.value_range import ValueRange
 from gpxtrackposter.xy import XY
 
@@ -66,9 +68,7 @@ def compute_bounds_xy(lines: List[List[XY]]) -> Tuple[ValueRange, ValueRange]:
     return range_x, range_y
 
 
-def compute_grid(
-    count: int, dimensions: XY
-) -> Tuple[Optional[float], Optional[Tuple[int, int]]]:
+def compute_grid(count: int, dimensions: XY) -> Tuple[Optional[float], Optional[Tuple[int, int]]]:
     # this is somehow suboptimal O(count^2). I guess it's possible in O(count)
     min_waste = -1.0
     best_size = None
@@ -82,7 +82,7 @@ def compute_grid(
                 waste = dimensions.x * dimensions.y - count * size * size
                 if waste < 0:
                     continue
-                elif best_size is None or waste < min_waste:
+                if best_size is None or waste < min_waste:
                     best_size = size
                     best_counts = count_x, count_y
                     min_waste = waste
@@ -104,5 +104,5 @@ def interpolate_color(color1: str, color2: str, ratio: float) -> str:
     return c3.hex_l
 
 
-def format_float(f) -> str:
+def format_float(f: float) -> str:
     return locale.format_string("%.1f", f)

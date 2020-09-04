@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 
-import setuptools
 import os
+
+import setuptools
 
 
 def _read_reqs(relpath):

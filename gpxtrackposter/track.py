@@ -1,14 +1,17 @@
 """Create and maintain info about a given activity track (corresponding to one GPX file)."""
-# Copyright 2016-2019 Florian Pigorsch & Contributors. All rights reserved.
+# Copyright 2016-2020 Florian Pigorsch & Contributors. All rights reserved.
 #
 # Use of this source code is governed by a MIT-style
 # license that can be found in the LICENSE file.
 
 import datetime
-import gpxpy as mod_gpxpy
 import json
 import os
-import s2sphere as s2
+import typing
+
+import gpxpy as mod_gpxpy  # type: ignore
+import s2sphere as s2  # type: ignore
+
 from gpxtrackposter.exceptions import TrackLoadError
 
 
@@ -31,15 +34,15 @@ class Track:
         store_cache: Cache the current track.
     """
 
-    def __init__(self):
-        self.file_names = []
-        self.polylines = []
-        self.start_time = None
-        self.end_time = None
-        self.length = 0
+    def __init__(self) -> None:
+        self.file_names: typing.List[str] = []
+        self.polylines: typing.List[typing.List[s2.LatLng]] = []
+        self.start_time: typing.Optional[datetime.datetime] = None
+        self.end_time: typing.Optional[datetime.datetime] = None
+        self.length: float = 0.0
         self.special = False
 
-    def load_gpx(self, file_name: str):
+    def load_gpx(self, file_name: str) -> None:
         """Load the GPX file into self.
 
         Args:
@@ -74,7 +77,7 @@ class Track:
                 bbox = bbox.union(s2.LatLngRect.from_point(latlng.normalized()))
         return bbox
 
-    def _load_gpx_data(self, gpx: "mod_gpxpy.gpx.GPX"):
+    def _load_gpx_data(self, gpx: "mod_gpxpy.gpx.GPX") -> None:
         self.start_time, self.end_time = gpx.get_time_bounds()
         if self.start_time is None:
             raise TrackLoadError("Track has no start time.")
@@ -86,12 +89,10 @@ class Track:
         gpx.simplify()
         for t in gpx.tracks:
             for s in t.segments:
-                line = [
-                    s2.LatLng.from_degrees(p.latitude, p.longitude) for p in s.points
-                ]
+                line = [s2.LatLng.from_degrees(p.latitude, p.longitude) for p in s.points]
                 self.polylines.append(line)
 
-    def append(self, other: "Track"):
+    def append(self, other: "Track") -> None:
         """Append other track to self."""
         self.end_time = other.end_time
         self.polylines.extend(other.polylines)
@@ -99,7 +100,7 @@ class Track:
         self.file_names.extend(other.file_names)
         self.special = self.special or other.special
 
-    def load_cache(self, cache_file_name: str):
+    def load_cache(self, cache_file_name: str) -> None:
         """Load the track from a previously cached track
 
         Args:
@@ -111,25 +112,16 @@ class Track:
         try:
             with open(cache_file_name) as data_file:
                 data = json.load(data_file)
-                self.start_time = datetime.datetime.strptime(
-                    data["start"], "%Y-%m-%d %H:%M:%S"
-                )
-                self.end_time = datetime.datetime.strptime(
-                    data["end"], "%Y-%m-%d %H:%M:%S"
-                )
+                self.start_time = datetime.datetime.strptime(data["start"], "%Y-%m-%d %H:%M:%S")
+                self.end_time = datetime.datetime.strptime(data["end"], "%Y-%m-%d %H:%M:%S")
                 self.length = float(data["length"])
                 self.polylines = []
                 for data_line in data["segments"]:
-                    self.polylines.append(
-                        [
-                            s2.LatLng.from_degrees(float(d["lat"]), float(d["lng"]))
-                            for d in data_line
-                        ]
-                    )
+                    self.polylines.append([s2.LatLng.from_degrees(float(d["lat"]), float(d["lng"])) for d in data_line])
         except Exception as e:
             raise TrackLoadError("Failed to load track data from cache.") from e
 
-    def store_cache(self, cache_file_name: str):
+    def store_cache(self, cache_file_name: str) -> None:
         """Cache the current track"""
         dir_name = os.path.dirname(cache_file_name)
         if not os.path.isdir(dir_name):
@@ -137,12 +129,9 @@ class Track:
         with open(cache_file_name, "w") as json_file:
             lines_data = []
             for line in self.polylines:
-                lines_data.append(
-                    [
-                        {"lat": latlng.lat().degrees, "lng": latlng.lng().degrees}
-                        for latlng in line
-                    ]
-                )
+                lines_data.append([{"lat": latlng.lat().degrees, "lng": latlng.lng().degrees} for latlng in line])
+            assert self.start_time is not None
+            assert self.end_time is not None
             json.dump(
                 {
                     "start": self.start_time.strftime("%Y-%m-%d %H:%M:%S"),

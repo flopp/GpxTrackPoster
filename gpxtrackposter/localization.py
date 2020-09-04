@@ -10,7 +10,7 @@ import locale
 def localized_month_name(month: int) -> str:
     assert 1 <= month <= 12
 
-    locale_name = locale.getlocale()[0]
+    # locale_name = locale.getlocale()[0]
 
     # special case for russian
     # if locale_name == "ru_RU":
@@ -43,24 +43,6 @@ def localized_day_of_week_name(day_of_week: int, short: bool) -> str:
 
     locale_name = locale.getlocale()[0]
 
-    # special case for chinese: chinese weekday key number is the third
-    if locale_name == "zh_CN":
-        name = locale.nl_langinfo(
-            [
-                locale.DAY_2,
-                locale.DAY_3,
-                locale.DAY_4,
-                locale.DAY_5,
-                locale.DAY_6,
-                locale.DAY_7,
-                locale.DAY_1,
-            ][day_of_week]
-        )
-        if short:
-            return name[2].upper()
-        return name
-
-    # default
     name = locale.nl_langinfo(
         [
             locale.DAY_2,
@@ -73,5 +55,8 @@ def localized_day_of_week_name(day_of_week: int, short: bool) -> str:
         ][day_of_week]
     )
     if short:
+        # special case for chinese: chinese weekday key number is the third
+        if locale_name == "zh_CN":
+            return name[2].upper()
         return name[0].upper()
     return name

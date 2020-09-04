@@ -1,73 +1,16 @@
 #!/usr/bin/env python
-"""Create a variety of poster-style visualizations from GPX data
 
-usage: create_poster.py [-h] [--gpx-dir DIR] [--output FILE]
-                        [--language LANGUAGE] [--year YEAR] [--title TITLE]
-                        [--athlete NAME] [--special FILE] [--type TYPE]
-                        [--background-color COLOR] [--track-color COLOR]
-                        [--track-color2 COLOR] [--text-color COLOR]
-                        [--min-distance distance]
-                        [--special-color COLOR] [--special-color2 COLOR]
-                        [--units UNITS] [--clear-cache] [--verbose]
-                        [--logfile FILE] [--heatmap-center LAT,LNG]
-                        [--heatmap-radius RADIUS_KM] [--circular-rings]
-                        [--circular-ring-color COLOR]
-                        [--special_distance DISTANCE][--special_distance2 DISTANCE]
-
-optional arguments:
-  -h, --help            show this help message and exit
-  --gpx-dir DIR         Directory containing GPX files (default: current
-                        directory).
-  --output FILE         Name of generated SVG image file (default:
-                        "poster.svg").
-  --language LANGUAGE   Language (default: english).
-  --year YEAR           Filter tracks by year; "NUM", "NUM-NUM", "all"
-                        (default: all years)
-  --title TITLE         Title to display.
-  --athlete NAME        Athlete name to display (default: "John Doe").
-  --special FILE        Mark track file from the GPX directory as special; use
-                        multiple times to mark multiple tracks.
-  --type TYPE           Type of poster to create (default: "grid", available:
-                        "grid", "calendar", "heatmap", "circular", "github").
-  --background-color COLOR
-                        Background color of poster (default: "#222222").
-  --track-color COLOR   Color of tracks (default: "#4DD2FF").
-  --track-color2 COLOR  Secondary color of tracks (default: none).
-  --text-color COLOR    Color of text (default: "#FFFFFF").
-  --min-distance DISTANCE
-                        min distance to filter tracks
-  --special-color COLOR
-                        Special track color (default: "#FFFF00").
-  --special-color2 COLOR
-                        Secondary color of special tracks (default: none).
-  --units UNITS         Distance units; "metric", "imperial" (default:
-                        "metric").
-  --clear-cache         Clear the track cache.
-  --verbose             Verbose logging.
-  --logfile FILE
-
-Heatmap Type Options:
-  --heatmap-center LAT,LNG
-                        Center of the heatmap (default: automatic).
-  --heatmap-radius RADIUS_KM
-                        Scale the heatmap such that at least a circle with
-                        radius=RADIUS_KM is visible (default: automatic).
-
-Circular Type Options:
-  --circular-rings      Draw distance rings.
-  --circular-ring-color COLOR
-                        Color of distance rings.
-"""
-# Copyright 2016-2019 Florian Pigorsch & Contributors. All rights reserved.
+# Copyright 2016-2020 Florian Pigorsch & Contributors. All rights reserved.
 #
 # Use of this source code is governed by a MIT-style
 # license that can be found in the LICENSE file.
 
 import argparse
-import appdirs
 import logging
 import os
 import sys
+
+import appdirs  # type: ignore
 
 from gpxtrackposter import poster, track_loader
 from gpxtrackposter import grid_drawer, circular_drawer, heatmap_drawer
@@ -79,7 +22,7 @@ __app_name__ = "create_poster"
 __app_author__ = "flopp.net"
 
 
-def main():
+def main() -> None:
     """Handle command line arguments and call other modules as needed."""
 
     p = poster.Poster()
@@ -91,7 +34,7 @@ def main():
         "github": github_drawer.GithubDrawer(p),
     }
 
-    args_parser = argparse.ArgumentParser()
+    args_parser = argparse.ArgumentParser(prog=__app_name__)
     args_parser.add_argument(
         "--gpx-dir",
         dest="gpx_dir",
@@ -121,9 +64,7 @@ def main():
         default="all",
         help='Filter tracks by year; "NUM", "NUM-NUM", "all" (default: all years)',
     )
-    args_parser.add_argument(
-        "--title", metavar="TITLE", type=str, help="Title to display."
-    )
+    args_parser.add_argument("--title", metavar="TITLE", type=str, help="Title to display.")
     args_parser.add_argument(
         "--athlete",
         metavar="NAME",
@@ -136,8 +77,7 @@ def main():
         metavar="FILE",
         action="append",
         default=[],
-        help="Mark track file from the GPX directory as special; use multiple times to mark "
-        "multiple tracks.",
+        help="Mark track file from the GPX directory as special; use multiple times to mark " "multiple tracks.",
     )
     types = '", "'.join(drawers.keys())
     args_parser.add_argument(
@@ -206,9 +146,7 @@ def main():
         action="store_true",
         help="Clear the track cache.",
     )
-    args_parser.add_argument(
-        "--verbose", dest="verbose", action="store_true", help="Verbose logging."
-    )
+    args_parser.add_argument("--verbose", dest="verbose", action="store_true", help="Verbose logging.")
     args_parser.add_argument("--logfile", dest="logfile", metavar="FILE", type=str)
     args_parser.add_argument(
         "--special-distance",
@@ -250,9 +188,7 @@ def main():
         log.addHandler(handler)
 
     loader = track_loader.TrackLoader()
-    loader.cache_dir = os.path.join(
-        appdirs.user_cache_dir(__app_name__, __app_author__), "tracks"
-    )
+    loader.set_cache_dir(os.path.join(appdirs.user_cache_dir(__app_name__, __app_author__), "tracks"))
     if not loader.year_range.parse(args.year):
         raise ParameterError(f"Bad year range: {args.year}.")
 
@@ -268,15 +204,10 @@ def main():
             print("No tracks found.")
         return
 
-    print(
-        f"Creating poster of type {args.type} with {len(tracks)} tracks and storing it in file {args.output}..."
-    )
+    print(f"Creating poster of type {args.type} with {len(tracks)} tracks and storing it in file {args.output}...")
     p.set_language(args.language)
-    p.athlete = args.athlete
-    if args.title:
-        p.title = args.title
-    else:
-        p.title = p.trans("MY TRACKS")
+    p.set_athlete(args.athlete)
+    p.set_title(args.title if args.title else p.translate("MY TRACKS"))
 
     p.special_distance = {
         "special_distance": args.special_distance,

@@ -1,13 +1,13 @@
 """Draw a calendar poster."""
-# Copyright 2016-2019 Florian Pigorsch & Contributors. All rights reserved.
+# Copyright 2016-2020 Florian Pigorsch & Contributors. All rights reserved.
 #
 # Use of this source code is governed by a MIT-style
 # license that can be found in the LICENSE file.
 
 import calendar
 import datetime
-import locale
-import svgwrite
+
+import svgwrite  # type: ignore
 
 from gpxtrackposter import utils
 from gpxtrackposter.exceptions import PosterError
@@ -23,7 +23,7 @@ class CalendarDrawer(TracksDrawer):
     def __init__(self, the_poster: Poster):
         super().__init__(the_poster)
 
-    def draw(self, dr: svgwrite.Drawing, size: XY, offset: XY):
+    def draw(self, dr: svgwrite.Drawing, size: XY, offset: XY) -> None:
         """Iterate through the Poster's years, creating a calendar for each."""
         if self.poster.tracks is None:
             raise PosterError("No tracks to draw.")
@@ -41,14 +41,14 @@ class CalendarDrawer(TracksDrawer):
             margin.y = 0
         sub_size = cell_size - 2 * margin
 
-        for year in range(self.poster.years.from_year, self.poster.years.to_year + 1):
+        for year in self.poster.years.iter():
             self._draw(dr, sub_size, offset + margin + cell_size * XY(x, y), year)
             x += 1
             if x >= count_x:
                 x = 0
                 y += 1
 
-    def _draw(self, dr: svgwrite.Drawing, size: XY, offset: XY, year: int):
+    def _draw(self, dr: svgwrite.Drawing, size: XY, offset: XY, year: int) -> None:
         min_size = min(size.x, size.y)
         year_size = min_size * 4.0 / 80.0
         year_style = f"font-size:{year_size}px; font-family:Arial;"
@@ -104,9 +104,7 @@ class CalendarDrawer(TracksDrawer):
                     tracks = self.poster.tracks_by_date[text_date]
                     length = sum([t.length for t in tracks])
                     has_special = len([t for t in tracks if t.special]) > 0
-                    color = self.color(
-                        self.poster.length_range_by_date, length, has_special
-                    )
+                    color = self.color(self.poster.length_range_by_date, length, has_special)
                     dr.add(dr.rect(pos, dim, fill=color))
                     dr.add(
                         dr.text(

@@ -1,5 +1,5 @@
 """Draw a heatmap poster."""
-# Copyright 2016-2019 Florian Pigorsch & Contributors. All rights reserved.
+# Copyright 2016-2020 Florian Pigorsch & Contributors. All rights reserved.
 #
 # Use of this source code is governed by a MIT-style
 # license that can be found in the LICENSE file.
@@ -7,8 +7,9 @@
 import argparse
 import logging
 import math
-import svgwrite
-import s2sphere as s2
+
+import svgwrite  # type: ignore
+import s2sphere as s2  # type: ignore
 
 from gpxtrackposter.exceptions import ParameterError
 from gpxtrackposter.poster import Poster
@@ -39,7 +40,7 @@ class HeatmapDrawer(TracksDrawer):
         self._center = None
         self._radius = None
 
-    def create_args(self, args_parser: argparse.ArgumentParser):
+    def create_args(self, args_parser: argparse.ArgumentParser) -> None:
         group = args_parser.add_argument_group("Heatmap Type Options")
         group.add_argument(
             "--heatmap-center",
@@ -57,7 +58,7 @@ class HeatmapDrawer(TracksDrawer):
             "(default: automatic).",
         )
 
-    def fetch_args(self, args: argparse.Namespace):
+    def fetch_args(self, args: argparse.Namespace) -> None:
         """Get arguments that were passed, and also perform basic validation on them.
 
         For example, make sure the center is an actual lat, lng , and make sure the radius is a
@@ -75,24 +76,20 @@ class HeatmapDrawer(TracksDrawer):
                 lat = float(latlng_str[0].strip())
                 lng = float(latlng_str[1].strip())
             except ValueError as e:
-                raise ParameterError(
-                    f"Not a valid LAT,LNG pair: {args.heatmap_center}"
-                ) from e
-            if not (-90 <= lat <= 90) or not (-180 <= lng <= 180):
+                raise ParameterError(f"Not a valid LAT,LNG pair: {args.heatmap_center}") from e
+            if not -90 <= lat <= 90 or not -180 <= lng <= 180:
                 raise ParameterError(f"Not a valid LAT,LNG pair: {args.heatmap_center}")
             self._center = s2.LatLng.from_degrees(lat, lng)
         if args.heatmap_radius:
             if args.heatmap_radius <= 0:
-                raise ParameterError(
-                    f"Not a valid radius: {args.heatmap_radius} (must be > 0)"
-                )
+                raise ParameterError(f"Not a valid radius: {args.heatmap_radius} (must be > 0)")
             if not args.heatmap_center:
                 raise ParameterError("--heatmap-radius needs --heatmap-center")
             self._radius = args.heatmap_radius
 
     def _determine_bbox(self) -> s2.LatLngRect:
         if self._center:
-            log.info(f"Forcing heatmap center to {self._center}")
+            log.info("Forcing heatmap center to %s", str(self._center))
             dlat, dlng = 0, 0
             if self._radius:
                 er = 6378.1
@@ -112,16 +109,14 @@ class HeatmapDrawer(TracksDrawer):
                             if d > 180:
                                 d = 360 - d
                             dlng = max(dlng, d)
-            return s2.LatLngRect.from_center_size(
-                self._center, s2.LatLng.from_degrees(2 * dlat, 2 * dlng)
-            )
+            return s2.LatLngRect.from_center_size(self._center, s2.LatLng.from_degrees(2 * dlat, 2 * dlng))
 
         tracks_bbox = s2.LatLngRect()
         for tr in self.poster.tracks:
             tracks_bbox = tracks_bbox.union(tr.bbox())
         return tracks_bbox
 
-    def draw(self, dr: svgwrite.Drawing, size: XY, offset: XY):
+    def draw(self, dr: svgwrite.Drawing, size: XY, offset: XY) -> None:
         """Draw the heatmap based on tracks."""
         bbox = self._determine_bbox()
         for tr in self.poster.tracks:

@@ -1,11 +1,13 @@
 """Contains the base class TracksDrawer, which other Drawers inherit from."""
-# Copyright 2016-2019 Florian Pigorsch & Contributors. All rights reserved.
+# Copyright 2016-2020 Florian Pigorsch & Contributors. All rights reserved.
 #
 # Use of this source code is governed by a MIT-style
 # license that can be found in the LICENSE file.
 
 import argparse
-import svgwrite
+
+import svgwrite  # type: ignore
+
 from gpxtrackposter.poster import Poster
 from gpxtrackposter.value_range import ValueRange
 from gpxtrackposter.xy import XY
@@ -18,34 +20,16 @@ class TracksDrawer:
     def __init__(self, the_poster: Poster):
         self.poster = the_poster
 
-    def create_args(self, args_parser: argparse.ArgumentParser):
+    def create_args(self, args_parser: argparse.ArgumentParser) -> None:
         pass
 
-    def fetch_args(self, args):
+    def fetch_args(self, args: argparse.Namespace) -> None:
         pass
 
-    def draw(self, dr: svgwrite.Drawing, size: XY, offset: XY):
+    def draw(self, dr: svgwrite.Drawing, size: XY, offset: XY) -> None:
         pass
 
-    def color(
-        self, length_range: ValueRange, length: float, is_special: bool = False
-    ) -> str:
-        assert length_range.is_valid()
-        assert length_range.contains(length)
-
-        color1 = (
-            self.poster.colors["special"] if is_special else self.poster.colors["track"]
-        )
-        color2 = (
-            self.poster.colors["special2"]
-            if is_special
-            else self.poster.colors["track2"]
-        )
-
-        diff = length_range.diameter()
-        if diff == 0:
-            return color1
-
-        return utils.interpolate_color(
-            color1, color2, (length - length_range.lower()) / diff
-        )
+    def color(self, length_range: ValueRange, length: float, is_special: bool = False) -> str:
+        color1 = self.poster.colors["special"] if is_special else self.poster.colors["track"]
+        color2 = self.poster.colors["special2"] if is_special else self.poster.colors["track2"]
+        return utils.interpolate_color(color1, color2, length_range.relative_position(length))

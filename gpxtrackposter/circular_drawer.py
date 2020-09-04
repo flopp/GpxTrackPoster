@@ -1,5 +1,5 @@
 """Draw a circular Poster."""
-# Copyright 2016-2019 Florian Pigorsch & Contributors. All rights reserved.
+# Copyright 2016-2020 Florian Pigorsch & Contributors. All rights reserved.
 #
 # Use of this source code is governed by a MIT-style
 # license that can be found in the LICENSE file.
@@ -8,8 +8,10 @@ import argparse
 import calendar
 import datetime
 import math
-import svgwrite
-from typing import List, Optional
+import typing
+
+import svgwrite  # type: ignore
+
 from gpxtrackposter.exceptions import PosterError
 from gpxtrackposter.poster import Poster
 from gpxtrackposter.track import Track
@@ -32,7 +34,7 @@ class CircularDrawer(TracksDrawer):
         draw: Draw each year on the Poster.
     """
 
-    def __init__(self, the_poster: Poster):
+    def __init__(self, the_poster: Poster) -> None:
         """Init the CircularDrawer with default values for _rings and _ring_color
 
         Note that these can be overridden via arguments when calling."""
@@ -40,7 +42,7 @@ class CircularDrawer(TracksDrawer):
         self._rings = False
         self._ring_color = "darkgrey"
 
-    def create_args(self, args_parser: argparse.ArgumentParser):
+    def create_args(self, args_parser: argparse.ArgumentParser) -> None:
         """Add arguments to the parser"""
         group = args_parser.add_argument_group("Circular Type Options")
         group.add_argument(
@@ -58,12 +60,12 @@ class CircularDrawer(TracksDrawer):
             help="Color of distance rings.",
         )
 
-    def fetch_args(self, args):
+    def fetch_args(self, args: argparse.Namespace) -> None:
         """Get arguments from the parser"""
         self._rings = args.circular_rings
         self._ring_color = args.circular_ring_color
 
-    def draw(self, dr: svgwrite.Drawing, size: XY, offset: XY):
+    def draw(self, dr: svgwrite.Drawing, size: XY, offset: XY) -> None:
         """Draw the circular Poster using distances broken down by time"""
         if self.poster.tracks is None:
             raise PosterError("No tracks to draw.")
@@ -83,14 +85,14 @@ class CircularDrawer(TracksDrawer):
         if count_y <= 1:
             margin.y = 0
         sub_size = cell_size - 2 * margin
-        for year in range(self.poster.years.from_year, self.poster.years.to_year + 1):
+        for year in self.poster.years.iter():
             self._draw_year(dr, sub_size, offset + margin + cell_size * XY(x, y), year)
             x += 1
             if x >= count_x:
                 x = 0
                 y += 1
 
-    def _draw_year(self, dr: svgwrite.Drawing, size: XY, offset: XY, year: int):
+    def _draw_year(self, dr: svgwrite.Drawing, size: XY, offset: XY, year: int) -> None:
         min_size = min(size.x, size.y)
         outer_radius = 0.5 * min_size - 6
         radius_range = ValueRange.from_pair(outer_radius / 4, outer_radius)
@@ -140,13 +142,9 @@ class CircularDrawer(TracksDrawer):
                     fill="none",
                     stroke="none",
                 )
-                path.push(
-                    f"a{r3},{r3} 0 0,1 {r3 * (sin_a3 - sin_a1)},{r3 * (cos_a1 - cos_a3)}"
-                )
+                path.push(f"a{r3},{r3} 0 0,1 {r3 * (sin_a3 - sin_a1)},{r3 * (cos_a1 - cos_a3)}")
                 dr.add(path)
-                tpath = svgwrite.text.TextPath(
-                    path, date.strftime("%B"), startOffset=(0.5 * r3 * (a3 - a1))
-                )
+                tpath = svgwrite.text.TextPath(path, date.strftime("%B"), startOffset=(0.5 * r3 * (a3 - a1)))
                 text = dr.text(
                     "",
                     fill=self.poster.colors["text"],
@@ -168,8 +166,7 @@ class CircularDrawer(TracksDrawer):
             day += 1
             date += datetime.timedelta(1)
 
-    def _determine_ring_distance(self) -> Optional[float]:
-        length_range = self.poster.length_range_by_date
+    def _determine_ring_distance(self, max_length: float) -> typing.Optional[float]:
         ring_distance = None
         for distance in [1.0, 5.0, 10.0, 50.0]:
             if self.poster.units != "metric":
@@ -178,24 +175,27 @@ class CircularDrawer(TracksDrawer):
             else:
                 # convert from km to meters
                 distance *= 1000.0
-            if length_range.upper() < distance:
+            if max_length < distance:
                 continue
             ring_distance = distance
-            if (length_range.upper() / distance) <= 5:
+            if (max_length / distance) <= 5:
                 break
         return ring_distance
 
-    def _draw_rings(self, dr: svgwrite.Drawing, center: XY, radius_range: ValueRange):
+    def _draw_rings(self, dr: svgwrite.Drawing, center: XY, radius_range: ValueRange) -> None:
         length_range = self.poster.length_range_by_date
-        ring_distance = self._determine_ring_distance()
+        if not length_range.is_valid():
+            return
+        min_length = length_range.lower()
+        max_length = length_range.upper()
+        assert min_length is not None
+        assert max_length is not None
+        ring_distance = self._determine_ring_distance(max_length)
         if ring_distance is None:
             return
         distance = ring_distance
-        while distance < length_range.upper():
-            radius = (
-                radius_range.lower()
-                + radius_range.diameter() * distance / length_range.upper()
-            )
+        while distance < max_length:
+            radius = radius_range.interpolate(distance / max_length)
             dr.add(
                 dr.circle(
                     center=center.tuple(),
@@ -211,20 +211,20 @@ class CircularDrawer(TracksDrawer):
     def _draw_circle_segment(
         self,
         dr: svgwrite.Drawing,
-        tracks: List[Track],
+        tracks: typing.List[Track],
         a1: float,
         a2: float,
         rr: ValueRange,
         center: XY,
-    ):
+    ) -> None:
         length = sum([t.length for t in tracks])
         has_special = len([t for t in tracks if t.special]) > 0
         color = self.color(self.poster.length_range_by_date, length, has_special)
+        max_length = self.poster.length_range_by_date.upper()
+        assert max_length is not None
         r1 = rr.lower()
-        r2 = (
-            rr.lower()
-            + rr.diameter() * length / self.poster.length_range_by_date.upper()
-        )
+        assert r1 is not None
+        r2 = rr.interpolate(length / max_length)
         sin_a1, cos_a1 = math.sin(a1), math.cos(a1)
         sin_a2, cos_a2 = math.sin(a2), math.cos(a2)
         path = dr.path(
