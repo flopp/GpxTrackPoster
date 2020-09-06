@@ -14,6 +14,7 @@ import pint  # type: ignore
 import svgwrite  # type: ignore
 
 from gpxtrackposter.exceptions import PosterError
+from gpxtrackposter.localization import localized_month_name
 from gpxtrackposter.poster import Poster
 from gpxtrackposter.track import Track
 from gpxtrackposter.tracks_drawer import TracksDrawer
@@ -146,7 +147,9 @@ class CircularDrawer(TracksDrawer):
                 )
                 path.push(f"a{r3},{r3} 0 0,1 {r3 * (sin_a3 - sin_a1)},{r3 * (cos_a1 - cos_a3)}")
                 dr.add(path)
-                tpath = svgwrite.text.TextPath(path, date.strftime("%B"), startOffset=(0.5 * r3 * (a3 - a1)))
+                tpath = svgwrite.text.TextPath(
+                    path, localized_month_name(date.month), startOffset=(0.5 * r3 * (a3 - a1))
+                )
                 text = dr.text(
                     "",
                     fill=self.poster.colors["text"],
