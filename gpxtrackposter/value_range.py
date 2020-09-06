@@ -1,8 +1,10 @@
 """Represent a range of numerical values"""
-# Copyright 2016-2019 Florian Pigorsch & Contributors. All rights reserved.
+# Copyright 2016-2020 Florian Pigorsch & Contributors. All rights reserved.
 #
 # Use of this source code is governed by a MIT-style
 # license that can be found in the LICENSE file.
+
+import typing
 
 
 class ValueRange:
@@ -23,9 +25,9 @@ class ValueRange:
 
     """
 
-    def __init__(self):
-        self._lower = None
-        self._upper = None
+    def __init__(self) -> None:
+        self._lower: typing.Optional[float] = None
+        self._upper: typing.Optional[float] = None
 
     @classmethod
     def from_pair(cls, value1: float, value2: float) -> "ValueRange":
@@ -34,27 +36,61 @@ class ValueRange:
         r.extend(value2)
         return r
 
+    def clear(self) -> None:
+        self._lower = None
+        self._upper = None
+
     def is_valid(self) -> bool:
         return self._lower is not None
 
-    def lower(self) -> float:
+    def lower(self) -> typing.Optional[float]:
         return self._lower
 
-    def upper(self) -> float:
+    def upper(self) -> typing.Optional[float]:
         return self._upper
 
     def diameter(self) -> float:
         if self.is_valid():
-            return self.upper() - self.lower()
+            assert self._upper is not None
+            assert self._lower is not None
+            return self._upper - self._lower
         return 0
 
     def contains(self, value: float) -> bool:
-        return self.is_valid() and (self.lower() <= value <= self.upper())
+        if not self.is_valid():
+            return False
 
-    def extend(self, value: float):
+        assert self._upper is not None
+        assert self._lower is not None
+        return self._lower <= value <= self._upper
+
+    def extend(self, value: float) -> None:
         if not self.is_valid():
             self._lower = value
             self._upper = value
         else:
+            assert self._upper is not None
+            assert self._lower is not None
             self._lower = min(self._lower, value)
             self._upper = max(self._upper, value)
+
+    def interpolate(self, relative: float) -> float:
+        if not self.is_valid():
+            raise ValueError("Cannot interpolate invalid ValueRange")
+        assert self._lower is not None
+        assert self._upper is not None
+        return self._lower + relative * (self._upper - self._lower)
+
+    def relative_position(self, value: float) -> float:
+        if not self.is_valid():
+            raise ValueError("Cannot get relaitive_position for invalid ValueRange")
+        assert self._lower is not None
+        assert self._upper is not None
+        if value <= self._lower:
+            return 0.0
+        if value >= self._upper:
+            return 1.0
+        diff = self._upper - self._lower
+        if diff == 0:
+            return 0.0
+        return (value - self._lower) / diff

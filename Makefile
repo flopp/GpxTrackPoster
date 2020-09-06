@@ -11,16 +11,37 @@ setup:
 	.env/bin/pip install .
 
 check-copyright:
-	@./scripts/check_copyright.py $(COPYRIGHT_FILES)
+	.env/bin/python scripts/check_copyright.py $(COPYRIGHT_FILES)
 
 bump-year:
-	@./scripts/bump_year.py $(COPYRIGHT_FILES)
+	.env/bin/python scripts/bump_year.py $(COPYRIGHT_FILES)
 
 update-readme:
-	@./gpxtrackposter/cli.py --help | ./scripts/update_readme.py README.md
+	PYTHON_PATH=. .env/bin/python gpxtrackposter/cli.py --help | .env/bin/python scripts/update_readme.py README.md
 
 format:
-	@black gpxtrackposter/*.py tests/*.py scripts/*.py
+	.env/bin/black \
+	    --line-length 120 \
+		gpxtrackposter tests scripts
+
+.PHONY: mypy
+mypy:
+	.env/bin/mypy \
+	    gpxtrackposter tests scripts
+
+.PHONY: lint
+lint:
+	.env/bin/pylint \
+	    gpxtrackposter tests scripts
+	.env/bin/mypy \
+	    gpxtrackposter tests scripts
+	.env/bin/codespell  \
+	    README.md gpxtrackposter/*.py tests/*.py scripts/*.py
+	.env/bin/black \
+	    --line-length 120 \
+	    --check \
+	    --diff \
+	    gpxtrackposter tests scripts
 
 extract-messages:
 	xgettext --keyword="trans" -d gpxposter -o locale/gpxposter.pot gpxtrackposter/*.py
@@ -36,4 +57,3 @@ compile-messages:
 	msgfmt -o locale/fr_FR/LC_MESSAGES/gpxposter.mo locale/fr_FR/LC_MESSAGES/gpxposter
 	msgfmt -o locale/ru_RU/LC_MESSAGES/gpxposter.mo locale/ru_RU/LC_MESSAGES/gpxposter
 	msgfmt -o locale/zh_CN/LC_MESSAGES/gpxposter.mo locale/zh_CN/LC_MESSAGES/gpxposter
-

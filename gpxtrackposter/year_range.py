@@ -1,12 +1,12 @@
 """Represent a range of years, with ability to update based on a track"""
-# Copyright 2016-2019 Florian Pigorsch & Contributors. All rights reserved.
+# Copyright 2016-2020 Florian Pigorsch & Contributors. All rights reserved.
 #
 # Use of this source code is governed by a MIT-style
 # license that can be found in the LICENSE file.
 
-import re
 import datetime
-from typing import Optional
+import re
+import typing
 
 
 class YearRange:
@@ -23,10 +23,10 @@ class YearRange:
         count: Number of years in range
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         """Inits YearRange with empty bounds -- to be built after init"""
-        self.from_year = None
-        self.to_year = None
+        self.from_year: typing.Optional[int] = None
+        self.to_year: typing.Optional[int] = None
 
     def parse(self, s: str) -> bool:
         """Parse a plaintext range of years into a pair of years
@@ -59,12 +59,20 @@ class YearRange:
                 return True
         return False
 
-    def add(self, t: datetime.datetime):
+    def clear(self) -> None:
+        self.from_year = None
+        self.to_year = None
+
+    def add(self, t: datetime.datetime) -> None:
         """For the given t, update from_year and to_year to include that timestamp"""
         if self.from_year is None:
             self.from_year = t.year
             self.to_year = t.year
-        elif t.year < self.from_year:
+            return
+
+        assert self.from_year is not None
+        assert self.to_year is not None
+        if t.year < self.from_year:
             self.from_year = t.year
         elif t.year > self.to_year:
             self.to_year = t.year
@@ -73,10 +81,23 @@ class YearRange:
         """Return True if current year range contains t, False if not"""
         if self.from_year is None:
             return True
+
+        assert self.from_year is not None
+        assert self.to_year is not None
         return self.from_year <= t.year <= self.to_year
 
-    def count(self) -> Optional[int]:
+    def count(self) -> int:
         """Return number of years contained in the current range"""
         if self.from_year is None:
-            return None
+            return 0
+
+        assert self.to_year is not None
         return 1 + self.to_year - self.from_year
+
+    def iter(self) -> typing.Generator[int, None, None]:
+        if self.from_year is None:
+            return
+
+        assert self.to_year is not None
+        for year in range(self.from_year, self.to_year + 1):
+            yield year
