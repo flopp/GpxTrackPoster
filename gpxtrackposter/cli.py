@@ -16,6 +16,7 @@ from gpxtrackposter import poster, track_loader
 from gpxtrackposter import grid_drawer, circular_drawer, heatmap_drawer
 from gpxtrackposter import github_drawer, calendar_drawer
 from gpxtrackposter.exceptions import ParameterError, PosterError
+from gpxtrackposter.units import Units
 
 
 __app_name__ = "create_poster"
@@ -193,7 +194,7 @@ def main() -> None:
         raise ParameterError(f"Bad year range: {args.year}.")
 
     loader.special_file_names = args.special
-    loader.min_length = args.min_distance * 1000
+    loader.set_min_length(args.min_distance * Units().km)
     if args.clear_cache:
         print("Clearing cache...")
         loader.clear_cache()
@@ -210,8 +211,8 @@ def main() -> None:
     p.set_title(args.title if args.title else p.translate("MY TRACKS"))
 
     p.special_distance = {
-        "special_distance": args.special_distance,
-        "special_distance2": args.special_distance2,
+        "special_distance": args.special_distance * Units().km,
+        "special_distance2": args.special_distance2 * Units().km,
     }
 
     p.colors = {

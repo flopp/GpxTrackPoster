@@ -13,9 +13,11 @@ import os
 import shutil
 import typing
 
+import pint  # type: ignore
 
 from gpxtrackposter.exceptions import ParameterError, TrackLoadError
 from gpxtrackposter.track import Track
+from gpxtrackposter.units import Units
 from gpxtrackposter.year_range import YearRange
 
 log = logging.getLogger(__name__)
@@ -56,7 +58,7 @@ class TrackLoader:
     """
 
     def __init__(self) -> None:
-        self.min_length = 1000
+        self._min_length: pint.quantity.Quantity = 1 * Units().km
         self.special_file_names: typing.List[str] = []
         self.year_range = YearRange()
         self.cache_dir: typing.Optional[str] = None
@@ -73,6 +75,9 @@ class TrackLoader:
                 shutil.rmtree(self.cache_dir)
             except OSError as e:
                 log.error("Failed: %s", str(e))
+
+    def set_min_length(self, min_length: pint.quantity.Quantity) -> None:
+        self._min_length = min_length
 
     def load_tracks(self, base_dir: str) -> typing.List[Track]:
         """Load tracks base_dir and return as a List of tracks"""
@@ -103,13 +108,13 @@ class TrackLoader:
         # merge tracks that took place within one hour
         tracks = self._merge_tracks(tracks)
         # filter out tracks with length < min_length
-        return [t for t in tracks if t.length >= self.min_length]
+        return [t for t in tracks if t.length() >= self._min_length]
 
     def _filter_tracks(self, tracks: typing.List[Track]) -> typing.List[Track]:
         filtered_tracks = []
         for t in tracks:
             file_name = t.file_names[0]
-            if t.length == 0:
+            if t.length().magnitude == 0:
                 log.info("%s: skipping empty track", file_name)
             elif not t.start_time:
                 log.info("%s: skipping track without start time", file_name)
@@ -159,11 +164,7 @@ class TrackLoader:
         tracks = {}
         with concurrent.futures.ProcessPoolExecutor() as executor:
             future_to_file_name = {
-                executor.submit(
-                    load_cached_track_file,
-                    self._get_cache_file_name(file_name),
-                    file_name,
-                ): file_name
+                executor.submit(load_cached_track_file, self._get_cache_file_name(file_name), file_name): file_name
                 for file_name in file_names
             }
         for future in concurrent.futures.as_completed(future_to_file_name):

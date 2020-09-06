@@ -10,12 +10,14 @@ import datetime
 import math
 import typing
 
+import pint  # type: ignore
 import svgwrite  # type: ignore
 
 from gpxtrackposter.exceptions import PosterError
 from gpxtrackposter.poster import Poster
 from gpxtrackposter.track import Track
 from gpxtrackposter.tracks_drawer import TracksDrawer
+from gpxtrackposter.units import Units
 from gpxtrackposter.value_range import ValueRange
 from gpxtrackposter.xy import XY
 from gpxtrackposter import utils
@@ -166,15 +168,13 @@ class CircularDrawer(TracksDrawer):
             day += 1
             date += datetime.timedelta(1)
 
-    def _determine_ring_distance(self, max_length: float) -> typing.Optional[float]:
+    def _determine_ring_distance(self, max_length: pint.quantity.Quantity) -> typing.Optional[pint.quantity.Quantity]:
         ring_distance = None
-        for distance in [1.0, 5.0, 10.0, 50.0]:
-            if self.poster.units != "metric":
-                # convert from miles to meters
-                distance *= 1609.344
-            else:
-                # convert from km to meters
-                distance *= 1000.0
+        if self.poster.units == "metric":
+            unit = Units().km
+        else:
+            unit = Units().mile
+        for distance in [1.0 * unit, 5.0 * unit, 10.0 * unit, 50.0 * unit]:
             if max_length < distance:
                 continue
             ring_distance = distance
@@ -195,7 +195,7 @@ class CircularDrawer(TracksDrawer):
             return
         distance = ring_distance
         while distance < max_length:
-            radius = radius_range.interpolate(distance / max_length)
+            radius = radius_range.interpolate((distance / max_length).magnitude)
             dr.add(
                 dr.circle(
                     center=center.tuple(),
@@ -217,14 +217,14 @@ class CircularDrawer(TracksDrawer):
         rr: ValueRange,
         center: XY,
     ) -> None:
-        length = sum([t.length for t in tracks])
+        length = sum([t.length() for t in tracks])
         has_special = len([t for t in tracks if t.special]) > 0
         color = self.color(self.poster.length_range_by_date, length, has_special)
         max_length = self.poster.length_range_by_date.upper()
         assert max_length is not None
         r1 = rr.lower()
         assert r1 is not None
-        r2 = rr.interpolate(length / max_length)
+        r2 = rr.interpolate((length / max_length).magnitude)
         sin_a1, cos_a1 = math.sin(a1), math.cos(a1)
         sin_a2, cos_a2 = math.sin(a2), math.cos(a2)
         path = dr.path(

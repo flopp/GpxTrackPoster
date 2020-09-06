@@ -46,7 +46,7 @@ class GridDrawer(TracksDrawer):
             )
 
     def _draw_track(self, dr: svgwrite.Drawing, tr: Track, size: XY, offset: XY) -> None:
-        color = self.color(self.poster.length_range, tr.length, tr.special)
+        color = self.color(self.poster.length_range, tr.length(), tr.special)
         for line in utils.project(tr.bbox(), size, offset, tr.polylines):
             dr.add(
                 dr.polyline(

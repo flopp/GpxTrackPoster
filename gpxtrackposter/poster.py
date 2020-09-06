@@ -9,11 +9,13 @@ import gettext
 import locale
 import typing
 
+import pint  # type: ignore
 import svgwrite  # type: ignore
 
+from gpxtrackposter.quantity_range import QuantityRange
 from gpxtrackposter.track import Track
+from gpxtrackposter.units import Units
 from gpxtrackposter.utils import format_float
-from gpxtrackposter.value_range import ValueRange
 from gpxtrackposter.xy import XY
 from gpxtrackposter.year_range import YearRange
 
@@ -51,9 +53,9 @@ class Poster:
         self._title: typing.Optional[str] = None
         self.tracks_by_date: typing.Dict[str, typing.List[Track]] = {}
         self.tracks: typing.List[Track] = []
-        self.length_range = ValueRange()
-        self.length_range_by_date = ValueRange()
-        self.total_length_year_dict: typing.Dict[int, float] = defaultdict(int)
+        self.length_range = QuantityRange()
+        self.length_range_by_date = QuantityRange()
+        self.total_length_year_dict: typing.Dict[int, pint.quantity.Quantity] = defaultdict(int)
         self.units = "metric"
         self.colors = {
             "background": "#222222",
@@ -115,9 +117,9 @@ class Poster:
                 self.tracks_by_date[text_date].append(track)
             else:
                 self.tracks_by_date[text_date] = [track]
-            self.length_range.extend(track.length)
+            self.length_range.extend(track.length())
         for date_tracks in self.tracks_by_date.values():
-            length = sum([t.length for t in date_tracks])
+            length = sum([t.length() for t in date_tracks])
             self.length_range_by_date.extend(length)
 
     def draw(self, drawer: "TracksDrawer", output: str) -> None:
@@ -131,11 +133,11 @@ class Poster:
         self._draw_tracks(d, XY(self.width - 20, self.height - 30 - 30), XY(10, 30))
         d.save()
 
-    def m2u(self, m: float) -> float:
+    def m2u(self, m: pint.quantity.Quantity) -> float:
         """Convert meters to kilometers or miles, according to units."""
         if self.units == "metric":
-            return 0.001 * m
-        return 0.001 * m / 1.609344
+            return m.m_as(Units().km)
+        return m.m_as(Units().mile)
 
     def u(self) -> str:
         """Return the unit of distance being used on the Poster."""
@@ -143,7 +145,7 @@ class Poster:
             return self.translate("km")
         return self.translate("mi")
 
-    def format_distance(self, d: float) -> str:
+    def format_distance(self, d: pint.quantity.Quantity) -> str:
         """Formats a distance using the locale specific float format and the selected unit."""
         return format_float(self.m2u(d)) + " " + self.u()
 
@@ -251,16 +253,18 @@ class Poster:
             )
         )
 
-    def _compute_track_statistics(self) -> typing.Tuple[float, float, ValueRange, int]:
-        length_range = ValueRange()
-        total_length = 0.0
+    def _compute_track_statistics(
+        self,
+    ) -> typing.Tuple[pint.quantity.Quantity, pint.quantity.Quantity, QuantityRange, int]:
+        length_range = QuantityRange()
+        total_length = 0.0 * Units().meter
         self.total_length_year_dict.clear()
         weeks = {}
         for t in self.tracks:
             assert t.start_time is not None
-            total_length += t.length
-            self.total_length_year_dict[t.start_time.year] += t.length
-            length_range.extend(t.length)
+            total_length += t.length()
+            self.total_length_year_dict[t.start_time.year] += t.length()
+            length_range.extend(t.length())
             # time.isocalendar()[1] -> week number
             weeks[(t.start_time.year, t.start_time.isocalendar()[1])] = 1
         return (

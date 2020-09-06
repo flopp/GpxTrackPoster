@@ -101,12 +101,12 @@ class GithubDrawer(TracksDrawer):
                     date_title = str(github_rect_day)
                     if date_title in self.poster.tracks_by_date:
                         tracks = self.poster.tracks_by_date[date_title]
-                        length = sum([t.length for t in tracks])
+                        length = sum([t.length() for t in tracks])
                         distance1 = self.poster.special_distance["special_distance"]
                         distance2 = self.poster.special_distance["special_distance2"]
-                        has_special = distance1 < length / 1000 < distance2
+                        has_special = distance1 < length < distance2
                         color = self.color(self.poster.length_range_by_date, length, has_special)
-                        if length / 1000 >= distance2:
+                        if length >= distance2:
                             special_color = self.poster.colors.get("special2") or self.poster.colors.get("special")
                             if special_color is not None:
                                 color = special_color
