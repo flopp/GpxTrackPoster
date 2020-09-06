@@ -51,9 +51,7 @@ class GithubDrawer(TracksDrawer):
                     locale.MON_12,
                 ]
             ]
-            km_or_mi = "mi"
-            if self.poster.units == "metric":
-                km_or_mi = "km"
+            km_or_mi = self.poster.u()
             dr.add(
                 dr.text(
                     f"{year}",
