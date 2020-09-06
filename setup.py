@@ -24,7 +24,7 @@ setuptools.setup(
         ('share/locale/fr_FR/LC_MESSAGES', ['locale/fr_FR/LC_MESSAGES/gpxposter.mo']),
         ('share/locale/ru_RU/LC_MESSAGES', ['locale/ru_RU/LC_MESSAGES/gpxposter.mo']),
         ('share/locale/zh_CN/LC_MESSAGES', ['locale/zh_CN/LC_MESSAGES/gpxposter.mo']),
-        ],
+    ],
     packages=setuptools.find_packages(),
     entry_points={
         'console_scripts': [
