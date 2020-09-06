@@ -10,9 +10,11 @@ import os
 import typing
 
 import gpxpy as mod_gpxpy  # type: ignore
+import pint  # type: ignore
 import s2sphere as s2  # type: ignore
 
 from gpxtrackposter.exceptions import TrackLoadError
+from gpxtrackposter.units import Units
 
 
 class Track:
@@ -39,7 +41,9 @@ class Track:
         self.polylines: typing.List[typing.List[s2.LatLng]] = []
         self.start_time: typing.Optional[datetime.datetime] = None
         self.end_time: typing.Optional[datetime.datetime] = None
-        self.length: float = 0.0
+        # Don't use Units().meter here, as this constructor is called from
+        # within a thread (which would create a second unit registry!)
+        self._length_meters = 0.0
         self.special = False
 
     def load_gpx(self, file_name: str) -> None:
@@ -53,6 +57,7 @@ class Track:
             PermissionError: An error occurred while opening the GPX file.
         """
         try:
+            print(f"load {file_name}")
             self.file_names = [os.path.basename(file_name)]
             # Handle empty gpx files
             # (for example, treadmill runs pulled via garmin-connect-export)
@@ -69,6 +74,12 @@ class Track:
         except Exception as e:
             raise TrackLoadError("Something went wrong when loading GPX.") from e
 
+    def length_meters(self) -> float:
+        return self._length_meters
+
+    def length(self) -> pint.quantity.Quantity:
+        return self._length_meters * Units().meter
+
     def bbox(self) -> s2.LatLngRect:
         """Compute the smallest rectangle that contains the entire track (border box)."""
         bbox = s2.LatLngRect()
@@ -83,8 +94,8 @@ class Track:
             raise TrackLoadError("Track has no start time.")
         if self.end_time is None:
             raise TrackLoadError("Track has no end time.")
-        self.length = gpx.length_2d()
-        if self.length == 0:
+        self._length_meters = gpx.length_2d()
+        if self._length_meters <= 0:
             raise TrackLoadError("Track is empty.")
         gpx.simplify()
         for t in gpx.tracks:
@@ -96,7 +107,7 @@ class Track:
         """Append other track to self."""
         self.end_time = other.end_time
         self.polylines.extend(other.polylines)
-        self.length += other.length
+        self._length_meters += other.length_meters()
         self.file_names.extend(other.file_names)
         self.special = self.special or other.special
 
@@ -114,7 +125,7 @@ class Track:
                 data = json.load(data_file)
                 self.start_time = datetime.datetime.strptime(data["start"], "%Y-%m-%d %H:%M:%S")
                 self.end_time = datetime.datetime.strptime(data["end"], "%Y-%m-%d %H:%M:%S")
-                self.length = float(data["length"])
+                self._length_meters = float(data["length"])
                 self.polylines = []
                 for data_line in data["segments"]:
                     self.polylines.append([s2.LatLng.from_degrees(float(d["lat"]), float(d["lng"])) for d in data_line])
@@ -136,7 +147,7 @@ class Track:
                 {
                     "start": self.start_time.strftime("%Y-%m-%d %H:%M:%S"),
                     "end": self.end_time.strftime("%Y-%m-%d %H:%M:%S"),
-                    "length": self.length,
+                    "length": self._length_meters,
                     "segments": lines_data,
                 },
                 json_file,

@@ -6,10 +6,11 @@
 
 import argparse
 
+import pint  # type: ignore
 import svgwrite  # type: ignore
 
 from gpxtrackposter.poster import Poster
-from gpxtrackposter.value_range import ValueRange
+from gpxtrackposter.quantity_range import QuantityRange
 from gpxtrackposter.xy import XY
 from gpxtrackposter import utils
 
@@ -29,7 +30,7 @@ class TracksDrawer:
     def draw(self, dr: svgwrite.Drawing, size: XY, offset: XY) -> None:
         pass
 
-    def color(self, length_range: ValueRange, length: float, is_special: bool = False) -> str:
+    def color(self, length_range: QuantityRange, length: pint.quantity.Quantity, is_special: bool = False) -> str:
         color1 = self.poster.colors["special"] if is_special else self.poster.colors["track"]
         color2 = self.poster.colors["special2"] if is_special else self.poster.colors["track2"]
         return utils.interpolate_color(color1, color2, length_range.relative_position(length))
