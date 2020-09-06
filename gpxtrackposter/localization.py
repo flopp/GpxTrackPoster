@@ -39,7 +39,7 @@ def localized_month_name(month: int) -> str:
 # If short is False return the full day name, otherwise return the shortest
 # possible abbreviation (e.g. the first letter)
 def localized_day_of_week_name(day_of_week: int, short: bool) -> str:
-    assert 1 <= day_of_week <= 7
+    assert 0 <= day_of_week <= 6
 
     locale_name = locale.getlocale()[0]
 
