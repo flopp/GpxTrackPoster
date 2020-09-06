@@ -2,8 +2,5 @@ black
 codespell
 coverage
 mypy
-pycodestyle
-pylama
 pylint
 pytest
-tox

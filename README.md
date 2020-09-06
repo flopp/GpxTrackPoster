@@ -1,4 +1,5 @@
-[![Build Status](https://travis-ci.org/flopp/GpxTrackPoster.svg?branch=master)](https://travis-ci.org/flopp/GpxTrackPoster)
+![CI](https://github.com/flopp/GpxTrackPoster/workflows/CI/badge.svg)
+[![Format](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/ambv/black)
 ![License MIT](https://img.shields.io/badge/license-MIT-lightgrey.svg?style=flat)
 
 # GpxTrackPoster

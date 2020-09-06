@@ -24,11 +24,6 @@ format:
 	    --line-length 120 \
 		gpxtrackposter tests scripts
 
-.PHONY: mypy
-mypy:
-	.env/bin/mypy \
-	    gpxtrackposter tests scripts
-
 .PHONY: lint
 lint:
 	.env/bin/pylint \
