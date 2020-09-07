@@ -7,12 +7,12 @@
 from datetime import datetime
 import locale
 import math
-import pytz
 from typing import List, Optional, Tuple
 
 import colour  # type: ignore
 import s2sphere as s2  # type: ignore
 from timezonefinder import TimezoneFinder  # type: ignore
+import pytz
 
 from gpxtrackposter.value_range import ValueRange
 from gpxtrackposter.xy import XY

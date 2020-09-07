@@ -2,6 +2,7 @@ appdirs>=1.4.0
 colour
 gpxpy>=1.1.2
 pint
+pytz
 s2sphere
 svgwrite>=1.1.9
 timezonefinder 
