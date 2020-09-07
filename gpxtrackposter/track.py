@@ -9,9 +9,9 @@ import json
 import os
 import typing
 
-import gpxpy as mod_gpxpy  # type: ignore
+import gpxpy  # type: ignore
 import pint  # type: ignore
-import s2sphere as s2  # type: ignore
+import s2sphere  # type: ignore
 
 from gpxtrackposter.exceptions import TrackLoadError
 from gpxtrackposter.utils import parse_datetime_to_local
@@ -39,7 +39,7 @@ class Track:
 
     def __init__(self) -> None:
         self.file_names: typing.List[str] = []
-        self.polylines: typing.List[typing.List[s2.LatLng]] = []
+        self.polylines: typing.List[typing.List[s2sphere.LatLng]] = []
         self.use_local_time = False
         self.start_time: typing.Optional[datetime.datetime] = None
         self.end_time: typing.Optional[datetime.datetime] = None
@@ -66,10 +66,10 @@ class Track:
             if os.path.getsize(file_name) == 0:
                 raise TrackLoadError("Empty GPX file")
             with open(file_name, "r") as file:
-                self._load_gpx_data(mod_gpxpy.parse(file))
+                self._load_gpx_data(gpxpy.parse(file))
         except TrackLoadError as e:
             raise e
-        except mod_gpxpy.gpx.GPXXMLSyntaxException as e:
+        except gpxpy.gpx.GPXXMLSyntaxException as e:
             raise TrackLoadError("Failed to parse GPX.") from e
         except PermissionError as e:
             raise TrackLoadError("Cannot load GPX (bad permissions)") from e
@@ -82,15 +82,15 @@ class Track:
     def length(self) -> pint.quantity.Quantity:
         return self._length_meters * Units().meter
 
-    def bbox(self) -> s2.LatLngRect:
+    def bbox(self) -> s2sphere.LatLngRect:
         """Compute the smallest rectangle that contains the entire track (border box)."""
-        bbox = s2.LatLngRect()
+        bbox = s2sphere.LatLngRect()
         for line in self.polylines:
             for latlng in line:
-                bbox = bbox.union(s2.LatLngRect.from_point(latlng.normalized()))
+                bbox = bbox.union(s2sphere.LatLngRect.from_point(latlng.normalized()))
         return bbox
 
-    def _load_gpx_data(self, gpx: "mod_gpxpy.gpx.GPX") -> None:
+    def _load_gpx_data(self, gpx: gpxpy.gpx.GPX) -> None:
         self.start_time, self.end_time = gpx.get_time_bounds()
         if self.start_time is None:
             raise TrackLoadError("Track has no start time.")
@@ -105,7 +105,7 @@ class Track:
         gpx.simplify()
         for t in gpx.tracks:
             for s in t.segments:
-                line = [s2.LatLng.from_degrees(p.latitude, p.longitude) for p in s.points]
+                line = [s2sphere.LatLng.from_degrees(p.latitude, p.longitude) for p in s.points]
                 self.polylines.append(line)
 
     def append(self, other: "Track") -> None:
@@ -133,7 +133,9 @@ class Track:
                 self._length_meters = float(data["length"])
                 self.polylines = []
                 for data_line in data["segments"]:
-                    self.polylines.append([s2.LatLng.from_degrees(float(d["lat"]), float(d["lng"])) for d in data_line])
+                    self.polylines.append(
+                        [s2sphere.LatLng.from_degrees(float(d["lat"]), float(d["lng"])) for d in data_line]
+                    )
         except Exception as e:
             raise TrackLoadError("Failed to load track data from cache.") from e
 

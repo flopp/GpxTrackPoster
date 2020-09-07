@@ -9,7 +9,7 @@ import logging
 import math
 
 import svgwrite  # type: ignore
-import s2sphere as s2  # type: ignore
+import s2sphere  # type: ignore
 
 from gpxtrackposter.exceptions import ParameterError
 from gpxtrackposter.poster import Poster
@@ -79,7 +79,7 @@ class HeatmapDrawer(TracksDrawer):
                 raise ParameterError(f"Not a valid LAT,LNG pair: {args.heatmap_center}") from e
             if not -90 <= lat <= 90 or not -180 <= lng <= 180:
                 raise ParameterError(f"Not a valid LAT,LNG pair: {args.heatmap_center}")
-            self._center = s2.LatLng.from_degrees(lat, lng)
+            self._center = s2sphere.LatLng.from_degrees(lat, lng)
         if args.heatmap_radius:
             if args.heatmap_radius <= 0:
                 raise ParameterError(f"Not a valid radius: {args.heatmap_radius} (must be > 0)")
@@ -87,7 +87,7 @@ class HeatmapDrawer(TracksDrawer):
                 raise ParameterError("--heatmap-radius needs --heatmap-center")
             self._radius = args.heatmap_radius
 
-    def _determine_bbox(self) -> s2.LatLngRect:
+    def _determine_bbox(self) -> s2sphere.LatLngRect:
         if self._center:
             log.info("Forcing heatmap center to %s", str(self._center))
             dlat, dlng = 0, 0
@@ -109,9 +109,9 @@ class HeatmapDrawer(TracksDrawer):
                             if d > 180:
                                 d = 360 - d
                             dlng = max(dlng, d)
-            return s2.LatLngRect.from_center_size(self._center, s2.LatLng.from_degrees(2 * dlat, 2 * dlng))
+            return s2sphere.LatLngRect.from_center_size(self._center, s2sphere.LatLng.from_degrees(2 * dlat, 2 * dlng))
 
-        tracks_bbox = s2.LatLngRect()
+        tracks_bbox = s2sphere.LatLngRect()
         for tr in self.poster.tracks:
             tracks_bbox = tracks_bbox.union(tr.bbox())
         return tracks_bbox

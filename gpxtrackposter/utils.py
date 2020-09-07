@@ -10,7 +10,7 @@ import math
 from typing import List, Optional, Tuple
 
 import colour  # type: ignore
-import s2sphere as s2  # type: ignore
+import s2sphere  # type: ignore
 from timezonefinder import TimezoneFinder  # type: ignore
 import pytz
 
@@ -19,7 +19,7 @@ from gpxtrackposter.xy import XY
 
 
 # mercator projection
-def latlng2xy(latlng: s2.LatLng) -> XY:
+def latlng2xy(latlng: s2sphere.LatLng) -> XY:
     return XY(lng2x(latlng.lng().degrees), lat2y(latlng.lat().degrees))
 
 
@@ -32,7 +32,7 @@ def lat2y(lat_deg: float) -> float:
 
 
 def project(
-    bbox: s2.LatLngRect, size: XY, offset: XY, latlnglines: List[List[s2.LatLng]]
+    bbox: s2sphere.LatLngRect, size: XY, offset: XY, latlnglines: List[List[s2sphere.LatLng]]
 ) -> List[List[Tuple[float, float]]]:
     min_x = lng2x(bbox.lng_lo().degrees)
     d_x = lng2x(bbox.lng_hi().degrees) - min_x
