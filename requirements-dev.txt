@@ -2,5 +2,5 @@ black
 codespell
 coverage
 mypy
-pylint==2.44
+pylint==2.4.4
 pytest
