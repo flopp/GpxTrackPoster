@@ -1,4 +1,4 @@
-black>=20
+black
 codespell
 coverage
 mypy
