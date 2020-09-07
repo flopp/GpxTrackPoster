@@ -23,18 +23,20 @@ from gpxtrackposter.year_range import YearRange
 log = logging.getLogger(__name__)
 
 
-def load_gpx_file(file_name: str) -> Track:
+def load_gpx_file(file_name: str, use_local_time: bool) -> Track:
     """Load an individual GPX file as a track by using Track.load_gpx()"""
     log.info("Loading track %s...", os.path.basename(file_name))
     t = Track()
+    t.use_local_time = use_local_time
     t.load_gpx(file_name)
     return t
 
 
-def load_cached_track_file(cache_file_name: str, file_name: str) -> Track:
+def load_cached_track_file(cache_file_name: str, file_name: str, use_local_time: bool) -> Track:
     """Load an individual track from cache files"""
     try:
         t = Track()
+        t.use_local_time = use_local_time
         t.load_cache(cache_file_name)
         t.file_names = [os.path.basename(file_name)]
         log.info("Loaded track %s from cache file %s", file_name, cache_file_name)
@@ -60,6 +62,7 @@ class TrackLoader:
     def __init__(self) -> None:
         self._min_length: pint.quantity.Quantity = 1 * Units().km
         self.special_file_names: typing.List[str] = []
+        self.use_local_time = False
         self.year_range = YearRange()
         self.cache_dir: typing.Optional[str] = None
         self._cache_file_names: typing.Dict[str, str] = {}
@@ -98,7 +101,7 @@ class TrackLoader:
         remaining_file_names = [f for f in file_names if f not in cached_tracks]
         if remaining_file_names:
             log.info("Trying to load %d track(s) from GPX files; this may take a while...", len(remaining_file_names))
-            loaded_tracks = self._load_tracks(remaining_file_names)
+            loaded_tracks = self._load_tracks(remaining_file_names, self.use_local_time)
             tracks.extend(loaded_tracks.values())
             log.info("Conventionally loaded tracks: %d", len(loaded_tracks))
             self._store_tracks_to_cache(loaded_tracks)
@@ -107,6 +110,10 @@ class TrackLoader:
 
         # merge tracks that took place within one hour
         tracks = self._merge_tracks(tracks)
+        # add use_local_time to every track
+        if self.use_local_time:
+            for t in tracks:
+                t.use_local_time = True
         # filter out tracks with length < min_length
         return [t for t in tracks if t.length() >= self._min_length]
 
@@ -145,10 +152,10 @@ class TrackLoader:
         return merged_tracks
 
     @staticmethod
-    def _load_tracks(file_names: typing.List[str]) -> typing.Dict[str, Track]:
+    def _load_tracks(file_names: typing.List[str], use_local_time: bool) -> typing.Dict[str, Track]:
         tracks = {}
         with concurrent.futures.ProcessPoolExecutor() as executor:
-            future_to_file_name = {executor.submit(load_gpx_file, file_name): file_name for file_name in file_names}
+            future_to_file_name = {executor.submit(load_gpx_file, file_name, use_local_time): file_name for file_name in file_names}
         for future in concurrent.futures.as_completed(future_to_file_name):
             file_name = future_to_file_name[future]
             try:
@@ -164,7 +171,7 @@ class TrackLoader:
         tracks = {}
         with concurrent.futures.ProcessPoolExecutor() as executor:
             future_to_file_name = {
-                executor.submit(load_cached_track_file, self._get_cache_file_name(file_name), file_name): file_name
+                executor.submit(load_cached_track_file, self._get_cache_file_name(file_name), file_name, self.use_local_time): file_name
                 for file_name in file_names
             }
         for future in concurrent.futures.as_completed(future_to_file_name):

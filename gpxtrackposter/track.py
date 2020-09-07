@@ -14,6 +14,7 @@ import pint  # type: ignore
 import s2sphere as s2  # type: ignore
 
 from gpxtrackposter.exceptions import TrackLoadError
+from gpxtrackposter.utils import parse_datetime_to_local
 from gpxtrackposter.units import Units
 
 
@@ -39,6 +40,7 @@ class Track:
     def __init__(self) -> None:
         self.file_names: typing.List[str] = []
         self.polylines: typing.List[typing.List[s2.LatLng]] = []
+        self.use_local_time = False
         self.start_time: typing.Optional[datetime.datetime] = None
         self.end_time: typing.Optional[datetime.datetime] = None
         # Don't use Units().meter here, as this constructor is called from
@@ -94,6 +96,9 @@ class Track:
             raise TrackLoadError("Track has no start time.")
         if self.end_time is None:
             raise TrackLoadError("Track has no end time.")
+        if self.use_local_time:
+            lat, _, lng, _ = list(gpx.get_bounds())
+            self.start_time, self.end_time = parse_datetime_to_local(self.start_time, self.end_time, lat, lng)
         self._length_meters = gpx.length_2d()
         if self._length_meters <= 0:
             raise TrackLoadError("Track is empty.")

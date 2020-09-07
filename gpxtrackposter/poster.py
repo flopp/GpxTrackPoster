@@ -51,7 +51,7 @@ class Poster:
     def __init__(self) -> None:
         self._athlete: typing.Optional[str] = None
         self._title: typing.Optional[str] = None
-        self.tracks_by_date: typing.Dict[str, typing.List[Track]] = {}
+        self.tracks_by_date: typing.Dict[str, typing.List[Track]] = defaultdict(list)
         self.tracks: typing.List[Track] = []
         self.length_range = QuantityRange()
         self.length_range_by_date = QuantityRange()
@@ -104,7 +104,7 @@ class Poster:
         based on this set of tracks.
         """
         self.tracks = tracks
-        self.tracks_by_date = {}
+        self.tracks_by_date.clear()
         self.length_range.clear()
         self.length_range_by_date.clear()
         self._compute_years(tracks)
@@ -113,10 +113,7 @@ class Poster:
             if not self.years.contains(track.start_time):
                 continue
             text_date = track.start_time.strftime("%Y-%m-%d")
-            if text_date in self.tracks_by_date:
-                self.tracks_by_date[text_date].append(track)
-            else:
-                self.tracks_by_date[text_date] = [track]
+            self.tracks_by_date[text_date].append(track)
             self.length_range.extend(track.length())
         for date_tracks in self.tracks_by_date.values():
             length = sum([t.length() for t in date_tracks])

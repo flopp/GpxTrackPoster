@@ -4,3 +4,4 @@ gpxpy>=1.1.2
 pint
 s2sphere
 svgwrite>=1.1.9
+timezonefinder 

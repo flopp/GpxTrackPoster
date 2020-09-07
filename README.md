@@ -159,7 +159,7 @@ If you have found a bug or have a feature request, please create a new issue. I'
 
 Or even better: clone the repo, fix the bug/implement the feature yourself, and file a pull request. Contributions are always welcome!
 
-Important: If you want to contribute via a pull request, make sure you run `tox` and possibly `make format` before pushing code.
+Important: If you want to contribute via a pull request, make sure you run `mypy` and possibly `make format` before pushing code.
 
 ## Translation
 The translation is based on GNUs 'gettext'.
