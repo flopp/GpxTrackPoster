@@ -4,15 +4,12 @@
 # Use of this source code is governed by a MIT-style
 # license that can be found in the LICENSE file.
 
-from datetime import datetime
 import locale
 import math
-from typing import List, Optional, Tuple
+import typing
 
 import colour  # type: ignore
 import s2sphere  # type: ignore
-from timezonefinder import TimezoneFinder  # type: ignore
-import pytz
 
 from gpxtrackposter.value_range import ValueRange
 from gpxtrackposter.xy import XY
@@ -32,8 +29,8 @@ def lat2y(lat_deg: float) -> float:
 
 
 def project(
-    bbox: s2sphere.LatLngRect, size: XY, offset: XY, latlnglines: List[List[s2sphere.LatLng]]
-) -> List[List[Tuple[float, float]]]:
+    bbox: s2sphere.LatLngRect, size: XY, offset: XY, latlnglines: typing.List[typing.List[s2sphere.LatLng]]
+) -> typing.List[typing.List[typing.Tuple[float, float]]]:
     min_x = lng2x(bbox.lng_lo().degrees)
     d_x = lng2x(bbox.lng_hi().degrees) - min_x
     while d_x >= 2:
@@ -61,7 +58,7 @@ def project(
     return lines
 
 
-def compute_bounds_xy(lines: List[List[XY]]) -> Tuple[ValueRange, ValueRange]:
+def compute_bounds_xy(lines: typing.List[typing.List[XY]]) -> typing.Tuple[ValueRange, ValueRange]:
     range_x = ValueRange()
     range_y = ValueRange()
     for line in lines:
@@ -71,7 +68,9 @@ def compute_bounds_xy(lines: List[List[XY]]) -> Tuple[ValueRange, ValueRange]:
     return range_x, range_y
 
 
-def compute_grid(count: int, dimensions: XY) -> Tuple[Optional[float], Optional[Tuple[int, int]]]:
+def compute_grid(
+    count: int, dimensions: XY
+) -> typing.Tuple[typing.Optional[float], typing.Optional[typing.Tuple[int, int]]]:
     # this is somehow suboptimal O(count^2). I guess it's possible in O(count)
     min_waste = -1.0
     best_size = None
@@ -109,19 +108,3 @@ def interpolate_color(color1: str, color2: str, ratio: float) -> str:
 
 def format_float(f: float) -> str:
     return locale.format_string("%.1f", f)
-
-
-def parse_datetime_to_local(
-    start_time: datetime, end_time: datetime, lat: float, lng: float
-) -> Tuple[datetime, datetime]:
-    # just parse the start time, because start/end maybe different
-    offset = start_time.utcoffset()
-    if offset:
-        return start_time + offset, end_time + offset
-    tf = TimezoneFinder()
-    timezone = tf.timezone_at(lng=lng, lat=lat)
-    tc_offset = datetime.now(pytz.timezone(timezone)).utcoffset()
-    if tc_offset:
-        return start_time + tc_offset, end_time + tc_offset
-    # skip if no tc_offset
-    return start_time, end_time

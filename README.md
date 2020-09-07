@@ -18,13 +18,11 @@ usage: create_poster [-h] [--gpx-dir DIR] [--output FILE]
                      [--background-color COLOR] [--track-color COLOR]
                      [--track-color2 COLOR] [--text-color COLOR]
                      [--special-color COLOR] [--special-color2 COLOR]
-                     [--min-distance DISTANCE]
-                     [--use-localtime TIME]
-                     [--special-distance DISTANCE] [--special-distance2 DISTANCE]
                      [--units UNITS] [--clear-cache] [--verbose]
-                     [--logfile FILE] [--heatmap-center LAT,LNG]
-                     [--heatmap-radius RADIUS_KM] [--circular-rings]
-                     [--circular-ring-color COLOR]
+                     [--logfile FILE] [--special-distance DISTANCE]
+                     [--special-distance2 DISTANCE] [--min-distance DISTANCE]
+                     [--heatmap-center LAT,LNG] [--heatmap-radius RADIUS_KM]
+                     [--circular-rings] [--circular-ring-color COLOR]
 
 optional arguments:
   -h, --help            show this help message and exit
@@ -50,19 +48,19 @@ optional arguments:
                         Special track color (default: "#FFFF00").
   --special-color2 COLOR
                         Secondary color of special tracks (default: none).
-  --special-distance Distance
-                        Special track distance (float default: 10.0 for github drawer)
-  --special-distance2 Distance
-                        Secondary track distance (float default: 20.0 for github drawer)
-  --min-distance Distance
-                        Min distance(km) to filter tracks
-
   --units UNITS         Distance units; "metric", "imperial" (default:
                         "metric").
-  --use-localtime       Use local time instead of utc time.
   --clear-cache         Clear the track cache.
   --verbose             Verbose logging.
   --logfile FILE
+  --special-distance DISTANCE
+                        Special Distance1 by km and color with the
+                        special_color
+  --special-distance2 DISTANCE
+                        Special Distance2 by km and corlor with the
+                        special_color2
+  --min-distance DISTANCE
+                        min distance by km for track filter
 
 Heatmap Type Options:
   --heatmap-center LAT,LNG
@@ -161,7 +159,7 @@ If you have found a bug or have a feature request, please create a new issue. I'
 
 Or even better: clone the repo, fix the bug/implement the feature yourself, and file a pull request. Contributions are always welcome!
 
-Important: If you want to contribute via a pull request, make sure you run `make lint` and possibly `make format` before pushing code.
+Important: If you want to contribute via a pull request, make sure you run `make lint` and possibly `make format` and `make update-readme` before pushing code.
 
 ## Translation
 The translation is based on GNUs 'gettext'.

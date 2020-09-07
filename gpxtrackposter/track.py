@@ -14,7 +14,7 @@ import pint  # type: ignore
 import s2sphere  # type: ignore
 
 from gpxtrackposter.exceptions import TrackLoadError
-from gpxtrackposter.utils import parse_datetime_to_local
+from gpxtrackposter.timezone_adjuster import TimezoneAdjuster
 from gpxtrackposter.units import Units
 
 
@@ -40,7 +40,6 @@ class Track:
     def __init__(self) -> None:
         self.file_names: typing.List[str] = []
         self.polylines: typing.List[typing.List[s2sphere.LatLng]] = []
-        self.use_local_time = False
         self.start_time: typing.Optional[datetime.datetime] = None
         self.end_time: typing.Optional[datetime.datetime] = None
         # Don't use Units().meter here, as this constructor is called from
@@ -48,7 +47,7 @@ class Track:
         self._length_meters = 0.0
         self.special = False
 
-    def load_gpx(self, file_name: str) -> None:
+    def load_gpx(self, file_name: str, timezone_adjuster: typing.Optional[TimezoneAdjuster]) -> None:
         """Load the GPX file into self.
 
         Args:
@@ -59,14 +58,13 @@ class Track:
             PermissionError: An error occurred while opening the GPX file.
         """
         try:
-            print(f"load {file_name}")
             self.file_names = [os.path.basename(file_name)]
             # Handle empty gpx files
             # (for example, treadmill runs pulled via garmin-connect-export)
             if os.path.getsize(file_name) == 0:
                 raise TrackLoadError("Empty GPX file")
             with open(file_name, "r") as file:
-                self._load_gpx_data(gpxpy.parse(file))
+                self._load_gpx_data(gpxpy.parse(file), timezone_adjuster)
         except TrackLoadError as e:
             raise e
         except gpxpy.gpx.GPXXMLSyntaxException as e:
@@ -90,15 +88,17 @@ class Track:
                 bbox = bbox.union(s2sphere.LatLngRect.from_point(latlng.normalized()))
         return bbox
 
-    def _load_gpx_data(self, gpx: gpxpy.gpx.GPX) -> None:
+    def _load_gpx_data(self, gpx: gpxpy.gpx.GPX, timezone_adjuster: typing.Optional[TimezoneAdjuster]) -> None:
         self.start_time, self.end_time = gpx.get_time_bounds()
         if self.start_time is None:
             raise TrackLoadError("Track has no start time.")
         if self.end_time is None:
             raise TrackLoadError("Track has no end time.")
-        if self.use_local_time:
+        if timezone_adjuster:
             lat, _, lng, _ = list(gpx.get_bounds())
-            self.start_time, self.end_time = parse_datetime_to_local(self.start_time, self.end_time, lat, lng)
+            latlng = s2sphere.LatLng.from_degrees(lat, lng)
+            self.start_time = timezone_adjuster.adjust(self.start_time, latlng)
+            self.end_time = timezone_adjuster.adjust(self.end_time, latlng)
         self._length_meters = gpx.length_2d()
         if self._length_meters <= 0:
             raise TrackLoadError("Track is empty.")

@@ -7,30 +7,30 @@
 
 import sys
 
-USAGE = sys.stdin.read()
-readme_md_file_name = sys.argv[0]
-
-if not USAGE.startswith("usage: create_poster"):
+usage = sys.stdin.read()
+if not usage.startswith("usage: create_poster"):
     raise RuntimeError("Bad usage info from stdin")
+
+readme_md_file_name = sys.argv[1]
+if not readme_md_file_name.endswith("README.md"):
+    raise RuntimeError(f"Bad README.md file: {readme_md_file_name}")
 
 # replace usage in README.md
 with open(readme_md_file_name, "r") as f:
     lines = f.readlines()
-    with open(readme_md_file_name, "w") as f:
-        STATE = 0
-        for line in lines:
-            if STATE == 0:
-                f.write(line)
-                if line.startswith("## Usage"):
-                    STATE = 1
-            elif STATE == 1:
-                f.write(line)
-                if line.startswith("```"):
-                    STATE = 2
-                    f.write(USAGE)
-            elif STATE == 2:
-                if line.startswith("```"):
-                    f.write(line)
-                    STATE = 3
+
+with open(readme_md_file_name, "w") as f:
+    STATE = 0
+    for line in lines:
+        if STATE == 0:
+            if line.startswith("usage: create_poster"):
+                f.write(usage)
+                STATE = 1
             else:
                 f.write(line)
+        elif STATE == 1:
+            if line.startswith("```"):
+                f.write(line)
+                STATE = 2
+        else:
+            f.write(line)
