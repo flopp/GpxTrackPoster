@@ -49,7 +49,10 @@ class CircularDrawer(TracksDrawer):
         """Add arguments to the parser"""
         group = args_parser.add_argument_group("Circular Type Options")
         group.add_argument(
-            "--circular-rings", dest="circular_rings", action="store_true", help="Draw distance rings.",
+            "--circular-rings",
+            dest="circular_rings",
+            action="store_true",
+            help="Draw distance rings.",
         )
         group.add_argument(
             "--circular-ring-color",
@@ -137,18 +140,32 @@ class CircularDrawer(TracksDrawer):
                         stroke_width=0.3,
                     )
                 )
-                path = dr.path(d=("M", center.x + r3 * sin_a1, center.y - r3 * cos_a1), fill="none", stroke="none",)
+                path = dr.path(
+                    d=("M", center.x + r3 * sin_a1, center.y - r3 * cos_a1),
+                    fill="none",
+                    stroke="none",
+                )
                 path.push(f"a{r3},{r3} 0 0,1 {r3 * (sin_a3 - sin_a1)},{r3 * (cos_a1 - cos_a3)}")
                 dr.add(path)
                 tpath = svgwrite.text.TextPath(
                     path, localized_month_name(date.month), startOffset=(0.5 * r3 * (a3 - a1))
                 )
-                text = dr.text("", fill=self.poster.colors["text"], text_anchor="middle", style=month_style,)
+                text = dr.text(
+                    "",
+                    fill=self.poster.colors["text"],
+                    text_anchor="middle",
+                    style=month_style,
+                )
                 text.add(tpath)
                 dr.add(text)
             if text_date in self.poster.tracks_by_date:
                 self._draw_circle_segment(
-                    dr, self.poster.tracks_by_date[text_date], a1, a2, radius_range, center,
+                    dr,
+                    self.poster.tracks_by_date[text_date],
+                    a1,
+                    a2,
+                    radius_range,
+                    center,
                 )
 
             day += 1
@@ -195,7 +212,13 @@ class CircularDrawer(TracksDrawer):
             distance += ring_distance
 
     def _draw_circle_segment(
-        self, dr: svgwrite.Drawing, tracks: typing.List[Track], a1: float, a2: float, rr: ValueRange, center: XY,
+        self,
+        dr: svgwrite.Drawing,
+        tracks: typing.List[Track],
+        a1: float,
+        a2: float,
+        rr: ValueRange,
+        center: XY,
     ) -> None:
         length = sum([t.length() for t in tracks])
         has_special = len([t for t in tracks if t.special]) > 0
@@ -207,7 +230,11 @@ class CircularDrawer(TracksDrawer):
         r2 = rr.interpolate((length / max_length).magnitude)
         sin_a1, cos_a1 = math.sin(a1), math.cos(a1)
         sin_a2, cos_a2 = math.sin(a2), math.cos(a2)
-        path = dr.path(d=("M", center.x + r1 * sin_a1, center.y - r1 * cos_a1), fill=color, stroke="none",)
+        path = dr.path(
+            d=("M", center.x + r1 * sin_a1, center.y - r1 * cos_a1),
+            fill=color,
+            stroke="none",
+        )
         path.push("l", (r2 - r1) * sin_a1, (r1 - r2) * cos_a1)
         path.push(f"a{r2},{r2} 0 0,0 {r2 * (sin_a2 - sin_a1)},{r2 * (cos_a1 - cos_a2)}")
         path.push("l", (r1 - r2) * sin_a2, (r2 - r1) * cos_a2)

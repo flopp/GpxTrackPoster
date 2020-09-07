@@ -74,7 +74,10 @@ class CalendarDrawer(TracksDrawer):
             count_x = max(count_x, date.weekday() + last_day)
 
         cell_size = min(size.x / count_x, size.y / 36)
-        spacing = XY((size.x - cell_size * count_x) / (count_x - 1), (size.y - cell_size * 3 * 12) / 11,)
+        spacing = XY(
+            (size.x - cell_size * count_x) / (count_x - 1),
+            (size.y - cell_size * 3 * 12) / 11,
+        )
 
         for month in range(1, 13):
             date = datetime.date(year, month, 1)
@@ -106,7 +109,10 @@ class CalendarDrawer(TracksDrawer):
                     dr.add(
                         dr.text(
                             utils.format_float(self.poster.m2u(length)),
-                            insert=(pos[0] + cell_size / 2, pos[1] + cell_size + cell_size / 2,),
+                            insert=(
+                                pos[0] + cell_size / 2,
+                                pos[1] + cell_size + cell_size / 2,
+                            ),
                             text_anchor="middle",
                             style=day_length_style,
                             fill=self.poster.colors["text"],
@@ -118,7 +124,10 @@ class CalendarDrawer(TracksDrawer):
                 dr.add(
                     dr.text(
                         localized_day_of_week_name(date.weekday(), short=True),
-                        insert=(offset.x + (day_offset + x) * cell_size + cell_size / 2, pos[1] + cell_size / 2,),
+                        insert=(
+                            offset.x + (day_offset + x) * cell_size + cell_size / 2,
+                            pos[1] + cell_size / 2,
+                        ),
                         text_anchor="middle",
                         alignment_baseline="middle",
                         style=day_style,

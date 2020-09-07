@@ -52,7 +52,11 @@ def main() -> None:
         help='Name of generated SVG image file (default: "poster.svg").',
     )
     args_parser.add_argument(
-        "--language", metavar="LANGUAGE", type=str, default="", help="Language (default: english).",
+        "--language",
+        metavar="LANGUAGE",
+        type=str,
+        default="",
+        help="Language (default: english).",
     )
     args_parser.add_argument(
         "--year",
@@ -138,7 +142,10 @@ def main() -> None:
         help='Distance units; "metric", "imperial" (default: "metric").',
     )
     args_parser.add_argument(
-        "--clear-cache", dest="clear_cache", action="store_true", help="Clear the track cache.",
+        "--clear-cache",
+        dest="clear_cache",
+        action="store_true",
+        help="Clear the track cache.",
     )
     args_parser.add_argument("--verbose", dest="verbose", action="store_true", help="Verbose logging.")
     args_parser.add_argument("--logfile", dest="logfile", metavar="FILE", type=str)
@@ -167,7 +174,10 @@ def main() -> None:
         help="min distance by km for track filter",
     )
     args_parser.add_argument(
-        "--use-localtime", dest="use_localtime", action="store_true", help="Use utc time or local time",
+        "--use-localtime",
+        dest="use_localtime",
+        action="store_true",
+        help="Use utc time or local time",
     )
 
     for _, drawer in drawers.items():
