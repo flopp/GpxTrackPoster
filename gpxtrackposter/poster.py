@@ -162,36 +162,12 @@ class Poster:
         value_style = "font-size:9px; font-family:Arial"
         small_value_style = "font-size:3px; font-family:Arial"
 
-        (
-            total_length,
-            average_length,
-            length_range,
-            weeks,
-        ) = self._compute_track_statistics()
+        (total_length, average_length, length_range, weeks,) = self._compute_track_statistics()
 
+        d.add(d.text(self.translate("ATHLETE"), insert=(10, self.height - 20), fill=text_color, style=header_style,))
+        d.add(d.text(self._athlete, insert=(10, self.height - 10), fill=text_color, style=value_style,))
         d.add(
-            d.text(
-                self.translate("ATHLETE"),
-                insert=(10, self.height - 20),
-                fill=text_color,
-                style=header_style,
-            )
-        )
-        d.add(
-            d.text(
-                self._athlete,
-                insert=(10, self.height - 10),
-                fill=text_color,
-                style=value_style,
-            )
-        )
-        d.add(
-            d.text(
-                self.translate("STATISTICS"),
-                insert=(120, self.height - 20),
-                fill=text_color,
-                style=header_style,
-            )
+            d.text(self.translate("STATISTICS"), insert=(120, self.height - 20), fill=text_color, style=header_style,)
         )
         d.add(
             d.text(

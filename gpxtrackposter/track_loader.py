@@ -155,7 +155,9 @@ class TrackLoader:
     def _load_tracks(file_names: typing.List[str], use_local_time: bool) -> typing.Dict[str, Track]:
         tracks = {}
         with concurrent.futures.ProcessPoolExecutor() as executor:
-            future_to_file_name = {executor.submit(load_gpx_file, file_name, use_local_time): file_name for file_name in file_names}
+            future_to_file_name = {
+                executor.submit(load_gpx_file, file_name, use_local_time): file_name for file_name in file_names
+            }
         for future in concurrent.futures.as_completed(future_to_file_name):
             file_name = future_to_file_name[future]
             try:
@@ -171,7 +173,9 @@ class TrackLoader:
         tracks = {}
         with concurrent.futures.ProcessPoolExecutor() as executor:
             future_to_file_name = {
-                executor.submit(load_cached_track_file, self._get_cache_file_name(file_name), file_name, self.use_local_time): file_name
+                executor.submit(
+                    load_cached_track_file, self._get_cache_file_name(file_name), file_name, self.use_local_time
+                ): file_name
                 for file_name in file_names
             }
         for future in concurrent.futures.as_completed(future_to_file_name):

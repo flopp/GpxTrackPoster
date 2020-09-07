@@ -12,7 +12,7 @@ from typing import List, Optional, Tuple
 
 import colour  # type: ignore
 import s2sphere as s2  # type: ignore
-from timezonefinder import TimezoneFinder # type: ignore
+from timezonefinder import TimezoneFinder  # type: ignore
 
 from gpxtrackposter.value_range import ValueRange
 from gpxtrackposter.xy import XY
@@ -111,7 +111,9 @@ def format_float(f: float) -> str:
     return locale.format_string("%.1f", f)
 
 
-def parse_datetime_to_local(start_time: datetime,  end_time: datetime, lat: float, lng: float) -> Tuple[datetime, datetime]:
+def parse_datetime_to_local(
+    start_time: datetime, end_time: datetime, lat: float, lng: float
+) -> Tuple[datetime, datetime]:
     # just parse the start time, because start/end maybe different
     offset = start_time.utcoffset()
     if offset:

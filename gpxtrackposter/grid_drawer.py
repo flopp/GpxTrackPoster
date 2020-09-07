@@ -39,10 +39,7 @@ class GridDrawer(TracksDrawer):
         for (index, tr) in enumerate(self.poster.tracks):
             p = XY(index % count_x, index // count_x) * XY(cell_size + spacing_x, cell_size + spacing_y)
             self._draw_track(
-                dr,
-                tr,
-                0.9 * XY(cell_size, cell_size),
-                offset + 0.05 * XY(cell_size, cell_size) + p,
+                dr, tr, 0.9 * XY(cell_size, cell_size), offset + 0.05 * XY(cell_size, cell_size) + p,
             )
 
     def _draw_track(self, dr: svgwrite.Drawing, tr: Track, size: XY, offset: XY) -> None:
