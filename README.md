@@ -19,6 +19,7 @@ usage: create_poster [-h] [--gpx-dir DIR] [--output FILE]
                      [--track-color2 COLOR] [--text-color COLOR]
                      [--special-color COLOR] [--special-color2 COLOR]
                      [--min-distance DISTANCE]
+                     [--use-localtime TIME]
                      [--special-distance DISTANCE] [--special-distance2 DISTANCE]
                      [--units UNITS] [--clear-cache] [--verbose]
                      [--logfile FILE] [--heatmap-center LAT,LNG]
@@ -58,6 +59,7 @@ optional arguments:
 
   --units UNITS         Distance units; "metric", "imperial" (default:
                         "metric").
+  --use-localtime       Use local time instead of utc time.
   --clear-cache         Clear the track cache.
   --verbose             Verbose logging.
   --logfile FILE
@@ -159,7 +161,7 @@ If you have found a bug or have a feature request, please create a new issue. I'
 
 Or even better: clone the repo, fix the bug/implement the feature yourself, and file a pull request. Contributions are always welcome!
 
-Important: If you want to contribute via a pull request, make sure you run `tox` and possibly `make format` before pushing code.
+Important: If you want to contribute via a pull request, make sure you run `mypy` and possibly `make format` before pushing code.
 
 ## Translation
 The translation is based on GNUs 'gettext'.
