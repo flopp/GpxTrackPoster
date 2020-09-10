@@ -23,51 +23,51 @@ msgstr "OMAT REITIT"
 
 #: gpxtrackposter/poster.py:98
 msgid "January"
-msgstr "tammikuu"
+msgstr "Tammikuu"
 
 #: gpxtrackposter/poster.py:99
 msgid "February"
-msgstr "helmikuu"
+msgstr "Helmikuu"
 
 #: gpxtrackposter/poster.py:100
 msgid "March"
-msgstr "maaliskuu"
+msgstr "Maaliskuu"
 
 #: gpxtrackposter/poster.py:101
 msgid "April"
-msgstr "huhtikuu"
+msgstr "Huhtikuu"
 
 #: gpxtrackposter/poster.py:102
 msgid "May"
-msgstr "toukokuu"
+msgstr "Toukokuu"
 
 #: gpxtrackposter/poster.py:103
 msgid "June"
-msgstr "kesäkuu"
+msgstr "Kesäkuu"
 
 #: gpxtrackposter/poster.py:104
 msgid "July"
-msgstr "heinäkuu"
+msgstr "Heinäkuu"
 
 #: gpxtrackposter/poster.py:105
 msgid "August"
-msgstr "elokuu"
+msgstr "Elokuu"
 
 #: gpxtrackposter/poster.py:106
 msgid "September"
-msgstr "syyskuu"
+msgstr "Syyskuu"
 
 #: gpxtrackposter/poster.py:107
 msgid "October"
-msgstr "lokakuu"
+msgstr "Lokakuu"
 
 #: gpxtrackposter/poster.py:108
 msgid "November"
-msgstr "marraskuu"
+msgstr "Marraskuu"
 
 #: gpxtrackposter/poster.py:109
 msgid "December"
-msgstr "joulukuu"
+msgstr "Joulukuu"
 
 #: gpxtrackposter/poster.py:161
 msgid "km"

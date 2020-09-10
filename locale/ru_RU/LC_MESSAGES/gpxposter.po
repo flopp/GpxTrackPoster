@@ -24,51 +24,51 @@ msgstr "МОИ ТРЕКИ"
 
 #: gpxtrackposter/poster.py:98
 msgid "January"
-msgstr "января"
+msgstr "Январь"
 
 #: gpxtrackposter/poster.py:99
 msgid "February"
-msgstr "февраля"
+msgstr "Февраль"
 
 #: gpxtrackposter/poster.py:100
 msgid "March"
-msgstr "марта"
+msgstr "Март"
 
 #: gpxtrackposter/poster.py:101
 msgid "April"
-msgstr "апреля"
+msgstr "Апрель"
 
 #: gpxtrackposter/poster.py:102
 msgid "May"
-msgstr "мая"
+msgstr "Май"
 
 #: gpxtrackposter/poster.py:103
 msgid "June"
-msgstr "июня"
+msgstr "Июнь"
 
 #: gpxtrackposter/poster.py:104
 msgid "July"
-msgstr "июля"
+msgstr "Июль"
 
 #: gpxtrackposter/poster.py:105
 msgid "August"
-msgstr "августа"
+msgstr "Август"
 
 #: gpxtrackposter/poster.py:106
 msgid "September"
-msgstr "сентября"
+msgstr "Сентябрь"
 
 #: gpxtrackposter/poster.py:107
 msgid "October"
-msgstr "октября"
+msgstr "Октябрь"
 
 #: gpxtrackposter/poster.py:108
 msgid "November"
-msgstr "ноября"
+msgstr "Ноябрь"
 
 #: gpxtrackposter/poster.py:109
 msgid "December"
-msgstr "декабря"
+msgstr "Декабрь"
 
 #: gpxtrackposter/poster.py:161
 msgid "km"
