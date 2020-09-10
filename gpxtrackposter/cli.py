@@ -59,6 +59,12 @@ def main() -> None:
         help="Language (default: english).",
     )
     args_parser.add_argument(
+        "--localedir",
+        metavar="DIR",
+        type=str,
+        help="The directory where the translation files can be found (default: the system's locale directory).",
+    )
+    args_parser.add_argument(
         "--year",
         metavar="YEAR",
         type=str,
@@ -206,7 +212,7 @@ def main() -> None:
         return
 
     print(f"Creating poster of type {args.type} with {len(tracks)} tracks and storing it in file {args.output}...")
-    p.set_language(args.language)
+    p.set_language(args.language, args.localedir)
     p.set_athlete(args.athlete)
     p.set_title(args.title if args.title else p.translate("MY TRACKS"))
 

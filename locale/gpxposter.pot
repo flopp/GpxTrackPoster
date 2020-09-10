@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-08-31 18:17+0300\n"
+"POT-Creation-Date: 2020-09-09 08:22+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,46 +17,94 @@ msgstr ""
 "Content-Type: text/plain; charset=CHARSET\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: gpxtrackposter/cli.py:267
+#: gpxtrackposter/cli.py:211
 msgid "MY TRACKS"
 msgstr ""
 
-#: gpxtrackposter/poster.py:125
+#: gpxtrackposter/poster.py:98
+msgid "January"
+msgstr ""
+
+#: gpxtrackposter/poster.py:99
+msgid "February"
+msgstr ""
+
+#: gpxtrackposter/poster.py:100
+msgid "March"
+msgstr ""
+
+#: gpxtrackposter/poster.py:101
+msgid "April"
+msgstr ""
+
+#: gpxtrackposter/poster.py:102
+msgid "May"
+msgstr ""
+
+#: gpxtrackposter/poster.py:103
+msgid "June"
+msgstr ""
+
+#: gpxtrackposter/poster.py:104
+msgid "July"
+msgstr ""
+
+#: gpxtrackposter/poster.py:105
+msgid "August"
+msgstr ""
+
+#: gpxtrackposter/poster.py:106
+msgid "September"
+msgstr ""
+
+#: gpxtrackposter/poster.py:107
+msgid "October"
+msgstr ""
+
+#: gpxtrackposter/poster.py:108
+msgid "November"
+msgstr ""
+
+#: gpxtrackposter/poster.py:109
+msgid "December"
+msgstr ""
+
+#: gpxtrackposter/poster.py:161
 msgid "km"
 msgstr ""
 
-#: gpxtrackposter/poster.py:126
+#: gpxtrackposter/poster.py:162
 msgid "mi"
 msgstr ""
 
-#: gpxtrackposter/poster.py:156
+#: gpxtrackposter/poster.py:193
 msgid "ATHLETE"
 msgstr ""
 
-#: gpxtrackposter/poster.py:172
+#: gpxtrackposter/poster.py:209
 msgid "STATISTICS"
 msgstr ""
 
-#: gpxtrackposter/poster.py:180
+#: gpxtrackposter/poster.py:217
 msgid "Number"
 msgstr ""
 
-#: gpxtrackposter/poster.py:188
+#: gpxtrackposter/poster.py:225
 msgid "Weekly"
 msgstr ""
 
-#: gpxtrackposter/poster.py:196
+#: gpxtrackposter/poster.py:233
 msgid "Total"
 msgstr ""
 
-#: gpxtrackposter/poster.py:204
+#: gpxtrackposter/poster.py:241
 msgid "Avg"
 msgstr ""
 
-#: gpxtrackposter/poster.py:212
+#: gpxtrackposter/poster.py:257
 msgid "Min"
 msgstr ""
 
-#: gpxtrackposter/poster.py:220
+#: gpxtrackposter/poster.py:265
 msgid "Max"
 msgstr ""

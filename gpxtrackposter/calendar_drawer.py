@@ -11,7 +11,7 @@ import svgwrite  # type: ignore
 
 from gpxtrackposter import utils
 from gpxtrackposter.exceptions import PosterError
-from gpxtrackposter.localization import localized_month_name, localized_day_of_week_name
+from gpxtrackposter.localization import localized_day_of_week_name
 from gpxtrackposter.poster import Poster
 from gpxtrackposter.tracks_drawer import TracksDrawer
 from gpxtrackposter.xy import XY
@@ -85,7 +85,7 @@ class CalendarDrawer(TracksDrawer):
             y_pos = offset.y + (y * 3 + 1) * cell_size + y * spacing.y
             dr.add(
                 dr.text(
-                    localized_month_name(month),
+                    self.poster.month_name(month),
                     insert=(offset.x, y_pos - 2),
                     fill=self.poster.colors["text"],
                     alignment_baseline="hanging",

@@ -7,6 +7,7 @@
 from collections import defaultdict
 import gettext
 import locale
+import logging
 import typing
 
 import pint  # type: ignore
@@ -22,6 +23,8 @@ from gpxtrackposter.year_range import YearRange
 if typing.TYPE_CHECKING:
     # avoid circlic import
     from gpxtrackposter.tracks_drawer import TracksDrawer  # pylint: disable=cyclic-import
+
+log = logging.getLogger(__name__)
 
 
 class Poster:
@@ -69,19 +72,25 @@ class Poster:
         self.years = YearRange()
         self.tracks_drawer: typing.Optional["TracksDrawer"] = None
         self._trans: typing.Optional[typing.Callable[[str], str]] = None
-        self.set_language(None)
+        self.set_language(None, None)
 
-    def set_language(self, language: typing.Optional[str]) -> None:
+    def set_language(self, language: typing.Optional[str], localedir: typing.Optional[str]) -> None:
         if language:
             try:
                 locale.setlocale(locale.LC_ALL, f"{language}.utf8")
             except locale.Error as e:
-                print(f'Cannot set locale to "{language}": {e}')
+                log.warning("Unable to set the locale to %s (%s)", language, str(e))
                 language = None
 
         # Fall-back to NullTranslations, if the specified language translation cannot be found.
         if language:
-            lang = gettext.translation("gpxposter", localedir="locale", languages=[language], fallback=True)
+            lang = gettext.translation("gpxposter", localedir=localedir, languages=[language], fallback=True)
+            if len(lang.info()) == 0:
+                log.warning(
+                    "Unable to load translations for %s from %s; falling back to the default translation.",
+                    language,
+                    localedir if localedir else "the system's default locale directory",
+                )
         else:
             lang = gettext.NullTranslations()
         self._trans = lang.gettext
@@ -90,6 +99,24 @@ class Poster:
         if self._trans is None:
             return s
         return self._trans(s)
+
+    def month_name(self, month: int) -> str:
+        assert 1 <= month <= 12
+
+        return [
+            self.translate("January"),
+            self.translate("February"),
+            self.translate("March"),
+            self.translate("April"),
+            self.translate("May"),
+            self.translate("June"),
+            self.translate("July"),
+            self.translate("August"),
+            self.translate("September"),
+            self.translate("October"),
+            self.translate("November"),
+            self.translate("December"),
+        ][month - 1]
 
     def set_athlete(self, athlete: str) -> None:
         self._athlete = athlete

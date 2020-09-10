@@ -46,7 +46,7 @@ test:
 
 .PHONY: extract-messages
 extract-messages:
-	xgettext --keyword="trans" -d gpxposter -o locale/gpxposter.pot gpxtrackposter/*.py
+	xgettext --keyword="translate" -d gpxposter -o locale/gpxposter.pot gpxtrackposter/*.py
 	msgmerge --update locale/de_DE/LC_MESSAGES/gpxposter.po locale/gpxposter.pot
 	msgmerge --update locale/fi_FI/LC_MESSAGES/gpxposter.po locale/gpxposter.pot
 	msgmerge --update locale/fr_FR/LC_MESSAGES/gpxposter.po locale/gpxposter.pot
