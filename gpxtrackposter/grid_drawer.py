@@ -47,14 +47,17 @@ class GridDrawer(TracksDrawer):
 
     def _draw_track(self, dr: svgwrite.Drawing, tr: Track, size: XY, offset: XY) -> None:
         color = self.color(self.poster.length_range, tr.length(), tr.special)
+        str_length = utils.format_float(self.poster.m2u(tr.length()))
+
+        date_title = str(tr.start_time.date()) if tr.start_time else "Unknown Date"
         for line in utils.project(tr.bbox(), size, offset, tr.polylines):
-            dr.add(
-                dr.polyline(
-                    points=line,
-                    stroke=color,
-                    fill="none",
-                    stroke_width=0.5,
-                    stroke_linejoin="round",
-                    stroke_linecap="round",
-                )
+            polyline = dr.polyline(
+                points=line,
+                stroke=color,
+                fill="none",
+                stroke_width=0.5,
+                stroke_linejoin="round",
+                stroke_linecap="round",
             )
+            polyline.set_desc(title=f"{date_title} {str_length} {self.poster.u()}")
+            dr.add(polyline)

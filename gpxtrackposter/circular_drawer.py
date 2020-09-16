@@ -237,4 +237,7 @@ class CircularDrawer(TracksDrawer):
         path.push("l", (r2 - r1) * sin_a1, (r1 - r2) * cos_a1)
         path.push(f"a{r2},{r2} 0 0,0 {r2 * (sin_a2 - sin_a1)},{r2 * (cos_a1 - cos_a2)}")
         path.push("l", (r1 - r2) * sin_a2, (r2 - r1) * cos_a2)
+        date_title = str(tracks[0].start_time.date()) if tracks[0].start_time else "Unknown date"
+        str_length = utils.format_float(self.poster.m2u(length))
+        path.set_desc(title=f"{date_title} {str_length} {self.poster.u()}")
         dr.add(path)
