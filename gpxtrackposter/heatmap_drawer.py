@@ -7,6 +7,7 @@
 import argparse
 import logging
 import math
+import typing
 
 import svgwrite  # type: ignore
 import s2sphere  # type: ignore
@@ -116,14 +117,23 @@ class HeatmapDrawer(TracksDrawer):
             tracks_bbox = tracks_bbox.union(tr.bbox())
         return tracks_bbox
 
-    def draw(self, dr: svgwrite.Drawing, size: XY, offset: XY) -> None:
+    def draw(self, dr: svgwrite.Drawing, g: svgwrite.container.Group, size: XY, offset: XY) -> None:
         """Draw the heatmap based on tracks."""
         bbox = self._determine_bbox()
+        year_groups: typing.Dict[int, svgwrite.container.Group] = {}
         for tr in self.poster.tracks:
+            assert tr.start_time
+            year = tr.start_time.year
+            if year not in year_groups:
+                g_year = dr.g(id=f"year{year}")
+                g.add(g_year)
+                year_groups[year] = g_year
+            else:
+                g_year = year_groups[year]
             color = self.color(self.poster.length_range, tr.length(), tr.special)
             for line in utils.project(bbox, size, offset, tr.polylines):
                 for opacity, width in [(0.1, 5.0), (0.2, 2.0), (1.0, 0.3)]:
-                    dr.add(
+                    g_year.add(
                         dr.polyline(
                             points=line,
                             stroke=color,

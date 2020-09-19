@@ -23,7 +23,7 @@ class CalendarDrawer(TracksDrawer):
     def __init__(self, the_poster: Poster):
         super().__init__(the_poster)
 
-    def draw(self, dr: svgwrite.Drawing, size: XY, offset: XY) -> None:
+    def draw(self, dr: svgwrite.Drawing, g: svgwrite.container.Group, size: XY, offset: XY) -> None:
         """Iterate through the Poster's years, creating a calendar for each."""
         if self.poster.tracks is None:
             raise PosterError("No tracks to draw.")
@@ -42,13 +42,15 @@ class CalendarDrawer(TracksDrawer):
         sub_size = cell_size - 2 * margin
 
         for year in self.poster.years.iter():
-            self._draw(dr, sub_size, offset + margin + cell_size * XY(x, y), year)
+            g_year = dr.g(id=f"year{year}")
+            g.add(g_year)
+            self._draw(dr, g_year, sub_size, offset + margin + cell_size * XY(x, y), year)
             x += 1
             if x >= count_x:
                 x = 0
                 y += 1
 
-    def _draw(self, dr: svgwrite.Drawing, size: XY, offset: XY, year: int) -> None:
+    def _draw(self, dr: svgwrite.Drawing, g: svgwrite.container.Group, size: XY, offset: XY, year: int) -> None:
         min_size = min(size.x, size.y)
         year_size = min_size * 4.0 / 80.0
         year_style = f"font-size:{year_size}px; font-family:Arial;"
@@ -56,7 +58,7 @@ class CalendarDrawer(TracksDrawer):
         day_style = f"dominant-baseline: central; font-size:{min_size * 1.0 / 80.0}px; font-family:Arial;"
         day_length_style = f"font-size:{min_size * 1.0 / 80.0}px; font-family:Arial;"
 
-        dr.add(
+        g.add(
             dr.text(
                 f"{year}",
                 insert=offset.tuple(),
@@ -83,7 +85,7 @@ class CalendarDrawer(TracksDrawer):
             date = datetime.date(year, month, 1)
             y = month - 1
             y_pos = offset.y + (y * 3 + 1) * cell_size + y * spacing.y
-            dr.add(
+            g.add(
                 dr.text(
                     self.poster.month_name(month),
                     insert=(offset.x, y_pos - 2),
@@ -105,8 +107,8 @@ class CalendarDrawer(TracksDrawer):
                     length = sum([t.length() for t in tracks])
                     has_special = len([t for t in tracks if t.special]) > 0
                     color = self.color(self.poster.length_range_by_date, length, has_special)
-                    dr.add(dr.rect(pos, dim, fill=color))
-                    dr.add(
+                    g.add(dr.rect(pos, dim, fill=color))
+                    g.add(
                         dr.text(
                             utils.format_float(self.poster.m2u(length)),
                             insert=(
@@ -119,9 +121,9 @@ class CalendarDrawer(TracksDrawer):
                         )
                     )
                 else:
-                    dr.add(dr.rect(pos, dim, fill="#444444"))
+                    g.add(dr.rect(pos, dim, fill="#444444"))
 
-                dr.add(
+                g.add(
                     dr.text(
                         localized_day_of_week_name(date.weekday(), short=True),
                         insert=(

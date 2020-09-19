@@ -67,7 +67,7 @@ class CircularDrawer(TracksDrawer):
         self._rings = args.circular_rings
         self._ring_color = args.circular_ring_color
 
-    def draw(self, dr: svgwrite.Drawing, size: XY, offset: XY) -> None:
+    def draw(self, dr: svgwrite.Drawing, g: svgwrite.container.Group, size: XY, offset: XY) -> None:
         """Draw the circular Poster using distances broken down by time"""
         if self.poster.tracks is None:
             raise PosterError("No tracks to draw.")
@@ -88,25 +88,27 @@ class CircularDrawer(TracksDrawer):
             margin.y = 0
         sub_size = cell_size - 2 * margin
         for year in self.poster.years.iter():
-            self._draw_year(dr, sub_size, offset + margin + cell_size * XY(x, y), year)
+            g_year = dr.g(id=f"year{year}")
+            g.add(g_year)
+            self._draw_year(dr, g_year, sub_size, offset + margin + cell_size * XY(x, y), year)
             x += 1
             if x >= count_x:
                 x = 0
                 y += 1
 
-    def _draw_year(self, dr: svgwrite.Drawing, size: XY, offset: XY, year: int) -> None:
+    def _draw_year(self, dr: svgwrite.Drawing, g: svgwrite.container.Group, size: XY, offset: XY, year: int) -> None:
         min_size = min(size.x, size.y)
         outer_radius = 0.5 * min_size - 6
         radius_range = ValueRange.from_pair(outer_radius / 4, outer_radius)
         center = offset + 0.5 * size
 
         if self._rings:
-            self._draw_rings(dr, center, radius_range)
+            self._draw_rings(dr, g, center, radius_range)
 
         year_style = f"dominant-baseline: central; font-size:{min_size * 4.0 / 80.0}px; font-family:Arial;"
         month_style = f"font-size:{min_size * 3.0 / 80.0}px; font-family:Arial;"
 
-        dr.add(
+        g.add(
             dr.text(
                 f"{year}",
                 insert=center.tuple(),
@@ -131,7 +133,7 @@ class CircularDrawer(TracksDrawer):
                 r1 = outer_radius + 1
                 r2 = outer_radius + 6
                 r3 = outer_radius + 2
-                dr.add(
+                g.add(
                     dr.line(
                         start=(center + r1 * XY(sin_a1, -cos_a1)).tuple(),
                         end=(center + r2 * XY(sin_a1, -cos_a1)).tuple(),
@@ -145,7 +147,7 @@ class CircularDrawer(TracksDrawer):
                     stroke="none",
                 )
                 path.push(f"a{r3},{r3} 0 0,1 {r3 * (sin_a3 - sin_a1)},{r3 * (cos_a1 - cos_a3)}")
-                dr.add(path)
+                g.add(path)
                 tpath = svgwrite.text.TextPath(
                     path, self.poster.month_name(date.month), startOffset=(0.5 * r3 * (a3 - a1))
                 )
@@ -156,10 +158,11 @@ class CircularDrawer(TracksDrawer):
                     style=month_style,
                 )
                 text.add(tpath)
-                dr.add(text)
+                g.add(text)
             if text_date in self.poster.tracks_by_date:
                 self._draw_circle_segment(
                     dr,
+                    g,
                     self.poster.tracks_by_date[text_date],
                     a1,
                     a2,
@@ -184,7 +187,9 @@ class CircularDrawer(TracksDrawer):
                 break
         return ring_distance
 
-    def _draw_rings(self, dr: svgwrite.Drawing, center: XY, radius_range: ValueRange) -> None:
+    def _draw_rings(
+        self, dr: svgwrite.Drawing, g: svgwrite.container.Group, center: XY, radius_range: ValueRange
+    ) -> None:
         length_range = self.poster.length_range_by_date
         if not length_range.is_valid():
             return
@@ -198,7 +203,7 @@ class CircularDrawer(TracksDrawer):
         distance = ring_distance
         while distance < max_length:
             radius = radius_range.interpolate((distance / max_length).magnitude)
-            dr.add(
+            g.add(
                 dr.circle(
                     center=center.tuple(),
                     r=radius,
@@ -213,6 +218,7 @@ class CircularDrawer(TracksDrawer):
     def _draw_circle_segment(
         self,
         dr: svgwrite.Drawing,
+        g: svgwrite.container.Group,
         tracks: typing.List[Track],
         a1: float,
         a2: float,
@@ -240,4 +246,4 @@ class CircularDrawer(TracksDrawer):
         date_title = str(tracks[0].start_time.date()) if tracks[0].start_time else "Unknown date"
         str_length = utils.format_float(self.poster.m2u(length))
         path.set_desc(title=f"{date_title} {str_length} {self.poster.u()}")
-        dr.add(path)
+        g.add(path)

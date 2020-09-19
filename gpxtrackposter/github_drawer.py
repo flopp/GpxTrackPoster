@@ -22,7 +22,7 @@ class GithubDrawer(TracksDrawer):
     def __init__(self, the_poster: Poster):
         super().__init__(the_poster)
 
-    def draw(self, dr: svgwrite.Drawing, size: XY, offset: XY) -> None:
+    def draw(self, dr: svgwrite.Drawing, g: svgwrite.container.Group, size: XY, offset: XY) -> None:
         if self.poster.tracks is None:
             raise PosterError("No tracks to draw")
         year_size = 200 * 4.0 / 80.0
@@ -31,6 +31,9 @@ class GithubDrawer(TracksDrawer):
         month_names_style = "font-size:2.5px; font-family:Arial"
         total_length_year_dict = self.poster.total_length_year_dict
         for year in self.poster.years.iter():
+            g_year = dr.g(id=f"year{year}")
+            g.add(g_year)
+
             start_date_weekday, _ = calendar.monthrange(year, 1)
             github_rect_first_day = datetime.date(year, 1, 1)
             # Github profile the first day start from the last Monday of the last year or the first Monday of this year
@@ -56,7 +59,7 @@ class GithubDrawer(TracksDrawer):
                 ]
             ]
             km_or_mi = self.poster.u()
-            dr.add(
+            g_year.add(
                 dr.text(
                     f"{year}",
                     insert=offset.tuple(),
@@ -66,7 +69,7 @@ class GithubDrawer(TracksDrawer):
                 )
             )
 
-            dr.add(
+            g_year.add(
                 dr.text(
                     f"{year_length_str} {km_or_mi}",
                     insert=(offset.tuple()[0] + 165, offset.tuple()[1] + 2),
@@ -77,7 +80,7 @@ class GithubDrawer(TracksDrawer):
             )
             # add month name up to the poster one by one because of svg text auto trim the spaces.
             for num, name in enumerate(month_names):
-                dr.add(
+                g_year.add(
                     dr.text(
                         f"{name}",
                         insert=(offset.tuple()[0] + 15.5 * num, offset.tuple()[1] + 14),
@@ -113,7 +116,7 @@ class GithubDrawer(TracksDrawer):
 
                     rect = dr.rect((rect_x, rect_y), dom, fill=color)
                     rect.set_desc(title=date_title)
-                    dr.add(rect)
+                    g_year.add(rect)
                     github_rect_day += datetime.timedelta(1)
                 rect_x += 3.5
             offset.y += 3.5 * 9 + year_size + 1.5

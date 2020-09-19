@@ -175,15 +175,25 @@ class Poster:
 
     def _draw_tracks(self, d: svgwrite.Drawing, size: XY, offset: XY) -> None:
         assert self.tracks_drawer
-        self.tracks_drawer.draw(d, size, offset)
+
+        g = d.g(id="tracks")
+        d.add(g)
+
+        self.tracks_drawer.draw(d, g, size, offset)
 
     def _draw_header(self, d: svgwrite.Drawing) -> None:
+        g = d.g(id="header")
+        d.add(g)
+
         text_color = self.colors["text"]
         title_style = "font-size:12px; font-family:Arial; font-weight:bold;"
         assert self._title is not None
-        d.add(d.text(self._title, insert=(10, 20), fill=text_color, style=title_style))
+        g.add(d.text(self._title, insert=(10, 20), fill=text_color, style=title_style))
 
     def _draw_footer(self, d: svgwrite.Drawing) -> None:
+        g = d.g(id="footer")
+        d.add(g)
+
         text_color = self.colors["text"]
         header_style = "font-size:4px; font-family:Arial"
         value_style = "font-size:9px; font-family:Arial"
@@ -196,7 +206,7 @@ class Poster:
             weeks,
         ) = self._compute_track_statistics()
 
-        d.add(
+        g.add(
             d.text(
                 self.translate("ATHLETE"),
                 insert=(10, self.height - 20),
@@ -204,7 +214,7 @@ class Poster:
                 style=header_style,
             )
         )
-        d.add(
+        g.add(
             d.text(
                 self._athlete,
                 insert=(10, self.height - 10),
@@ -212,7 +222,7 @@ class Poster:
                 style=value_style,
             )
         )
-        d.add(
+        g.add(
             d.text(
                 self.translate("STATISTICS"),
                 insert=(120, self.height - 20),
@@ -220,7 +230,7 @@ class Poster:
                 style=header_style,
             )
         )
-        d.add(
+        g.add(
             d.text(
                 self.translate("Number") + f": {len(self.tracks)}",
                 insert=(120, self.height - 15),
@@ -228,7 +238,7 @@ class Poster:
                 style=small_value_style,
             )
         )
-        d.add(
+        g.add(
             d.text(
                 self.translate("Weekly") + ": " + format_float(len(self.tracks) / weeks),
                 insert=(120, self.height - 10),
@@ -236,7 +246,7 @@ class Poster:
                 style=small_value_style,
             )
         )
-        d.add(
+        g.add(
             d.text(
                 self.translate("Total") + ": " + self.format_distance(total_length),
                 insert=(141, self.height - 15),
@@ -244,7 +254,7 @@ class Poster:
                 style=small_value_style,
             )
         )
-        d.add(
+        g.add(
             d.text(
                 self.translate("Avg") + ": " + self.format_distance(average_length),
                 insert=(141, self.height - 10),
@@ -260,7 +270,7 @@ class Poster:
         else:
             min_length = 0.0
             max_length = 0.0
-        d.add(
+        g.add(
             d.text(
                 self.translate("Min") + ": " + self.format_distance(min_length),
                 insert=(167, self.height - 15),
@@ -268,7 +278,7 @@ class Poster:
                 style=small_value_style,
             )
         )
-        d.add(
+        g.add(
             d.text(
                 self.translate("Max") + ": " + self.format_distance(max_length),
                 insert=(167, self.height - 10),

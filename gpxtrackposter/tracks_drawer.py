@@ -27,7 +27,7 @@ class TracksDrawer:
     def fetch_args(self, args: argparse.Namespace) -> None:
         pass
 
-    def draw(self, dr: svgwrite.Drawing, size: XY, offset: XY) -> None:
+    def draw(self, dr: svgwrite.Drawing, g: svgwrite.container.Group, size: XY, offset: XY) -> None:
         pass
 
     def color(self, length_range: QuantityRange, length: pint.quantity.Quantity, is_special: bool = False) -> str:
