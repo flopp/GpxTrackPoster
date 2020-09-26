@@ -12,6 +12,8 @@ import typing
 import gpxpy  # type: ignore
 import pint  # type: ignore
 import s2sphere  # type: ignore
+import polyline  # type: ignore
+from stravalib.model import Activity as StravaActivity  # type: ignore
 
 from gpxtrackposter.exceptions import TrackLoadError
 from gpxtrackposter.timezone_adjuster import TimezoneAdjuster
@@ -74,8 +76,23 @@ class Track:
         except Exception as e:
             raise TrackLoadError("Something went wrong when loading GPX.") from e
 
+    def load_strava(self, activate: StravaActivity) -> None:
+        # use strava as file name
+        self.file_names = [str(activate.id)]
+        self.start_time = activate.start_date_local
+        self.end_time = activate.start_date_local + activate.elapsed_time
+        self._length_meters = float(activate.distance)
+        summary_polyline = activate.map.summary_polyline
+        polyline_data = polyline.decode(summary_polyline) if summary_polyline else []
+        self.polylines = [[s2sphere.LatLng.from_degrees(p[0], p[1]) for p in polyline_data]]
+
+    @property
     def length_meters(self) -> float:
         return self._length_meters
+
+    @length_meters.setter
+    def length_meters(self, value: float) -> None:
+        self._length_meters = value
 
     def length(self) -> pint.quantity.Quantity:
         return self._length_meters * Units().meter
@@ -112,7 +129,7 @@ class Track:
         """Append other track to self."""
         self.end_time = other.end_time
         self.polylines.extend(other.polylines)
-        self._length_meters += other.length_meters()
+        self._length_meters += other.length_meters
         self.file_names.extend(other.file_names)
         self.special = self.special or other.special
 

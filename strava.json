@@ -1,0 +1,5 @@
+{
+    "client_id": "YOUR STRAVA API CLIENT ID",
+    "client_secret": "YOUR STRAVA API CLIENT SECRET",
+    "refresh_token": "YOUR STRAVA REFRESH TOKEN"
+}
