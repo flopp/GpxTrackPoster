@@ -10,10 +10,15 @@ import concurrent.futures
 import hashlib
 import logging
 import os
+import json
+import datetime
 import shutil
 import typing
+from typing import Any
 
 import pint  # type: ignore
+import s2sphere  # type: ignore
+from stravalib import Client  # type: ignore
 
 from gpxtrackposter.exceptions import ParameterError, TrackLoadError
 from gpxtrackposter.timezone_adjuster import TimezoneAdjuster
@@ -63,6 +68,7 @@ class TrackLoader:
         self.special_file_names: typing.List[str] = []
         self.year_range = YearRange()
         self.cache_dir: typing.Optional[str] = None
+        self.strava_cache_file = ""
         self._cache_file_names: typing.Dict[str, str] = {}
 
     def set_cache_dir(self, cache_dir: str) -> None:
@@ -105,12 +111,38 @@ class TrackLoader:
             log.info("Conventionally loaded tracks: %d", len(loaded_tracks))
             self._store_tracks_to_cache(loaded_tracks)
 
-        tracks = self._filter_tracks(tracks)
+        return self._filter_and_merge_tracks(tracks)
 
-        # merge tracks that took place within one hour
-        tracks = self._merge_tracks(tracks)
-        # filter out tracks with length < min_length
-        return [t for t in tracks if t.length() >= self._min_length]
+    def load_strava_tracks(self, strava_config: str) -> typing.List[Track]:
+        tracks = []
+        tracks_names = []
+        if self.cache_dir:
+            self.strava_cache_file = os.path.join(self.cache_dir, strava_config)
+            if os.path.isfile(self.strava_cache_file):
+                with open(self.strava_cache_file) as f:
+                    strava_cache_data = json.load(f)
+                    tracks = [self._strava_cache_to_track(i) for i in strava_cache_data]
+                    tracks_names = [track.file_names[0] for track in tracks]
+
+        with open(strava_config) as f:
+            strava_data = json.load(f)
+        client = Client()
+        response = client.refresh_access_token(**strava_data)
+        client.access_token = response["access_token"]
+        fliter_dict = {"before": datetime.datetime.utcnow()}
+        if tracks:
+            max_time = max(track.start_time for track in tracks)
+            if max_time:
+                fliter_dict = {"after": max_time - datetime.timedelta(days=2)}
+        for activate in client.get_activities(**fliter_dict):
+            # tricky to pass the timezone
+            if str(activate.id) in tracks_names:
+                continue
+            t = Track()
+            t.load_strava(activate)
+            tracks.append(t)
+        self._store_strava_tracks_to_cache(tracks)
+        return self._filter_and_merge_tracks(tracks)
 
     def _filter_tracks(self, tracks: typing.List[Track]) -> typing.List[Track]:
         filtered_tracks = []
@@ -126,6 +158,13 @@ class TrackLoader:
                 t.special = file_name in self.special_file_names
                 filtered_tracks.append(t)
         return filtered_tracks
+
+    def _filter_and_merge_tracks(self, tracks: typing.List[Track]) -> typing.List[Track]:
+        tracks = self._filter_tracks(tracks)
+        # merge tracks that took place within one hour
+        tracks = self._merge_tracks(tracks)
+        # filter out tracks with length < min_length
+        return [t for t in tracks if t.length() >= self._min_length]
 
     @staticmethod
     def _merge_tracks(tracks: typing.List[Track]) -> typing.List[Track]:
@@ -194,6 +233,43 @@ class TrackLoader:
                 log.error("Failed to store track %s to cache: %s", file_name, str(e))
             else:
                 log.info("Stored track %s to cache", file_name)
+
+    def _store_strava_tracks_to_cache(self, tracks: typing.List[Track]) -> None:
+        if (not tracks) or (not self.cache_dir):
+            return
+        dirname = os.path.dirname(self.strava_cache_file)
+        if not os.path.exists(dirname):
+            os.makedirs(dirname)
+        log.info("Storing %d track(s) to cache...", len(tracks))
+        to_cache_tracks = [self._make_strava_cache_dict(track) for track in tracks]
+        with open(self.strava_cache_file, "w") as f:
+            json.dump(to_cache_tracks, f)
+
+    @staticmethod
+    def _make_strava_cache_dict(track: Track) -> typing.Dict[str, Any]:
+        lines_data = []
+        for line in track.polylines:
+            lines_data.append([{"lat": latlng.lat().degrees, "lng": latlng.lng().degrees} for latlng in line])
+        assert track.start_time and track.end_time
+        return {
+            "name": track.file_names[0],  # strava id
+            "start": track.start_time.strftime("%Y-%m-%d %H:%M:%S"),
+            "end": track.end_time.strftime("%Y-%m-%d %H:%M:%S"),
+            "length": track.length_meters,
+            "segments": lines_data,
+        }
+
+    @staticmethod
+    def _strava_cache_to_track(data: typing.Dict[str, Any]) -> "Track":
+        t = Track()
+        t.file_names = [data["name"]]
+        t.start_time = datetime.datetime.strptime(data["start"], "%Y-%m-%d %H:%M:%S")
+        t.end_time = datetime.datetime.strptime(data["end"], "%Y-%m-%d %H:%M:%S")
+        t.length_meters = float(data["length"])
+        t.polylines = []
+        for data_line in data["segments"]:
+            t.polylines.append([s2sphere.LatLng.from_degrees(float(d["lat"]), float(d["lng"])) for d in data_line])
+        return t
 
     @staticmethod
     def _list_gpx_files(base_dir: str) -> typing.Generator[str, None, None]:

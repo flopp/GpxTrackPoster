@@ -153,6 +153,13 @@ def main() -> None:
         action="store_true",
         help="Clear the track cache.",
     )
+    args_parser.add_argument(
+        "--from-strava",
+        dest="from_strava",
+        metavar="FILE",
+        type=str,
+        help="strava config file",
+    )
     args_parser.add_argument("--verbose", dest="verbose", action="store_true", help="Verbose logging.")
     args_parser.add_argument("--logfile", dest="logfile", metavar="FILE", type=str)
     args_parser.add_argument(
@@ -204,8 +211,10 @@ def main() -> None:
     if args.clear_cache:
         print("Clearing cache...")
         loader.clear_cache()
-
-    tracks = loader.load_tracks(args.gpx_dir)
+    if args.from_strava:
+        tracks = loader.load_strava_tracks(args.from_strava)
+    else:
+        tracks = loader.load_tracks(args.gpx_dir)
     if not tracks:
         if not args.clear_cache:
             print("No tracks found.")

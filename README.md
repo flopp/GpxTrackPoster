@@ -11,6 +11,14 @@ First of all, you need directory with a bunch of GPX files (e.g. you can export 
 
 You will need a little experience running things from the command line to use this script. That said, here are the usage details from the `--help` flag:
 
+Get data from strava is ok now:
+```
+create_poster --from-strava strava.json --year 2020 --title "Running" \
+    --athlete "Florian Pigorsch" --special 4110886680(strava id)
+```
+Only you need is change the strava config
+[How to get strava config](https://developers.strava.com/docs/getting-started/)
+
 ```
 usage: create_poster [-h] [--gpx-dir DIR] [--output FILE]
                      [--language LANGUAGE] [--year YEAR] [--title TITLE]
@@ -61,6 +69,7 @@ optional arguments:
                         special_color2
   --min-distance DISTANCE
                         min distance by km for track filter
+  --from-strava         get activities from strava api no need to download gpx files
 
 Heatmap Type Options:
   --heatmap-center LAT,LNG
@@ -77,6 +86,7 @@ Circular Type Options:
 
 Example:
 ```
+create_poster --from-strava strava.json --type circular
 create_poster --type grid --gpx-dir "my-tracks" --language "de" --year 2015 --title "Running" \
     --athlete "Florian Pigorsch" --special race1.gpx --special race2.gpx --special race3.gpx
 
