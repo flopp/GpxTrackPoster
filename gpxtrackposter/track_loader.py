@@ -130,11 +130,11 @@ class TrackLoader:
         client = Client()
         response = client.refresh_access_token(**strava_data)
         client.access_token = response["access_token"]
-        fliter_dict = {"before": datetime.datetime.utcnow()}
+        filter_dict = {"before": datetime.datetime.utcnow()}
         if tracks:
             max_time = max(track.start_time() for track in tracks)
-            fliter_dict = {"after": max_time - datetime.timedelta(days=2)}
-        for activity in client.get_activities(**fliter_dict):
+            filter_dict = {"after": max_time - datetime.timedelta(days=2)}
+        for activity in client.get_activities(**filter_dict):
             # tricky to pass the timezone
             if str(activity.id) in tracks_names:
                 continue

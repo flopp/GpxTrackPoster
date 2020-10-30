@@ -76,13 +76,13 @@ class Track:
         except Exception as e:
             raise TrackLoadError("Something went wrong when loading GPX.") from e
 
-    def load_strava(self, activate: StravaActivity) -> None:
+    def load_strava(self, activity: StravaActivity) -> None:
         # use strava as file name
-        self.file_names = [str(activate.id)]
-        self.set_start_time(activate.start_date_local)
-        self.set_end_time(activate.start_date_local + activate.elapsed_time)
-        self._length_meters = float(activate.distance)
-        summary_polyline = activate.map.summary_polyline
+        self.file_names = [str(activity.id)]
+        self.set_start_time(activity.start_date_local)
+        self.set_end_time(activity.start_date_local + activity.elapsed_time)
+        self._length_meters = float(activity.distance)
+        summary_polyline = activity.map.summary_polyline
         polyline_data = polyline.decode(summary_polyline) if summary_polyline else []
         self.polylines = [[s2sphere.LatLng.from_degrees(p[0], p[1]) for p in polyline_data]]
 
