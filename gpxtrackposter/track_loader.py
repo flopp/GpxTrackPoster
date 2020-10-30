@@ -126,6 +126,7 @@ class TrackLoader:
 
         with open(strava_config) as f:
             strava_data = json.load(f)
+        filter_type = strava_data.pop("activity_type", None)
         client = Client()
         response = client.refresh_access_token(**strava_data)
         client.access_token = response["access_token"]
@@ -134,12 +135,14 @@ class TrackLoader:
             max_time = max(track.start_time for track in tracks)
             if max_time:
                 fliter_dict = {"after": max_time - datetime.timedelta(days=2)}
-        for activate in client.get_activities(**fliter_dict):
+        for activity in client.get_activities(**fliter_dict):
             # tricky to pass the timezone
-            if str(activate.id) in tracks_names:
+            if str(activity.id) in tracks_names:
+                continue
+            if filter_type and activity.type not in ([filter_type] if isinstance(filter_type, str) else filter_type):
                 continue
             t = Track()
-            t.load_strava(activate)
+            t.load_strava(activity)
             tracks.append(t)
         self._store_strava_tracks_to_cache(tracks)
         return self._filter_and_merge_tracks(tracks)

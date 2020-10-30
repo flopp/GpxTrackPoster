@@ -21,13 +21,14 @@ Only you need is change the strava config
 
 ```
 usage: create_poster [-h] [--gpx-dir DIR] [--output FILE]
-                     [--language LANGUAGE] [--year YEAR] [--title TITLE]
-                     [--athlete NAME] [--special FILE] [--type TYPE]
-                     [--background-color COLOR] [--track-color COLOR]
-                     [--track-color2 COLOR] [--text-color COLOR]
-                     [--special-color COLOR] [--special-color2 COLOR]
-                     [--units UNITS] [--clear-cache] [--verbose]
-                     [--logfile FILE] [--special-distance DISTANCE]
+                     [--language LANGUAGE] [--localedir DIR] [--year YEAR]
+                     [--title TITLE] [--athlete NAME] [--special FILE]
+                     [--type TYPE] [--background-color COLOR]
+                     [--track-color COLOR] [--track-color2 COLOR]
+                     [--text-color COLOR] [--special-color COLOR]
+                     [--special-color2 COLOR] [--units UNITS] [--clear-cache]
+                     [--from-strava FILE] [--verbose] [--logfile FILE]
+                     [--special-distance DISTANCE]
                      [--special-distance2 DISTANCE] [--min-distance DISTANCE]
                      [--heatmap-center LAT,LNG] [--heatmap-radius RADIUS_KM]
                      [--circular-rings] [--circular-ring-color COLOR]
@@ -39,6 +40,8 @@ optional arguments:
   --output FILE         Name of generated SVG image file (default:
                         "poster.svg").
   --language LANGUAGE   Language (default: english).
+  --localedir DIR       The directory where the translation files can be
+                        found (default: the system's locale directory).
   --year YEAR           Filter tracks by year; "NUM", "NUM-NUM", "all"
                         (default: all years)
   --title TITLE         Title to display.
@@ -59,6 +62,8 @@ optional arguments:
   --units UNITS         Distance units; "metric", "imperial" (default:
                         "metric").
   --clear-cache         Clear the track cache.
+  --from-strava FILE    JSON file containning config used to get activities
+                        from strava
   --verbose             Verbose logging.
   --logfile FILE
   --special-distance DISTANCE
@@ -69,7 +74,6 @@ optional arguments:
                         special_color2
   --min-distance DISTANCE
                         min distance by km for track filter
-  --from-strava         get activities from strava api no need to download gpx files
 
 Heatmap Type Options:
   --heatmap-center LAT,LNG
@@ -103,6 +107,41 @@ To speed up subsequent executions of the script, successfully loaded GPX tracks 
 Tracks without time stamps and tracks recorded in the wrong year (option `--year`) are discarded.
 Tracks shorter than 1km are discarded, too
 If multiple tracks have been recorded within one hour, they are merged to a single track.
+
+### Filtering activities `--from-strava FILE` by `activity_type`
+
+When using `--from-strava FILE` option,
+you may specify optional `activity_type` to filter only certain [type(s) of activity][strava-activity-type] to load.
+Note, `activity_type` filters activities only when loading from strava, and will not affect what already cached.
+That means if you change the value of `activity_type` you have to use `--clear-cache` to reload with the new filter.
+You can provide `activity_type` with a list or a string.
+All following examples are valid.
+
+```json
+{
+    "client_id": "YOUR STRAVA API CLIENT ID",
+    "client_secret": "YOUR STRAVA API CLIENT SECRET",
+    "refresh_token": "YOUR STRAVA REFRESH TOKEN",
+    "activity_type": "Run"
+}
+```
+
+```json
+{
+    "client_id": "YOUR STRAVA API CLIENT ID",
+    "client_secret": "YOUR STRAVA API CLIENT SECRET",
+    "refresh_token": "YOUR STRAVA REFRESH TOKEN",
+    "activity_type": ["Walk", "Hike"]
+}
+```
+
+```json
+{
+    "client_id": "YOUR STRAVA API CLIENT ID",
+    "client_secret": "YOUR STRAVA API CLIENT SECRET",
+    "refresh_token": "YOUR STRAVA REFRESH TOKEN"
+}
+```
 
 ## Poster Types
 
@@ -191,3 +230,5 @@ E.g. use [Poedit](https://poedit.net/) or [Localise Online Editor](https://local
 
 ## License
 [MIT](https://github.com/flopp/GpxTrackPoster/blob/master/LICENSE) &copy; 2016-2020 Florian Pigorsch
+
+[strava-activity-type]: https://developers.strava.com/docs/reference/#api-models-ActivityType

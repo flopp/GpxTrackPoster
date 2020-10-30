@@ -158,7 +158,7 @@ def main() -> None:
         dest="from_strava",
         metavar="FILE",
         type=str,
-        help="strava config file",
+        help="JSON file containning config used to get activities from strava",
     )
     args_parser.add_argument("--verbose", dest="verbose", action="store_true", help="Verbose logging.")
     args_parser.add_argument("--logfile", dest="logfile", metavar="FILE", type=str)
