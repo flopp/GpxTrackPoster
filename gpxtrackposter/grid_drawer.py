@@ -40,8 +40,7 @@ class GridDrawer(TracksDrawer):
         offset.y += (size.y - count_y * cell_size - (count_y - 1) * spacing_y) / 2
         year_groups: typing.Dict[int, svgwrite.container.Group] = {}
         for (index, tr) in enumerate(self.poster.tracks):
-            assert tr.start_time
-            year = tr.start_time.year
+            year = tr.start_time().year
             if year not in year_groups:
                 g_year = dr.g(id=f"year{year}")
                 g.add(g_year)
@@ -61,7 +60,7 @@ class GridDrawer(TracksDrawer):
         color = self.color(self.poster.length_range, tr.length(), tr.special)
         str_length = utils.format_float(self.poster.m2u(tr.length()))
 
-        date_title = str(tr.start_time.date()) if tr.start_time else "Unknown Date"
+        date_title = str(tr.start_time().date())
         for line in utils.project(tr.bbox(), size, offset, tr.polylines):
             polyline = dr.polyline(
                 points=line,

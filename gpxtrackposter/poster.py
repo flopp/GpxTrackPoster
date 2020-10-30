@@ -136,10 +136,9 @@ class Poster:
         self.length_range_by_date.clear()
         self._compute_years(tracks)
         for track in tracks:
-            assert track.start_time is not None
-            if not self.years.contains(track.start_time):
+            if not self.years.contains(track.start_time()):
                 continue
-            text_date = track.start_time.strftime("%Y-%m-%d")
+            text_date = track.start_time().strftime("%Y-%m-%d")
             self.tracks_by_date[text_date].append(track)
             self.length_range.extend(track.length())
         for date_tracks in self.tracks_by_date.values():
@@ -295,12 +294,11 @@ class Poster:
         self.total_length_year_dict.clear()
         weeks = {}
         for t in self.tracks:
-            assert t.start_time is not None
             total_length += t.length()
-            self.total_length_year_dict[t.start_time.year] += t.length()
+            self.total_length_year_dict[t.start_time().year] += t.length()
             length_range.extend(t.length())
             # time.isocalendar()[1] -> week number
-            weeks[(t.start_time.year, t.start_time.isocalendar()[1])] = 1
+            weeks[(t.start_time().year, t.start_time().isocalendar()[1])] = 1
         return (
             total_length,
             total_length / len(self.tracks),
@@ -311,5 +309,4 @@ class Poster:
     def _compute_years(self, tracks: typing.List[Track]) -> None:
         self.years.clear()
         for t in tracks:
-            assert t.start_time is not None
-            self.years.add(t.start_time)
+            self.years.add(t.start_time())

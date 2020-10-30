@@ -132,9 +132,8 @@ class TrackLoader:
         client.access_token = response["access_token"]
         fliter_dict = {"before": datetime.datetime.utcnow()}
         if tracks:
-            max_time = max(track.start_time for track in tracks)
-            if max_time:
-                fliter_dict = {"after": max_time - datetime.timedelta(days=2)}
+            max_time = max(track.start_time() for track in tracks)
+            fliter_dict = {"after": max_time - datetime.timedelta(days=2)}
         for activity in client.get_activities(**fliter_dict):
             # tricky to pass the timezone
             if str(activity.id) in tracks_names:
@@ -153,10 +152,10 @@ class TrackLoader:
             file_name = t.file_names[0]
             if t.length().magnitude == 0:
                 log.info("%s: skipping empty track", file_name)
-            elif not t.start_time:
-                log.info("%s: skipping track without start time", file_name)
-            elif not self.year_range.contains(t.start_time):
-                log.info("%s: skipping track with wrong year %d", file_name, t.start_time.year)
+            elif not t.has_time():
+                log.info("%s: skipping track without start or end time", file_name)
+            elif not self.year_range.contains(t.start_time()):
+                log.info("%s: skipping track with wrong year %d", file_name, t.start_time().year)
             else:
                 t.special = file_name in self.special_file_names
                 filtered_tracks.append(t)
@@ -172,19 +171,19 @@ class TrackLoader:
     @staticmethod
     def _merge_tracks(tracks: typing.List[Track]) -> typing.List[Track]:
         log.info("Merging tracks...")
-        tracks = sorted(tracks, key=lambda t1: t1.start_time)
+        tracks = sorted(tracks, key=lambda t1: t1.start_time())
         merged_tracks = []
         last_end_time = None
         for t in tracks:
             if last_end_time is None:
                 merged_tracks.append(t)
             else:
-                dt = (t.start_time - last_end_time).total_seconds()
+                dt = (t.start_time() - last_end_time).total_seconds()
                 if 0 < dt < 3600:
                     merged_tracks[-1].append(t)
                 else:
                     merged_tracks.append(t)
-            last_end_time = t.end_time
+            last_end_time = t.end_time()
         log.info("Merged %d track(s)", len(tracks) - len(merged_tracks))
         return merged_tracks
 
@@ -253,11 +252,10 @@ class TrackLoader:
         lines_data = []
         for line in track.polylines:
             lines_data.append([{"lat": latlng.lat().degrees, "lng": latlng.lng().degrees} for latlng in line])
-        assert track.start_time and track.end_time
         return {
             "name": track.file_names[0],  # strava id
-            "start": track.start_time.strftime("%Y-%m-%d %H:%M:%S"),
-            "end": track.end_time.strftime("%Y-%m-%d %H:%M:%S"),
+            "start": track.start_time().strftime("%Y-%m-%d %H:%M:%S"),
+            "end": track.end_time().strftime("%Y-%m-%d %H:%M:%S"),
             "length": track.length_meters,
             "segments": lines_data,
         }
@@ -266,8 +264,8 @@ class TrackLoader:
     def _strava_cache_to_track(data: typing.Dict[str, Any]) -> "Track":
         t = Track()
         t.file_names = [data["name"]]
-        t.start_time = datetime.datetime.strptime(data["start"], "%Y-%m-%d %H:%M:%S")
-        t.end_time = datetime.datetime.strptime(data["end"], "%Y-%m-%d %H:%M:%S")
+        t.set_start_time(datetime.datetime.strptime(data["start"], "%Y-%m-%d %H:%M:%S"))
+        t.set_end_time(datetime.datetime.strptime(data["end"], "%Y-%m-%d %H:%M:%S"))
         t.length_meters = float(data["length"])
         t.polylines = []
         for data_line in data["segments"]:

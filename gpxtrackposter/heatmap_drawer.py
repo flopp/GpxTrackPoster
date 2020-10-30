@@ -122,8 +122,7 @@ class HeatmapDrawer(TracksDrawer):
         bbox = self._determine_bbox()
         year_groups: typing.Dict[int, svgwrite.container.Group] = {}
         for tr in self.poster.tracks:
-            assert tr.start_time
-            year = tr.start_time.year
+            year = tr.start_time().year
             if year not in year_groups:
                 g_year = dr.g(id=f"year{year}")
                 g.add(g_year)
