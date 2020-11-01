@@ -138,7 +138,9 @@ class TrackLoader:
             # tricky to pass the timezone
             if str(activity.id) in tracks_names:
                 continue
-            if filter_type and activity.type not in ([filter_type] if isinstance(filter_type, str) else filter_type):
+            if filter_type and activity.type not in (
+                [filter_type] if isinstance(filter_type, str) else filter_type
+            ):  # pylint: disable=superfluous-parens
                 continue
             t = Track()
             t.load_strava(activity)
