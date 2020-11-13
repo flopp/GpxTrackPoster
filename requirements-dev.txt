@@ -4,4 +4,5 @@ coverage
 mypy
 pylint
 pytest
+pytest-mock~=3.3
 python-dateutil
