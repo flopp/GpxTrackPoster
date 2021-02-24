@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-# Copyright 2018-2020 Florian Pigorsch & Contributors. All rights reserved.
+# Copyright 2018-2021 Florian Pigorsch & Contributors. All rights reserved.
 #
 # Use of this source code is governed by a MIT-style
 # license that can be found in the LICENSE file.
@@ -40,7 +40,7 @@ def has_valid_copyright(file_name: str) -> bool:
     return ok
 
 
-if not all([has_valid_copyright(file_name) for file_name in sys.argv]):
+if not all(has_valid_copyright(file_name) for file_name in sys.argv):
     sys.exit(1)
 
 sys.exit(0)
