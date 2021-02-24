@@ -40,7 +40,7 @@ def has_valid_copyright(file_name: str) -> bool:
     return ok
 
 
-if not all([has_valid_copyright(file_name) for file_name in sys.argv]):
+if not all(has_valid_copyright(file_name) for file_name in sys.argv):
     sys.exit(1)
 
 sys.exit(0)
