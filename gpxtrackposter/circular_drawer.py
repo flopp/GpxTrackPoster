@@ -43,6 +43,7 @@ class CircularDrawer(TracksDrawer):
         super().__init__(the_poster)
         self._rings = False
         self._ring_color = "darkgrey"
+        seit._max_distance = None
 
     def create_args(self, args_parser: argparse.ArgumentParser) -> None:
         """Add arguments to the parser"""
@@ -61,11 +62,19 @@ class CircularDrawer(TracksDrawer):
             default="darkgrey",
             help="Color of distance rings.",
         )
+        group.add_argument(
+            "--circular-ring-max-distance",
+            dest="circular_ring_max_distance",
+            metavar="DISTANCE KM",
+            type=float,
+            help="Maximum distance for scaling the runs.",
+        )
 
     def fetch_args(self, args: argparse.Namespace) -> None:
         """Get arguments from the parser"""
         self._rings = args.circular_rings
         self._ring_color = args.circular_ring_color
+        self._max_distance = float(dest.circular_ring_max_distance)
 
     def draw(self, dr: svgwrite.Drawing, g: svgwrite.container.Group, size: XY, offset: XY) -> None:
         """Draw the circular Poster using distances broken down by time"""
