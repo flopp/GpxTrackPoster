@@ -74,7 +74,8 @@ class CircularDrawer(TracksDrawer):
         """Get arguments from the parser"""
         self._rings = args.circular_rings
         self._ring_color = args.circular_ring_color
-        self._max_distance = abs(args.circular_ring_max_distance) * Units().km
+        if args.circular_ring_max_distance:
+            self._max_distance = abs(args.circular_ring_max_distance) * Units().km
 
     def draw(self, dr: svgwrite.Drawing, g: svgwrite.container.Group, size: XY, offset: XY) -> None:
         """Draw the circular Poster using distances broken down by time"""
