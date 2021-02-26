@@ -1,5 +1,5 @@
 """Draw a circular Poster."""
-# Copyright 2016-2021 Florian Pigorsch & Contributors. All rights reserved.
+# Copyright 2016-2020 Florian Pigorsch & Contributors. All rights reserved.
 #
 # Use of this source code is governed by a MIT-style
 # license that can be found in the LICENSE file.
@@ -43,7 +43,7 @@ class CircularDrawer(TracksDrawer):
         super().__init__(the_poster)
         self._rings = False
         self._ring_color = "darkgrey"
-        seit._max_distance = None
+        self._max_distance = None
 
     def create_args(self, args_parser: argparse.ArgumentParser) -> None:
         """Add arguments to the parser"""
@@ -74,7 +74,7 @@ class CircularDrawer(TracksDrawer):
         """Get arguments from the parser"""
         self._rings = args.circular_rings
         self._ring_color = args.circular_ring_color
-        self._max_distance = float(dest.circular_ring_max_distance)
+        self._max_distance = abs(args.circular_ring_max_distance) * Units().km
 
     def draw(self, dr: svgwrite.Drawing, g: svgwrite.container.Group, size: XY, offset: XY) -> None:
         """Draw the circular Poster using distances broken down by time"""
@@ -204,6 +204,8 @@ class CircularDrawer(TracksDrawer):
             return
         min_length = length_range.lower()
         max_length = length_range.upper()
+        if self._max_distance:
+            max_length = self._max_distance
         assert min_length is not None
         assert max_length is not None
         ring_distance = self._determine_ring_distance(max_length)
@@ -238,6 +240,8 @@ class CircularDrawer(TracksDrawer):
         has_special = len([t for t in tracks if t.special]) > 0
         color = self.color(self.poster.length_range_by_date, length, has_special)
         max_length = self.poster.length_range_by_date.upper()
+        if self._max_distance:
+            max_length = self._max_distance.to_base_units()
         assert max_length is not None
         r1 = rr.lower()
         assert r1 is not None
