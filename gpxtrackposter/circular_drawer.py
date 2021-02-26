@@ -1,5 +1,5 @@
 """Draw a circular Poster."""
-# Copyright 2016-2020 Florian Pigorsch & Contributors. All rights reserved.
+# Copyright 2016-2021 Florian Pigorsch & Contributors. All rights reserved.
 #
 # Use of this source code is governed by a MIT-style
 # license that can be found in the LICENSE file.
@@ -67,7 +67,7 @@ class CircularDrawer(TracksDrawer):
             dest="circular_ring_max_distance",
             metavar="DISTANCE KM",
             type=float,
-            help="Maximum distance for scaling the runs.",
+            help="Maximum distance for scaling the track length.",
         )
 
     def fetch_args(self, args: argparse.Namespace) -> None:
