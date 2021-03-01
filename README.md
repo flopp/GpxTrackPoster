@@ -31,7 +31,7 @@ usage: create_poster [-h] [--gpx-dir DIR] [--output FILE]
                      [--special-distance DISTANCE]
                      [--special-distance2 DISTANCE] [--min-distance DISTANCE]
                      [--heatmap-center LAT,LNG] [--heatmap-radius RADIUS_KM]
-                     [--circular-rings] [--circular-ring-color COLOR]
+                     [--circular-rings] [--circular-ring-color COLOR] [--circular-ring-max-distance DISTANCE KM]
 
 optional arguments:
   -h, --help            show this help message and exit
@@ -86,6 +86,8 @@ Circular Type Options:
   --circular-rings      Draw distance rings.
   --circular-ring-color COLOR
                         Color of distance rings.
+  --circular-ring-max-distance DISTANCE KM
+                        Maximum distance for scaling the track length.
 ```
 
 Example:
