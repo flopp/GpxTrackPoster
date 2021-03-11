@@ -63,7 +63,8 @@ class TrackLoader:
         load_tracks: Load all data from cache and GPX files
     """
 
-    def __init__(self) -> None:
+    def __init__(self, workers: typing.Optional[int]) -> None:
+        self._workers = workers
         self._min_length: pint.quantity.Quantity = 1 * Units().km
         self.special_file_names: typing.List[str] = []
         self.year_range = YearRange()
@@ -189,9 +190,22 @@ class TrackLoader:
         log.info("Merged %d track(s)", len(tracks) - len(merged_tracks))
         return merged_tracks
 
-    @staticmethod
-    def _load_tracks(file_names: typing.List[str], timezone_adjuster: TimezoneAdjuster) -> typing.Dict[str, Track]:
+    def _load_tracks(
+        self, file_names: typing.List[str], timezone_adjuster: TimezoneAdjuster
+    ) -> typing.Dict[str, Track]:
         tracks = {}
+
+        if self._workers is not None and self._workers <= 1:
+            print("non-parallel loading")
+            for file_name in file_names:
+                try:
+                    t = load_gpx_file(file_name, timezone_adjuster)
+                except TrackLoadError as e:
+                    log.error("Error while loading %s: %s", file_name, str(e))
+                else:
+                    tracks[file_name] = t
+            return tracks
+
         with concurrent.futures.ProcessPoolExecutor() as executor:
             future_to_file_name = {
                 executor.submit(load_gpx_file, file_name, timezone_adjuster): file_name for file_name in file_names
@@ -209,7 +223,20 @@ class TrackLoader:
 
     def _load_tracks_from_cache(self, file_names: typing.List[str]) -> typing.Dict[str, Track]:
         tracks = {}
-        with concurrent.futures.ProcessPoolExecutor() as executor:
+
+        if self._workers is not None and self._workers <= 1:
+            print("non-parallel loading")
+            for file_name in file_names:
+                try:
+                    t = load_cached_track_file(self._get_cache_file_name(file_name), file_name)
+                except Exception:
+                    # silently ignore failed cache load attempts
+                    pass
+                else:
+                    tracks[file_name] = t
+            return tracks
+
+        with concurrent.futures.ProcessPoolExecutor(max_workers=self._workers) as executor:
             future_to_file_name = {
                 executor.submit(load_cached_track_file, self._get_cache_file_name(file_name), file_name): file_name
                 for file_name in file_names
@@ -223,6 +250,7 @@ class TrackLoader:
                 pass
             else:
                 tracks[file_name] = t
+
         return tracks
 
     def _store_tracks_to_cache(self, tracks: typing.Dict[str, Track]) -> None:

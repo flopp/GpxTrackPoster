@@ -154,6 +154,13 @@ def main() -> None:
         help="Clear the track cache.",
     )
     args_parser.add_argument(
+        "--workers",
+        dest="workers",
+        metavar="NUMBER_OF_WORKERS",
+        type=int,
+        help="Number of parallel track loading workers (default: number of CPU cores)",
+    )
+    args_parser.add_argument(
         "--from-strava",
         dest="from_strava",
         metavar="FILE",
@@ -201,7 +208,7 @@ def main() -> None:
         handler = logging.FileHandler(args.logfile)
         log.addHandler(handler)
 
-    loader = track_loader.TrackLoader()
+    loader = track_loader.TrackLoader(args.workers)
     loader.set_cache_dir(os.path.join(appdirs.user_cache_dir(__app_name__, __app_author__), "tracks"))
     if not loader.year_range.parse(args.year):
         raise ParameterError(f"Bad year range: {args.year}.")

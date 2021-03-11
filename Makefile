@@ -4,8 +4,8 @@ COPYRIGHT_FILES = README.md LICENSE gpxtrackposter/*.py tests/*.py scripts/*.py
 setup:
 	python3 -m venv .env
 	.env/bin/pip install --upgrade pip
-	.env/bin/pip install -r requirements.txt
-	.env/bin/pip install -r requirements-dev.txt
+	.env/bin/pip install --upgrade -r requirements.txt
+	.env/bin/pip install --upgrade -r requirements-dev.txt
 	.env/bin/pip install .
 
 .PHONY: check-copyright

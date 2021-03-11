@@ -62,6 +62,9 @@ optional arguments:
   --units UNITS         Distance units; "metric", "imperial" (default:
                         "metric").
   --clear-cache         Clear the track cache.
+  --workers NUMBER_OF_WORKERS
+                        Number of parallel track loading workers
+                        (default: number of CPU cores)
   --from-strava FILE    JSON file containning config used to get activities
                         from strava
   --verbose             Verbose logging.

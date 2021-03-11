@@ -68,7 +68,7 @@ def fixture_loader(
     mock_client_class = mocker.patch("gpxtrackposter.track_loader.Client")
     instance = mock_client_class.return_value
     instance.get_activities.return_value = [mock_run_activity, mock_walk_activity, mock_hike_activity]
-    return TrackLoader()
+    return TrackLoader(workers=None)
 
 
 @pytest.fixture(name="mock_track_instance")
