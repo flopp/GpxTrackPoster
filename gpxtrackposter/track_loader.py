@@ -196,7 +196,6 @@ class TrackLoader:
         tracks = {}
 
         if self._workers is not None and self._workers <= 1:
-            print("non-parallel loading")
             for file_name in file_names:
                 try:
                     t = load_gpx_file(file_name, timezone_adjuster)
@@ -206,7 +205,7 @@ class TrackLoader:
                     tracks[file_name] = t
             return tracks
 
-        with concurrent.futures.ProcessPoolExecutor() as executor:
+        with concurrent.futures.ProcessPoolExecutor(max_workers=self._workers) as executor:
             future_to_file_name = {
                 executor.submit(load_gpx_file, file_name, timezone_adjuster): file_name for file_name in file_names
             }
@@ -225,7 +224,6 @@ class TrackLoader:
         tracks = {}
 
         if self._workers is not None and self._workers <= 1:
-            print("non-parallel loading")
             for file_name in file_names:
                 try:
                     t = load_cached_track_file(self._get_cache_file_name(file_name), file_name)
