@@ -55,6 +55,7 @@ class Poster:
         self._athlete: typing.Optional[str] = None
         self._title: typing.Optional[str] = None
         self.tracks_by_date: typing.Dict[str, typing.List[Track]] = defaultdict(list)
+        self.year_tracks_date_count_dict: typing.Dict[int, int] = defaultdict(int)
         self.tracks: typing.List[Track] = []
         self.length_range = QuantityRange()
         self.length_range_by_date = QuantityRange()
@@ -72,6 +73,7 @@ class Poster:
         self.years = YearRange()
         self.tracks_drawer: typing.Optional["TracksDrawer"] = None
         self._trans: typing.Optional[typing.Callable[[str], str]] = None
+        self.with_animation = False
         self.set_language(None, None)
 
     def set_language(self, language: typing.Optional[str], localedir: typing.Optional[str]) -> None:
@@ -124,6 +126,9 @@ class Poster:
     def set_title(self, title: str) -> None:
         self._title = title
 
+    def set_with_animation(self, with_animation: bool) -> None:
+        self.with_animation = with_animation
+
     def set_tracks(self, tracks: typing.List[Track]) -> None:
         """Associate the set of tracks with this poster.
 
@@ -134,11 +139,15 @@ class Poster:
         self.tracks_by_date.clear()
         self.length_range.clear()
         self.length_range_by_date.clear()
+        self.year_tracks_date_count_dict.clear()
         self._compute_years(tracks)
         for track in tracks:
             if not self.years.contains(track.start_time()):
                 continue
             text_date = track.start_time().strftime("%Y-%m-%d")
+            year = track.start_time().year
+            if not text_date in self.tracks_by_date:
+                self.year_tracks_date_count_dict[year] += 1
             self.tracks_by_date[text_date].append(track)
             self.length_range.extend(track.length())
         for date_tracks in self.tracks_by_date.values():
