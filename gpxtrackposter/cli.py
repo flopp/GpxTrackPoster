@@ -165,7 +165,7 @@ def main() -> None:
         dest="from_strava",
         metavar="FILE",
         type=str,
-        help="JSON file containning config used to get activities from strava",
+        help="JSON file containing config used to get activities from strava",
     )
     args_parser.add_argument("--verbose", dest="verbose", action="store_true", help="Verbose logging.")
     args_parser.add_argument("--logfile", dest="logfile", metavar="FILE", type=str)
@@ -183,7 +183,7 @@ def main() -> None:
         metavar="DISTANCE",
         type=float,
         default=20.0,
-        help="Special Distance2 by km and corlor with the special_color2",
+        help="Special Distance2 by km and color with the special_color2",
     )
     args_parser.add_argument(
         "--min-distance",
