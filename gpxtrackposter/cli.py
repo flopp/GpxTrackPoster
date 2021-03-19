@@ -193,6 +193,12 @@ def main() -> None:
         default=1.0,
         help="min distance by km for track filter",
     )
+    args_parser.add_argument(
+        "--with-animation",
+        dest="with_animation",
+        action="store_true",
+        help="If the `poster` contains animation or not",
+    )
 
     for _, drawer in drawers.items():
         drawer.create_args(args_parser)
@@ -231,6 +237,7 @@ def main() -> None:
     p.set_language(args.language, args.localedir)
     p.set_athlete(args.athlete)
     p.set_title(args.title if args.title else p.translate("MY TRACKS"))
+    p.set_with_animation(args.with_animation)
 
     p.special_distance = {
         "special_distance": args.special_distance * Units().km,

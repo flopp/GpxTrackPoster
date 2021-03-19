@@ -131,6 +131,7 @@ class CircularDrawer(TracksDrawer):
         df = 360.0 / (366 if calendar.isleap(year) else 365)
         day = 0
         date = datetime.date(year, 1, 1)
+        animate_index = 1
         while date.year == year:
             text_date = date.strftime("%Y-%m-%d")
             a1 = math.radians(day * df)
@@ -169,7 +170,13 @@ class CircularDrawer(TracksDrawer):
                 )
                 text.add(tpath)
                 g.add(text)
+            year_count = self.poster.year_tracks_date_count_dict[year]
+            key_times_list = utils.make_key_times(year_count)
+            key_times_len = len(key_times_list)
             if text_date in self.poster.tracks_by_date:
+                values = ""
+                if self.poster.with_animation:
+                    values = ";".join(["0"] * animate_index) + ";" + ";".join(["1"] * (key_times_len - animate_index))
                 self._draw_circle_segment(
                     dr,
                     g,
@@ -178,8 +185,10 @@ class CircularDrawer(TracksDrawer):
                     a2,
                     radius_range,
                     center,
+                    values=values,
+                    key_times=";".join(key_times_list),
                 )
-
+                animate_index += 1
             day += 1
             date += datetime.timedelta(1)
 
@@ -236,6 +245,8 @@ class CircularDrawer(TracksDrawer):
         a2: float,
         rr: ValueRange,
         center: XY,
+        values: str = "",
+        key_times: str = "",
     ) -> None:
         length = sum([t.length() for t in tracks])
         has_special = len([t for t in tracks if t.special]) > 0
@@ -260,4 +271,10 @@ class CircularDrawer(TracksDrawer):
         date_title = str(tracks[0].start_time().date())
         str_length = utils.format_float(self.poster.m2u(length))
         path.set_desc(title=f"{date_title} {str_length} {self.poster.u()}")
+        if self.poster.with_animation:
+            path.add(
+                svgwrite.animate.Animate(
+                    "opacity", dur="30s", values=values, keyTimes=key_times, repeatCount="indefinite"
+                )
+            )
         g.add(path)
