@@ -199,6 +199,13 @@ def main() -> None:
         action="store_true",
         help="If the `poster` contains animation or not",
     )
+    args_parser.add_argument(
+        "--animation-time",
+        dest="animation_time",
+        type=int,
+        default=30,
+        help="Animation show time",
+    )
 
     for _, drawer in drawers.items():
         drawer.create_args(args_parser)
@@ -238,6 +245,7 @@ def main() -> None:
     p.set_athlete(args.athlete)
     p.set_title(args.title if args.title else p.translate("MY TRACKS"))
     p.set_with_animation(args.with_animation)
+    p.set_animation_time(args.animation_time)
 
     p.special_distance = {
         "special_distance": args.special_distance * Units().km,
