@@ -74,6 +74,7 @@ class Poster:
         self.tracks_drawer: typing.Optional["TracksDrawer"] = None
         self._trans: typing.Optional[typing.Callable[[str], str]] = None
         self.with_animation = False
+        self.animation_time: int = 30
         self.set_language(None, None)
 
     def set_language(self, language: typing.Optional[str], localedir: typing.Optional[str]) -> None:
@@ -128,6 +129,9 @@ class Poster:
 
     def set_with_animation(self, with_animation: bool) -> None:
         self.with_animation = with_animation
+
+    def set_animation_time(self, animation_time: int) -> None:
+        self.animation_time = animation_time
 
     def set_tracks(self, tracks: typing.List[Track]) -> None:
         """Associate the set of tracks with this poster.

@@ -274,7 +274,11 @@ class CircularDrawer(TracksDrawer):
         if self.poster.with_animation:
             path.add(
                 svgwrite.animate.Animate(
-                    "opacity", dur="30s", values=values, keyTimes=key_times, repeatCount="indefinite"
+                    "opacity",
+                    dur=f"{self.poster.animation_time}s",
+                    values=values,
+                    keyTimes=key_times,
+                    repeatCount="indefinite",
                 )
             )
         g.add(path)

@@ -78,6 +78,7 @@ optional arguments:
   --min-distance DISTANCE
                         min distance by km for track filter
   --with-animation      add amimation to the poster
+  --animation-time      amimation duration (default 30s)
 
 Heatmap Type Options:
   --heatmap-center LAT,LNG
