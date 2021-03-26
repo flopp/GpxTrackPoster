@@ -53,10 +53,11 @@ class TrackLoader:
     """Handle the loading of tracks from cache and/or GPX files
 
     Attributes:
-        min_length: All tracks shorter than this value are filtered out.
+        _min_length: All tracks shorter than this value are filtered out.
         special_file_names: Tracks marked as special in command line args
         year_range: All tracks outside of this range will be filtered out.
         cache_dir: Directory used to store cached tracks
+        _activity_type: Only gpx files with activity type are considered
 
     Methods:
         clear_cache: Remove cache directory
@@ -71,6 +72,7 @@ class TrackLoader:
         self.cache_dir: typing.Optional[str] = None
         self.strava_cache_file = ""
         self._cache_file_names: typing.Dict[str, str] = {}
+        self._activity_type: str = "all"
 
     def set_cache_dir(self, cache_dir: str) -> None:
         self.cache_dir = cache_dir
@@ -86,6 +88,9 @@ class TrackLoader:
 
     def set_min_length(self, min_length: pint.quantity.Quantity) -> None:
         self._min_length = min_length
+
+    def set_activity(self, activity_type: str) -> None:
+        self._activity_type = activity_type.lower()
 
     def load_tracks(self, base_dir: str) -> typing.List[Track]:
         """Load tracks base_dir and return as a List of tracks"""
@@ -169,7 +174,10 @@ class TrackLoader:
         # merge tracks that took place within one hour
         tracks = self._merge_tracks(tracks)
         # filter out tracks with length < min_length
-        return [t for t in tracks if t.length() >= self._min_length]
+        tracks = [t for t in tracks if t.length() >= self._min_length]
+        # filter out tracks with wrong activity type
+        tracks = [t for t in tracks if t.activity_type == self._activity_type or self._activity_type == "all"]
+        return tracks
 
     @staticmethod
     def _merge_tracks(tracks: typing.List[Track]) -> typing.List[Track]:
