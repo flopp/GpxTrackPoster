@@ -26,10 +26,11 @@ class Track:
     Attributes:
         file_names: Basename of a given file passed in load_gpx.
         polylines: Lines interpolated between each coordinate.
-        start_time: Activity start time.
-        end_time: Activity end time.
-        length: Length of the track (2-dimensional).
-        self.special: True if track is special, else False.
+        _start_time: Activity start time.
+        _end_time: Activity end time.
+        _length_meters: Length of the track (2-dimensional).
+        special: True if track is special, else False.
+        activity_type: Activity type
 
     Methods:
         load_gpx: Load a GPX file into the current track.
@@ -48,12 +49,14 @@ class Track:
         # within a thread (which would create a second unit registry!)
         self._length_meters = 0.0
         self.special = False
+        self.activity_type = None
 
     def load_gpx(self, file_name: str, timezone_adjuster: typing.Optional[TimezoneAdjuster]) -> None:
         """Load the GPX file into self.
 
         Args:
-            file_name: GPX file to be loaded .
+            file_name: GPX file to be loaded.
+            timezone_adjuster: timezone adjuster
 
         Raises:
             TrackLoadError: An error occurred while parsing the GPX file (empty or bad format).
@@ -139,6 +142,7 @@ class Track:
             for s in t.segments:
                 line = [s2sphere.LatLng.from_degrees(p.latitude, p.longitude) for p in s.points]
                 self.polylines.append(line)
+        self.activity_type = gpx.tracks[0].type.lower()
 
     def append(self, other: "Track") -> None:
         """Append other track to self."""
