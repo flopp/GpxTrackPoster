@@ -142,7 +142,8 @@ class Track:
             for s in t.segments:
                 line = [s2sphere.LatLng.from_degrees(p.latitude, p.longitude) for p in s.points]
                 self.polylines.append(line)
-        self.activity_type = gpx.tracks[0].type.lower()
+        if gpx.tracks[0].type:
+            self.activity_type = gpx.tracks[0].type.lower()
 
     def append(self, other: "Track") -> None:
         """Append other track to self."""
