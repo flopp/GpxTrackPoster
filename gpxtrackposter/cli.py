@@ -205,14 +205,14 @@ def main() -> None:
         "--with-animation",
         dest="with_animation",
         action="store_true",
-        help="If the `poster` contains animation or not",
+        help="add animation to the poster",
     )
     args_parser.add_argument(
         "--animation-time",
         dest="animation_time",
         type=int,
         default=30,
-        help="Animation show time",
+        help="animation duration (default: 30s)",
     )
 
     for _, drawer in drawers.items():
