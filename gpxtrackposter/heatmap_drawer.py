@@ -7,17 +7,17 @@
 import argparse
 import logging
 import math
-import typing
+from typing import Dict, List, Optional, Tuple
 
-import svgwrite  # type: ignore
 import s2sphere  # type: ignore
+import svgwrite  # type: ignore
+from geopy.distance import distance  # type: ignore
 
+from gpxtrackposter import utils
 from gpxtrackposter.exceptions import ParameterError
 from gpxtrackposter.poster import Poster
 from gpxtrackposter.tracks_drawer import TracksDrawer
 from gpxtrackposter.xy import XY
-from gpxtrackposter import utils
-
 
 log = logging.getLogger(__name__)
 
@@ -26,11 +26,11 @@ class HeatmapDrawer(TracksDrawer):
     """Draw a heatmap Poster based on the tracks.
 
     Attributes:
-        center: Center of the heatmap.
-        radius: Scale the heatmap so that a circle with radius (in KM) is visible.
+        _center: Center of the heatmap.
+        _radius: Scale the heatmap so that a circle with radius (in KM) is visible.
 
     Methods:
-        Create_args: Create arguments for heatmap.
+        create_args: Create arguments for heatmap.
         fetch_args: Get arguments passed.
         draw: Draw the heatmap based on the Poster's tracks.
 
@@ -40,6 +40,11 @@ class HeatmapDrawer(TracksDrawer):
         super().__init__(the_poster)
         self._center = None
         self._radius = None
+        self._heatmap_line_width_low: float = 10.0
+        self._heatmap_line_width_upp: float = 1000.0
+        self._heatmap_line_width_lower: List[Tuple[float, float]] = [(0.10, 5.0), (0.20, 2.0), (1.0, 0.30)]
+        self._heatmap_line_width_upper: List[Tuple[float, float]] = [(0.02, 0.5), (0.05, 0.2), (1.0, 0.05)]
+        self._heatmap_line_width: Optional[List[Tuple[float, float]]] = self._heatmap_line_width_lower
 
     def create_args(self, args_parser: argparse.ArgumentParser) -> None:
         group = args_parser.add_argument_group("Heatmap Type Options")
@@ -58,7 +63,16 @@ class HeatmapDrawer(TracksDrawer):
             help="Scale the heatmap such that at least a circle with radius=RADIUS_KM is visible "
             "(default: automatic).",
         )
+        group.add_argument(
+            "--heatmap-line-transparency-width",
+            dest="heatmap_line_width",
+            metavar="TRANSP_1,WIDTH_1, TRANSP_2,WIDTH_2, TRANSP_3,WIDTH_3",
+            type=str,
+            help="Define three transparency and width tuples for the heatmap lines or set it to "
+            "`automatic` for automatic calculation (default: 0.1,5.0, 0.2,2.0, 1.0,0.3).",
+        )
 
+    # pylint: disable=too-many-branches
     def fetch_args(self, args: argparse.Namespace) -> None:
         """Get arguments that were passed, and also perform basic validation on them.
 
@@ -67,6 +81,7 @@ class HeatmapDrawer(TracksDrawer):
 
         Raises:
             ParameterError: Center was not a valid lat, lng coordinate, or radius was not positive.
+            ParameterError: Line transparency and width values are not valid
         """
         self._center = None
         if args.heatmap_center:
@@ -87,6 +102,57 @@ class HeatmapDrawer(TracksDrawer):
             if not args.heatmap_center:
                 raise ParameterError("--heatmap-radius needs --heatmap-center")
             self._radius = args.heatmap_radius
+        if args.heatmap_line_width:
+            if args.heatmap_line_width.lower() == "automatic":
+                self._heatmap_line_width = None
+            else:
+                trans_width_str = args.heatmap_line_width.split(",")
+                if len(trans_width_str) != 6:
+                    raise ParameterError(f"Not three valid TRANSPARENCY,WIDTH pairs: {args.heatmap_line_width}")
+                try:
+                    self._heatmap_line_width = []
+                    for value in range(0, 5, 2):
+                        transparency = float(trans_width_str[value].strip())
+                        width = float(trans_width_str[value + 1].strip())
+                        if transparency < 0 or transparency > 1:
+                            raise ParameterError(
+                                f"Not a valid TRANSPARENCY value (0 < value < 1): {transparency} in "
+                                f"{args.heatmap_line_width}"
+                            )
+                        self._heatmap_line_width.append((transparency, width))
+                except ValueError as e:
+                    raise ParameterError(f"Not three valid TRANSPARENCY,WIDTH pairs: {args.heatmap_line_width}") from e
+
+    def _get_line_transparencies_and_widths(self, bbox: s2sphere.sphere.LatLngRect) -> List[Tuple[float, float]]:
+        if self._heatmap_line_width:
+            return self._heatmap_line_width
+        # automatic calculation of line transparencies and widths
+        low = self._heatmap_line_width_low
+        upp = self._heatmap_line_width_upp
+        lower = self._heatmap_line_width_lower
+        upper = self._heatmap_line_width_upper
+        d = distance(
+            (bbox.lo().lat().degrees, bbox.lo().lng().degrees), (bbox.hi().lat().degrees, bbox.hi().lng().degrees)
+        ).km
+        log.info("Length of diagonal of boundary box %s", str(d))
+        if d > upp:
+            return upper
+        if d < low:
+            return lower
+        return [
+            (
+                lower[0][0] + d / (upp - low) * (upper[0][0] - lower[0][0]),
+                (lower[0][1] + d / (upp - low) * (upper[0][1] - lower[0][1])),
+            ),
+            (
+                lower[1][0] + d / (upp - low) * (upper[1][0] - lower[1][0]),
+                (lower[1][1] + d / (upp - low) * (upper[1][1] - lower[1][1])),
+            ),
+            (
+                lower[2][0] + d / (upp - low) * (upper[2][0] - lower[2][0]),
+                (lower[2][1] + d / (upp - low) * (upper[2][1] - lower[2][1])),
+            ),
+        ]
 
     def _determine_bbox(self) -> s2sphere.LatLngRect:
         if self._center:
@@ -120,7 +186,8 @@ class HeatmapDrawer(TracksDrawer):
     def draw(self, dr: svgwrite.Drawing, g: svgwrite.container.Group, size: XY, offset: XY) -> None:
         """Draw the heatmap based on tracks."""
         bbox = self._determine_bbox()
-        year_groups: typing.Dict[int, svgwrite.container.Group] = {}
+        line_transparencies_and_widths = self._get_line_transparencies_and_widths(bbox)
+        year_groups: Dict[int, svgwrite.container.Group] = {}
         for tr in self.poster.tracks:
             year = tr.start_time().year
             if year not in year_groups:
@@ -131,7 +198,7 @@ class HeatmapDrawer(TracksDrawer):
                 g_year = year_groups[year]
             color = self.color(self.poster.length_range, tr.length(), tr.special)
             for line in utils.project(bbox, size, offset, tr.polylines):
-                for opacity, width in [(0.1, 5.0), (0.2, 2.0), (1.0, 0.3)]:
+                for opacity, width in line_transparencies_and_widths:
                     g_year.add(
                         dr.polyline(
                             points=line,

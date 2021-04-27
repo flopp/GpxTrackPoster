@@ -27,11 +27,16 @@ usage: create_poster [-h] [--gpx-dir DIR] [--output FILE]
                      [--track-color COLOR] [--track-color2 COLOR]
                      [--text-color COLOR] [--special-color COLOR]
                      [--special-color2 COLOR] [--units UNITS] [--clear-cache]
-                     [--from-strava FILE] [--verbose] [--logfile FILE]
+                     [--workers NUMBER_OF_WORKERS] [--from-strava FILE]
+                     [--verbose] [--logfile FILE]
                      [--special-distance DISTANCE]
                      [--special-distance2 DISTANCE] [--min-distance DISTANCE]
+                     [--activity ACTIVITY] [--with-animation]
+                     [--animation-time ANIMATION_TIME]
                      [--heatmap-center LAT,LNG] [--heatmap-radius RADIUS_KM]
-                     [--circular-rings] [--circular-ring-color COLOR] [--circular-ring-max-distance DISTANCE KM]
+                     [--heatmap-line-transparency-width TRANSP_1,WIDTH_1, TRANSP_2,WIDTH_2, TRANSP_3,WIDTH_3]
+                     [--circular-rings] [--circular-ring-color COLOR]
+                     [--circular-ring-max-distance DISTANCE KM]
 
 optional arguments:
   -h, --help            show this help message and exit
@@ -40,8 +45,8 @@ optional arguments:
   --output FILE         Name of generated SVG image file (default:
                         "poster.svg").
   --language LANGUAGE   Language (default: english).
-  --localedir DIR       The directory where the translation files can be
-                        found (default: the system's locale directory).
+  --localedir DIR       The directory where the translation files can be found
+                        (default: the system's locale directory).
   --year YEAR           Filter tracks by year; "NUM", "NUM-NUM", "all"
                         (default: all years)
   --title TITLE         Title to display.
@@ -63,9 +68,9 @@ optional arguments:
                         "metric").
   --clear-cache         Clear the track cache.
   --workers NUMBER_OF_WORKERS
-                        Number of parallel track loading workers
-                        (default: number of CPU cores)
-  --from-strava FILE    JSON file containning config used to get activities
+                        Number of parallel track loading workers (default:
+                        number of CPU cores)
+  --from-strava FILE    JSON file containing config used to get activities
                         from strava
   --verbose             Verbose logging.
   --logfile FILE
@@ -73,12 +78,15 @@ optional arguments:
                         Special Distance1 by km and color with the
                         special_color
   --special-distance2 DISTANCE
-                        Special Distance2 by km and corlor with the
+                        Special Distance2 by km and color with the
                         special_color2
   --min-distance DISTANCE
                         min distance by km for track filter
-  --with-animation      add animation to the poster
-  --animation-time      animation duration (default 30s)
+  --activity ACTIVITY   Filter tracks by activity; e.g. 'running' (default:
+                        all activities)
+  --with-animation      If the `poster` contains animation or not
+  --animation-time ANIMATION_TIME
+                        Animation show time
 
 Heatmap Type Options:
   --heatmap-center LAT,LNG
@@ -86,6 +94,10 @@ Heatmap Type Options:
   --heatmap-radius RADIUS_KM
                         Scale the heatmap such that at least a circle with
                         radius=RADIUS_KM is visible (default: automatic).
+  --heatmap-line-transparency-width TRANSP_1,WIDTH_1, TRANSP_2,WIDTH_2, TRANSP_3,WIDTH_3
+                        Define three transparency and width tuples for the
+                        heatmap lines or set it to `automatic` for automatic
+                        calculation (default: 0.1,5.0, 0.2,2.0, 1.0,0.3).
 
 Circular Type Options:
   --circular-rings      Draw distance rings.
