@@ -194,12 +194,12 @@ def main() -> None:
         help="min distance by km for track filter",
     )
     args_parser.add_argument(
-        "--activity",
-        dest="activity",
-        metavar="ACTIVITY",
+        "--activity-type",
+        dest="activity_type",
+        metavar="ACTIVITY_TYPE",
         type=str,
         default="all",
-        help="Filter tracks by activity; e.g. 'running' (default: all activities)",
+        help="Filter tracks by activity type; e.g. 'running' (default: all activity types)",
     )
     args_parser.add_argument(
         "--with-animation",
@@ -236,7 +236,7 @@ def main() -> None:
 
     loader.special_file_names = args.special
     loader.set_min_length(args.min_distance * Units().km)
-    loader.set_activity(args.activity)
+    loader.set_activity(args.activity_type)
     if args.clear_cache:
         print("Clearing cache...")
         loader.clear_cache()
