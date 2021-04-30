@@ -194,7 +194,7 @@ def main() -> None:
         help="min distance by km for track filter",
     )
     args_parser.add_argument(
-        "--activity-type",
+        "--activity-type", "--activity",
         dest="activity_type",
         metavar="ACTIVITY_TYPE",
         type=str,

@@ -34,7 +34,8 @@ usage: create_poster [-h] [--gpx-dir DIR] [--output FILE]
                      [--activity-type ACTIVITY_TYPE]
                      [--with-animation] [--animation-time ANIMATION_TIME]
                      [--heatmap-center LAT,LNG] [--heatmap-radius RADIUS_KM]
-                     [--circular-rings] [--circular-ring-color COLOR] [--circular-ring-max-distance DISTANCE KM]
+                     [--circular-rings] [--circular-ring-color COLOR]
+                     [--circular-ring-max-distance DISTANCE KM]
 
 optional arguments:
   -h, --help            show this help message and exit
@@ -80,7 +81,7 @@ optional arguments:
                         special_color2
   --min-distance DISTANCE
                         min distance by km for track filter
-  --activity-type ACTIVITY_TYPE
+  --activity-type ACTIVITY_TYPE, --activity ACTIVITY_TYPE
                         Filter tracks by activity type; e.g. 'running'
                         (default: all activity types)
   --with-animation      add animation to the poster
