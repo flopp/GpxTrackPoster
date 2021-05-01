@@ -27,11 +27,15 @@ usage: create_poster [-h] [--gpx-dir DIR] [--output FILE]
                      [--track-color COLOR] [--track-color2 COLOR]
                      [--text-color COLOR] [--special-color COLOR]
                      [--special-color2 COLOR] [--units UNITS] [--clear-cache]
+                     [--workers NUMBER_OF_WORKERS]
                      [--from-strava FILE] [--verbose] [--logfile FILE]
                      [--special-distance DISTANCE]
                      [--special-distance2 DISTANCE] [--min-distance DISTANCE]
+                     [--activity-type ACTIVITY_TYPE]
+                     [--with-animation] [--animation-time ANIMATION_TIME]
                      [--heatmap-center LAT,LNG] [--heatmap-radius RADIUS_KM]
-                     [--circular-rings] [--circular-ring-color COLOR] [--circular-ring-max-distance DISTANCE KM]
+                     [--circular-rings] [--circular-ring-color COLOR]
+                     [--circular-ring-max-distance DISTANCE KM]
 
 optional arguments:
   -h, --help            show this help message and exit
@@ -40,8 +44,8 @@ optional arguments:
   --output FILE         Name of generated SVG image file (default:
                         "poster.svg").
   --language LANGUAGE   Language (default: english).
-  --localedir DIR       The directory where the translation files can be
-                        found (default: the system's locale directory).
+  --localedir DIR       The directory where the translation files can be found
+                        (default: the system's locale directory).
   --year YEAR           Filter tracks by year; "NUM", "NUM-NUM", "all"
                         (default: all years)
   --title TITLE         Title to display.
@@ -65,7 +69,7 @@ optional arguments:
   --workers NUMBER_OF_WORKERS
                         Number of parallel track loading workers
                         (default: number of CPU cores)
-  --from-strava FILE    JSON file containning config used to get activities
+  --from-strava FILE    JSON file containing config used to get activities
                         from strava
   --verbose             Verbose logging.
   --logfile FILE
@@ -73,12 +77,16 @@ optional arguments:
                         Special Distance1 by km and color with the
                         special_color
   --special-distance2 DISTANCE
-                        Special Distance2 by km and corlor with the
+                        Special Distance2 by km and color with the
                         special_color2
   --min-distance DISTANCE
                         min distance by km for track filter
+  --activity-type ACTIVITY_TYPE, --activity ACTIVITY_TYPE
+                        Filter tracks by activity type; e.g. 'running'
+                        (default: all activity types)
   --with-animation      add animation to the poster
-  --animation-time      animation duration (default 30s)
+  --animation-time ANIMATION_TIME
+                        animation duration (default: 30s)
 
 Heatmap Type Options:
   --heatmap-center LAT,LNG
