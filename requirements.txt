@@ -1,5 +1,6 @@
 appdirs>=1.4.0
 colour
+geopy
 gpxpy>=1.1.2
 pint
 pytz
