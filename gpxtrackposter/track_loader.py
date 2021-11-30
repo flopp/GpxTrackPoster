@@ -125,12 +125,12 @@ class TrackLoader:
         if self.cache_dir:
             self.strava_cache_file = os.path.join(self.cache_dir, strava_config)
             if os.path.isfile(self.strava_cache_file):
-                with open(self.strava_cache_file) as f:
+                with open(self.strava_cache_file, encoding="utf8") as f:
                     strava_cache_data = json.load(f)
                     tracks = [self._strava_cache_to_track(i) for i in strava_cache_data]
                     tracks_names = [track.file_names[0] for track in tracks]
 
-        with open(strava_config) as f:
+        with open(strava_config, encoding="utf8") as f:
             strava_data = json.load(f)
         filter_type = strava_data.pop("activity_type", None)
         client = Client()
@@ -176,7 +176,7 @@ class TrackLoader:
         # filter out tracks with length < min_length
         tracks = [t for t in tracks if t.length() >= self._min_length]
         # filter out tracks with wrong activity type
-        tracks = [t for t in tracks if t.activity_type == self._activity_type or self._activity_type == "all"]
+        tracks = [t for t in tracks if self._activity_type in (t.activity_type, "all")]
         return tracks
 
     @staticmethod
@@ -280,7 +280,7 @@ class TrackLoader:
             os.makedirs(dirname)
         log.info("Storing %d track(s) to cache...", len(tracks))
         to_cache_tracks = [self._make_strava_cache_dict(track) for track in tracks]
-        with open(self.strava_cache_file, "w") as f:
+        with open(self.strava_cache_file, "w", encoding="utf8") as f:
             json.dump(to_cache_tracks, f)
 
     @staticmethod
@@ -325,7 +325,8 @@ class TrackLoader:
             return self._cache_file_names[file_name]
 
         try:
-            checksum = hashlib.sha256(open(file_name, "rb").read()).hexdigest()
+            with open(file_name, "rb", encoding="utf8") as file:
+                checksum = hashlib.sha256(file.read()).hexdigest()
         except PermissionError as e:
             raise TrackLoadError("Failed to compute checksum (bad permissions).") from e
         except Exception as e:

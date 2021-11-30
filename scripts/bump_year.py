@@ -16,7 +16,7 @@ re_year_range = re.compile(r"\s(\d\d\d\d)-(\d\d\d\d) Florian Pigorsch")
 
 def bump_year(file_name: str) -> None:
     lines = []
-    with open(file_name, "r") as f:
+    with open(file_name, "r", encoding="utf8") as f:
         for line in f.readlines():
             m = re_year.search(line)
             if m and (m.group(1) != THIS_YEAR):
@@ -32,7 +32,7 @@ def bump_year(file_name: str) -> None:
 
             lines.append(line)
 
-    with open(file_name, "w") as f:
+    with open(file_name, "w", encoding="utf8") as f:
         f.writelines(lines)
 
 

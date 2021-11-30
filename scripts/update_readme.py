@@ -16,10 +16,10 @@ if not readme_md_file_name.endswith("README.md"):
     raise RuntimeError(f"Bad README.md file: {readme_md_file_name}")
 
 # replace usage in README.md
-with open(readme_md_file_name, "r") as f:
+with open(readme_md_file_name, "r", encoding="utf8") as f:
     lines = f.readlines()
 
-with open(readme_md_file_name, "w") as f:
+with open(readme_md_file_name, "w", encoding="utf8") as f:
     STATE = 0
     for line in lines:
         if STATE == 0:

@@ -68,7 +68,7 @@ class Track:
             # (for example, treadmill runs pulled via garmin-connect-export)
             if os.path.getsize(file_name) == 0:
                 raise TrackLoadError("Empty GPX file")
-            with open(file_name, "r") as file:
+            with open(file_name, "r", encoding="utf8") as file:
                 self._load_gpx_data(gpxpy.parse(file), timezone_adjuster)
         except TrackLoadError as e:
             raise e
@@ -163,7 +163,7 @@ class Track:
             TrackLoadError: An error occurred while loading the track data from the cache file.
         """
         try:
-            with open(cache_file_name) as data_file:
+            with open(cache_file_name, encoding="utf8") as data_file:
                 data = json.load(data_file)
                 self.set_start_time(datetime.datetime.strptime(data["start"], "%Y-%m-%d %H:%M:%S"))
                 self.set_end_time(datetime.datetime.strptime(data["end"], "%Y-%m-%d %H:%M:%S"))
@@ -181,7 +181,7 @@ class Track:
         dir_name = os.path.dirname(cache_file_name)
         if not os.path.isdir(dir_name):
             os.makedirs(dir_name)
-        with open(cache_file_name, "w") as json_file:
+        with open(cache_file_name, "w", encoding="utf8") as json_file:
             lines_data = []
             for line in self.polylines:
                 lines_data.append([{"lat": latlng.lat().degrees, "lng": latlng.lng().degrees} for latlng in line])
