@@ -59,7 +59,7 @@ class Poster:
         self.tracks: typing.List[Track] = []
         self.length_range = QuantityRange()
         self.length_range_by_date = QuantityRange()
-        self.total_length_year_dict: typing.Dict[int, pint.quantity.Quantity] = defaultdict(int)
+        self.total_length_year_dict: typing.Dict[int, pint.quantity.Quantity] = defaultdict(int)  # type: ignore
         self.units = "metric"
         self.colors = {
             "background": "#222222",
