@@ -325,7 +325,7 @@ class TrackLoader:
             return self._cache_file_names[file_name]
 
         try:
-            with open(file_name, "rb", encoding="utf8") as file:
+            with open(file_name, "rb") as file:
                 checksum = hashlib.sha256(file.read()).hexdigest()
         except PermissionError as e:
             raise TrackLoadError("Failed to compute checksum (bad permissions).") from e
