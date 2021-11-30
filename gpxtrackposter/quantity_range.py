@@ -38,7 +38,7 @@ class QuantityRange:
             assert self._upper is not None
             assert self._lower is not None
             return self._upper - self._lower
-        return 0
+        return pint.quantity.Quantity(0)
 
     def contains(self, value: pint.quantity.Quantity) -> bool:
         if not self.is_valid():
@@ -67,7 +67,7 @@ class QuantityRange:
 
     def relative_position(self, value: pint.quantity.Quantity) -> float:
         if not self.is_valid():
-            raise ValueError("Cannot get relaitive_position for invalid QuantityRange")
+            raise ValueError("Cannot get relative_position for invalid QuantityRange")
         assert self._lower is not None
         assert self._upper is not None
         if value <= self._lower:

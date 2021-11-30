@@ -31,8 +31,8 @@ class Poster:
     """Create a poster from track data.
 
     Attributes:
-        athlete: Name of athlete to be displayed on poster.
-        title: Title of poster.
+        _athlete: Name of athlete to be displayed on poster.
+        _title: Title of poster.
         tracks_by_date: Tracks organized temporally if needed.
         tracks: List of tracks to be used in the poster.
         length_range: Range of lengths of tracks in poster.
@@ -150,12 +150,12 @@ class Poster:
                 continue
             text_date = track.start_time().strftime("%Y-%m-%d")
             year = track.start_time().year
-            if not text_date in self.tracks_by_date:
+            if text_date not in self.tracks_by_date:
                 self.year_tracks_date_count_dict[year] += 1
             self.tracks_by_date[text_date].append(track)
             self.length_range.extend(track.length())
         for date_tracks in self.tracks_by_date.values():
-            length = sum([t.length() for t in date_tracks])
+            length = pint.quantity.Quantity(sum([t.length() for t in date_tracks]))
             self.length_range_by_date.extend(length)
 
     def draw(self, drawer: "TracksDrawer", output: str) -> None:
@@ -280,8 +280,8 @@ class Poster:
             assert min_length is not None
             assert max_length is not None
         else:
-            min_length = 0.0
-            max_length = 0.0
+            min_length = pint.quantity.Quantity(0.0)
+            max_length = pint.quantity.Quantity(0.0)
         g.add(
             d.text(
                 self.translate("Min") + ": " + self.format_distance(min_length),

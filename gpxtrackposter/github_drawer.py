@@ -7,6 +7,7 @@ import calendar
 import datetime
 import locale
 
+import pint  # type: ignore
 import svgwrite  # type: ignore
 
 from gpxtrackposter import utils
@@ -17,7 +18,7 @@ from gpxtrackposter.xy import XY
 
 
 class GithubDrawer(TracksDrawer):
-    """Draw a gtihub profile-like poster"""
+    """Draw a github profile-like poster"""
 
     def __init__(self, the_poster: Poster):
         super().__init__(the_poster)
@@ -37,9 +38,9 @@ class GithubDrawer(TracksDrawer):
             start_date_weekday, _ = calendar.monthrange(year, 1)
             github_rect_first_day = datetime.date(year, 1, 1)
             # Github profile the first day start from the last Monday of the last year or the first Monday of this year
-            # It depands on if the first day of this year is Monday or not.
+            # It depends on if the first day of this year is Monday or not.
             github_rect_day = github_rect_first_day + datetime.timedelta(-start_date_weekday)
-            year_length = total_length_year_dict.get(year, 0)
+            year_length = pint.quantity.Quantity(total_length_year_dict.get(year, 0))
             year_length_str = utils.format_float(self.poster.m2u(year_length))
             month_names = [
                 locale.nl_langinfo(day)[:3]  # Get only first three letters
@@ -105,7 +106,7 @@ class GithubDrawer(TracksDrawer):
                     date_title = str(github_rect_day)
                     if date_title in self.poster.tracks_by_date:
                         tracks = self.poster.tracks_by_date[date_title]
-                        length = sum([t.length() for t in tracks])
+                        length = pint.quantity.Quantity(sum([t.length() for t in tracks]))
                         distance1 = self.poster.special_distance["special_distance"]
                         distance2 = self.poster.special_distance["special_distance2"]
                         has_special = distance1 < length < distance2

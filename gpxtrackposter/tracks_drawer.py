@@ -9,10 +9,10 @@ import argparse
 import pint  # type: ignore
 import svgwrite  # type: ignore
 
+from gpxtrackposter import utils
 from gpxtrackposter.poster import Poster
 from gpxtrackposter.quantity_range import QuantityRange
 from gpxtrackposter.xy import XY
-from gpxtrackposter import utils
 
 
 class TracksDrawer:
