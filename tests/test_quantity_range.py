@@ -8,7 +8,7 @@ Several tests for QuantityRange
 
 import unittest
 
-from pint.quantity import Quantity
+from pint.quantity import Quantity  # type: ignore
 
 from gpxtrackposter.quantity_range import QuantityRange
 
