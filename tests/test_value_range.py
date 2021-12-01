@@ -13,7 +13,7 @@ from gpxtrackposter.value_range import ValueRange
 
 class TestCase(unittest.TestCase):
     """
-    Test class for openscale2runalyze
+    Test class for ValueRange
     """
 
     def test_init_returns_invalid_instance(self) -> None:
