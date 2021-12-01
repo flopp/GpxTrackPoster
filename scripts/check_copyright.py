@@ -19,7 +19,7 @@ def has_valid_copyright(file_name: str) -> bool:
     copyright_found = False
     copyright_bad_year_found = False
 
-    with open(file_name, "r") as f:
+    with open(file_name, "r", encoding="utf8") as f:
         for line in f.readlines():
             empty = False
             if re_copyright.search(line):
