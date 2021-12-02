@@ -44,6 +44,10 @@ lint:
 test:
 	.env/bin/pytest tests
 
+.PHONY: coverage
+coverage:
+	.env/bin/pytest --cov=gpxtrackposter --cov-report=term --cov-report=html tests
+
 .PHONY: extract-messages
 extract-messages:
 	xgettext --keyword="translate" -d gpxposter -o locale/gpxposter.pot gpxtrackposter/*.py
