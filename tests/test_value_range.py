@@ -28,6 +28,7 @@ class TestCase(unittest.TestCase):
         self.assertIsInstance(value_range, ValueRange)
 
     def test_clear_returns_invalid_empty_instance(self) -> None:
+        """clear returns invalid and empty instance of ValueRange"""
         float_pairs = [(0.0, 0.0), (0.0, 1.0), (-1.0, 0.0)]
         for float_1, float_2 in float_pairs:
             value_range = ValueRange.from_pair(float_1, float_2)
@@ -39,6 +40,7 @@ class TestCase(unittest.TestCase):
             self.assertEqual(value_range.upper(), None)
 
     def test_lower_returns_lower_value(self) -> None:
+        """lower returns the lower value of ValueRange"""
         float_pairs = [
             (0.0, 0.0, 0.0),
             (0.0, 1.0, 0.0),
@@ -53,6 +55,7 @@ class TestCase(unittest.TestCase):
             self.assertEqual(value_range.lower(), lower)
 
     def test_upper_returns_upper_value(self) -> None:
+        """upper returns the lower value of ValueRange"""
         float_pairs = [
             (0.0, 0.0, 0.0),
             (0.0, 1.0, 1.0),
@@ -67,6 +70,7 @@ class TestCase(unittest.TestCase):
             self.assertEqual(value_range.upper(), upper)
 
     def test_diameter_returns_difference(self) -> None:
+        """diameter returns the difference of upper and lower"""
         float_pairs = [
             (0.0, 0.0, 0.0),
             (0.0, 1.0, 1.0),
@@ -79,7 +83,14 @@ class TestCase(unittest.TestCase):
             value_range = ValueRange.from_pair(float_1, float_2)
             self.assertEqual(value_range.diameter(), difference)
 
+    def test_diameter_on_invalid_returns_zero(self) -> None:
+        """diameter on invalid instance returns 0"""
+        value_range = ValueRange()
+        self.assertFalse(value_range.is_valid())
+        self.assertEqual(value_range.diameter(), 0.0)
+
     def test_contains_returns_true(self) -> None:
+        """contains returns True"""
         float_pairs = [
             (0.0, 0.0, 0.0),
             (0.0, 1.0, 0.0),
@@ -93,6 +104,7 @@ class TestCase(unittest.TestCase):
             self.assertTrue(value_range.contains(value))
 
     def test_contains_returns_false(self) -> None:
+        """contains returns False"""
         float_pairs = [
             (0.0, 0.0, 1.0),
             (0.0, 1.0, 2.0),
@@ -105,7 +117,14 @@ class TestCase(unittest.TestCase):
             value_range = ValueRange.from_pair(float_1, float_2)
             self.assertFalse(value_range.contains(value))
 
-    def test_extend_with_invalid_instance_returns_valid(self) -> None:
+    def test_contains_on_invalid_returns_false(self) -> None:
+        """contains on invalid instance returns False"""
+        value_range = ValueRange()
+        self.assertFalse(value_range.is_valid())
+        self.assertFalse(value_range.contains(1.0))
+
+    def test_extend_on_invalid_instance_instance_returns_valid(self) -> None:
+        """extend on invalid instance returns valid instance with upper and lower"""
         value = 1.0
         value_range = ValueRange()
         self.assertFalse(value_range.is_valid())
@@ -115,6 +134,7 @@ class TestCase(unittest.TestCase):
         self.assertEqual(value_range.upper(), value)
 
     def test_extend_returns_extended_value_range(self) -> None:
+        """extend returns a ValueRange with extended upper and/or lower"""
         float_pairs = [
             (0.0, 0.0, 1.0),
             (0.0, 1.0, 2.0),
@@ -131,13 +151,15 @@ class TestCase(unittest.TestCase):
             self.assertEqual(value_range.lower(), min(float_1, float_2, value))
             self.assertEqual(value_range.upper(), max(float_1, float_2, value))
 
-    def test_interpolate_with_invalid_raises_exception(self) -> None:
+    def test_interpolate_on_invalid_instance_raises_exception(self) -> None:
+        """interpolate on invalid instance raises exception"""
         value_range = ValueRange()
         self.assertFalse(value_range.is_valid())
         with self.assertRaises(ValueError):
             value_range.interpolate(1.0)
 
-    def test_interpolate_with_valid_returns_value(self) -> None:
+    def test_interpolate_on_valid_instance_returns_value(self) -> None:
+        """interpolate returns interpolated value"""
         float_pairs = [
             (0.0, 0.0, 0.0, 0.0),
             (0.0, 2.0, 1.0, 2.0),
@@ -150,13 +172,15 @@ class TestCase(unittest.TestCase):
             value_range = ValueRange.from_pair(float_1, float_2)
             self.assertEqual(value_range.interpolate(value), expected)
 
-    def test_relative_position_with_invalid_raises_exception(self) -> None:
+    def test_relative_position_on_invalid_instance_raises_exception(self) -> None:
+        """relative_position on invalid instance raises exception"""
         value_range = ValueRange()
         self.assertFalse(value_range.is_valid())
         with self.assertRaises(ValueError):
             value_range.relative_position(1.0)
 
-    def test_relative_position_with_valid_returns_zero(self) -> None:
+    def test_relative_position_on_valid_instance_returns_expected_value(self) -> None:
+        """relative_position returns the relative position value"""
         float_pairs = [
             (0.0, 0.0, 0.0, 0.0),
             (0.0, 2.0, 1.0, 0.5),
