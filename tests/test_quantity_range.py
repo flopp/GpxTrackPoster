@@ -207,5 +207,5 @@ class TestCase(unittest.TestCase):
             self.assertEqual(quantity_range.relative_position(Quantity(value)), expected)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     unittest.main()
