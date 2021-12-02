@@ -193,3 +193,7 @@ class TestCase(unittest.TestCase):
         for float_1, float_2, value, expected in float_pairs:
             value_range = ValueRange.from_pair(float_1, float_2)
             self.assertEqual(value_range.relative_position(value), expected)
+
+
+if __name__ == '__main__':
+    unittest.main()

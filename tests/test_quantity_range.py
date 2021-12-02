@@ -205,3 +205,7 @@ class TestCase(unittest.TestCase):
             quantity_range = QuantityRange.from_pair(Quantity(float_1), Quantity(float_2))
             self.assertEqual(quantity_range.relative_position(Quantity(value)), Quantity(expected))
             self.assertEqual(quantity_range.relative_position(Quantity(value)), expected)
+
+
+if __name__ == '__main__':
+    unittest.main()
