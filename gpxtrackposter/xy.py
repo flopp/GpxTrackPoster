@@ -24,9 +24,6 @@ class XY:
             return XY(self.x * factor.x, self.y * factor.y)
         return XY(self.x * factor, self.y * factor)
 
-    def __div__(self, divisor: Union[float, "XY"]) -> "XY":
-        return self.__truediv__(divisor)
-
     def __truediv__(self, divisor: Union[float, "XY"]) -> "XY":
         if isinstance(divisor, XY):
             return XY(self.x / divisor.x, self.y / divisor.y)
