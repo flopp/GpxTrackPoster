@@ -27,14 +27,14 @@ class TestCase(unittest.TestCase):
 
     def test_localized_returns_expected_value(self) -> None:
         """method with valid values returns expected value"""
-        locale.setlocale(category=locale.LC_ALL, locale="de_DE")
+        locale.setlocale(category=locale.LC_ALL, locale="german")
         self.assertEqual(localized_day_of_week_name(0, False), "Montag")
         self.assertEqual(localized_day_of_week_name(5, False), "Samstag")
         self.assertEqual(localized_day_of_week_name(6, False), "Sonntag")
         self.assertEqual(localized_day_of_week_name(0, True), "M")
         self.assertEqual(localized_day_of_week_name(5, True), "S")
         self.assertEqual(localized_day_of_week_name(6, True), "S")
-        locale.setlocale(category=locale.LC_ALL, locale="en_US")
+        locale.setlocale(category=locale.LC_ALL, locale="en_GB")
         self.assertEqual(localized_day_of_week_name(0, False), "Monday")
         self.assertEqual(localized_day_of_week_name(5, False), "Saturday")
         self.assertEqual(localized_day_of_week_name(6, False), "Sunday")
