@@ -38,8 +38,8 @@ class TestCase(unittest.TestCase):
             self.assertEqual(quantity_range.lower(), Quantity(float_1))
             quantity_range.clear()
             self.assertFalse(quantity_range.is_valid())
-            self.assertEqual(quantity_range.lower(), None)
-            self.assertEqual(quantity_range.upper(), None)
+            self.assertIsNone(quantity_range.lower())
+            self.assertIsNone(quantity_range.upper())
 
     def test_lower_returns_lower_value(self) -> None:
         """lower returns a Quantity instance of the lower value"""

@@ -36,8 +36,8 @@ class TestCase(unittest.TestCase):
             self.assertEqual(value_range.lower(), float_1)
             value_range.clear()
             self.assertFalse(value_range.is_valid())
-            self.assertEqual(value_range.lower(), None)
-            self.assertEqual(value_range.upper(), None)
+            self.assertIsNone(value_range.lower())
+            self.assertIsNone(value_range.upper())
 
     def test_lower_returns_lower_value(self) -> None:
         """lower returns the lower value of ValueRange"""
