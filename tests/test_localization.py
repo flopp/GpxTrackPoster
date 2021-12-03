@@ -19,9 +19,11 @@ class TestCase(unittest.TestCase):
 
     def test_localized_with_invalid_raises_exception(self) -> None:
         """method with invalid value returns False"""
-        with self.assertRaises(AssertionError):
-            self.assertFalse(localized_day_of_week_name(7, True))
-            self.assertFalse(localized_day_of_week_name(7, False))
+        invalid_days_of_week = [-1, 7]
+        for invalid_day in invalid_days_of_week:
+            with self.assertRaises(AssertionError):
+                self.assertFalse(localized_day_of_week_name(invalid_day, True))
+                self.assertFalse(localized_day_of_week_name(invalid_day, False))
 
     def test_localized_returns_expected_value(self) -> None:
         """method with valid values returns expected value"""
