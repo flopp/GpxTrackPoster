@@ -30,4 +30,8 @@ jobs:
     - name: Check spelling (codespell)
       run: codespell README.md gpxtrackposter/*.py tests/*.py scripts/*.py
     - name: Run tests (pytest)
-      run: python -m pytest tests
+      run: |
+        sudo locale-gen --lang de_DE.UTF-8
+        sudo locale-gen --lang en_US.UTF-8
+        sudo locale-gen --lang zh_CN.UTF-8
+        python -m pytest tests
