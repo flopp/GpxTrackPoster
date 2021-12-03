@@ -97,7 +97,7 @@ class XY:
         """
         if self.x > self.y:
             x = max_value
-            y = x / self.y * self.y
+            y = x / self.x * self.y
         else:
             y = max_value
             x = y / self.y * self.x
