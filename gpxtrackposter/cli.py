@@ -22,19 +22,89 @@ from gpxtrackposter.units import Units
 __app_name__ = "create_poster"
 __app_author__ = "flopp.net"
 
+p = poster.Poster()
+drawers = {
+    "grid": grid_drawer.GridDrawer(p),
+    "calendar": calendar_drawer.CalendarDrawer(p),
+    "heatmap": heatmap_drawer.HeatmapDrawer(p),
+    "circular": circular_drawer.CircularDrawer(p),
+    "github": github_drawer.GithubDrawer(p),
+}
+
 
 def main() -> None:
     """Handle command line arguments and call other modules as needed."""
 
-    p = poster.Poster()
-    drawers = {
-        "grid": grid_drawer.GridDrawer(p),
-        "calendar": calendar_drawer.CalendarDrawer(p),
-        "heatmap": heatmap_drawer.HeatmapDrawer(p),
-        "circular": circular_drawer.CircularDrawer(p),
-        "github": github_drawer.GithubDrawer(p),
+    # create basic args parser
+    args_parser = create_parser()
+
+    # add command line options for every single drawer type
+    for _, drawer in drawers.items():
+        drawer.create_args(args_parser)
+
+    args = parse_args(args_parser, sys.argv[1:])
+
+    for _, drawer in drawers.items():
+        drawer.fetch_args(args)
+
+    log = logging.getLogger("gpxtrackposter")
+    log.setLevel(logging.INFO if args.verbose else logging.ERROR)
+    if args.logfile:
+        handler = logging.FileHandler(args.logfile)
+        log.addHandler(handler)
+
+    loader = track_loader.TrackLoader(args.workers)
+    loader.set_cache_dir(os.path.join(appdirs.user_cache_dir(__app_name__, __app_author__), "tracks"))
+    if not loader.year_range.parse(args.year):
+        raise ParameterError(f"Bad year range: {args.year}.")
+
+    loader.special_file_names = args.special
+    loader.set_min_length(args.min_distance * Units().km)
+    loader.set_activity(args.activity_type)
+    if args.clear_cache:
+        print("Clearing cache...")
+        loader.clear_cache()
+    if args.from_strava:
+        tracks = loader.load_strava_tracks(args.from_strava)
+    else:
+        tracks = loader.load_tracks(args.gpx_dir)
+    if not tracks:
+        if not args.clear_cache:
+            print("No tracks found.")
+        return
+
+    print(f"Creating poster of type {args.type} with {len(tracks)} tracks and storing it in file {args.output}...")
+    p.set_language(args.language, args.localedir)
+    p.set_athlete(args.athlete)
+    p.set_title(args.title if args.title else p.translate("MY TRACKS"))
+    p.set_with_animation(args.with_animation)
+    p.set_animation_time(args.animation_time)
+
+    p.special_distance = {
+        "special_distance": args.special_distance * Units().km,
+        "special_distance2": args.special_distance2 * Units().km,
     }
 
+    p.colors = {
+        "background": args.background_color,
+        "track": args.track_color,
+        "track2": args.track_color2 or args.track_color,
+        "special": args.special_color,
+        "special2": args.special_color2 or args.special_color,
+        "text": args.text_color,
+    }
+    p.units = args.units
+    p.set_tracks(tracks)
+    if args.type == "github":
+        p.height = 55 + p.years.count() * 43
+    p.draw(drawers[args.type], args.output)
+
+
+def parse_args(args_parser: argparse.ArgumentParser, args: list) -> argparse.Namespace:
+    return args_parser.parse_args(args)
+
+
+def create_parser() -> argparse.ArgumentParser:
     args_parser = argparse.ArgumentParser(prog=__app_name__)
     args_parser.add_argument(
         "--gpx-dir",
@@ -215,66 +285,7 @@ def main() -> None:
         default=30,
         help="animation duration (default: 30s)",
     )
-
-    for _, drawer in drawers.items():
-        drawer.create_args(args_parser)
-
-    args = args_parser.parse_args()
-
-    for _, drawer in drawers.items():
-        drawer.fetch_args(args)
-
-    log = logging.getLogger("gpxtrackposter")
-    log.setLevel(logging.INFO if args.verbose else logging.ERROR)
-    if args.logfile:
-        handler = logging.FileHandler(args.logfile)
-        log.addHandler(handler)
-
-    loader = track_loader.TrackLoader(args.workers)
-    loader.set_cache_dir(os.path.join(appdirs.user_cache_dir(__app_name__, __app_author__), "tracks"))
-    if not loader.year_range.parse(args.year):
-        raise ParameterError(f"Bad year range: {args.year}.")
-
-    loader.special_file_names = args.special
-    loader.set_min_length(args.min_distance * Units().km)
-    loader.set_activity(args.activity_type)
-    if args.clear_cache:
-        print("Clearing cache...")
-        loader.clear_cache()
-    if args.from_strava:
-        tracks = loader.load_strava_tracks(args.from_strava)
-    else:
-        tracks = loader.load_tracks(args.gpx_dir)
-    if not tracks:
-        if not args.clear_cache:
-            print("No tracks found.")
-        return
-
-    print(f"Creating poster of type {args.type} with {len(tracks)} tracks and storing it in file {args.output}...")
-    p.set_language(args.language, args.localedir)
-    p.set_athlete(args.athlete)
-    p.set_title(args.title if args.title else p.translate("MY TRACKS"))
-    p.set_with_animation(args.with_animation)
-    p.set_animation_time(args.animation_time)
-
-    p.special_distance = {
-        "special_distance": args.special_distance * Units().km,
-        "special_distance2": args.special_distance2 * Units().km,
-    }
-
-    p.colors = {
-        "background": args.background_color,
-        "track": args.track_color,
-        "track2": args.track_color2 or args.track_color,
-        "special": args.special_color,
-        "special2": args.special_color2 or args.special_color,
-        "text": args.text_color,
-    }
-    p.units = args.units
-    p.set_tracks(tracks)
-    if args.type == "github":
-        p.height = 55 + p.years.count() * 43
-    p.draw(drawers[args.type], args.output)
+    return args_parser
 
 
 if __name__ == "__main__":
