@@ -8,7 +8,7 @@ Several tests for CircularDrawer
 
 import unittest
 
-from pint.quantity import Quantity
+from pint.quantity import Quantity  # type: ignore
 
 from gpxtrackposter.circular_drawer import CircularDrawer
 from gpxtrackposter.cli import create_parser, parse_args
