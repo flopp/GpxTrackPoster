@@ -38,13 +38,13 @@ class HeatmapDrawer(TracksDrawer):
 
     def __init__(self, the_poster: Poster):
         super().__init__(the_poster)
-        self._center = None
-        self._radius = None
+        self._center: Optional[s2sphere.LatLng] = None
+        self._radius: Optional[float] = None
         self._heatmap_line_width_low: float = 10.0
         self._heatmap_line_width_upp: float = 1000.0
         self._heatmap_line_width_lower: List[Tuple[float, float]] = [(0.10, 5.0), (0.20, 2.0), (1.0, 0.30)]
         self._heatmap_line_width_upper: List[Tuple[float, float]] = [(0.02, 0.5), (0.05, 0.2), (1.0, 0.05)]
-        self._heatmap_line_width: Optional[List[Tuple[float, float]]] = self._heatmap_line_width_lower
+        self._heatmap_line_width: Optional[List[Tuple[float, float]]] = None
 
     def create_args(self, args_parser: argparse.ArgumentParser) -> None:
         group = args_parser.add_argument_group("Heatmap Type Options")
@@ -72,7 +72,6 @@ class HeatmapDrawer(TracksDrawer):
             "`automatic` for automatic calculation (default: 0.1,5.0, 0.2,2.0, 1.0,0.3).",
         )
 
-    # pylint: disable=too-many-branches
     def fetch_args(self, args: argparse.Namespace) -> None:
         """Get arguments that were passed, and also perform basic validation on them.
 
@@ -83,47 +82,11 @@ class HeatmapDrawer(TracksDrawer):
             ParameterError: Center was not a valid lat, lng coordinate, or radius was not positive.
             ParameterError: Line transparency and width values are not valid
         """
-        self._center = None
-        if args.heatmap_center:
-            latlng_str = args.heatmap_center.split(",")
-            if len(latlng_str) != 2:
-                raise ParameterError(f"Not a valid LAT,LNG pair: {args.heatmap_center}")
-            try:
-                lat = float(latlng_str[0].strip())
-                lng = float(latlng_str[1].strip())
-            except ValueError as e:
-                raise ParameterError(f"Not a valid LAT,LNG pair: {args.heatmap_center}") from e
-            if not -90 <= lat <= 90 or not -180 <= lng <= 180:
-                raise ParameterError(f"Not a valid LAT,LNG pair: {args.heatmap_center}")
-            self._center = s2sphere.LatLng.from_degrees(lat, lng)
-        if args.heatmap_radius:
-            if args.heatmap_radius <= 0:
-                raise ParameterError(f"Not a valid radius: {args.heatmap_radius} (must be > 0)")
-            if not args.heatmap_center:
-                raise ParameterError("--heatmap-radius needs --heatmap-center")
-            self._radius = args.heatmap_radius
-        if args.heatmap_line_width:
-            if args.heatmap_line_width.lower() == "automatic":
-                self._heatmap_line_width = None
-            else:
-                trans_width_str = args.heatmap_line_width.split(",")
-                if len(trans_width_str) != 6:
-                    raise ParameterError(f"Not three valid TRANSPARENCY,WIDTH pairs: {args.heatmap_line_width}")
-                try:
-                    self._heatmap_line_width = []
-                    for value in range(0, 5, 2):
-                        transparency = float(trans_width_str[value].strip())
-                        width = float(trans_width_str[value + 1].strip())
-                        if transparency < 0 or transparency > 1:
-                            raise ParameterError(
-                                f"Not a valid TRANSPARENCY value (0 < value < 1): {transparency} in "
-                                f"{args.heatmap_line_width}"
-                            )
-                        self._heatmap_line_width.append((transparency, width))
-                except ValueError as e:
-                    raise ParameterError(f"Not three valid TRANSPARENCY,WIDTH pairs: {args.heatmap_line_width}") from e
+        self._center = self.validate_heatmap_center(args.heatmap_center)
+        self._radius = self.validate_heatmap_radius(args.heatmap_radius)
+        self._heatmap_line_width = self.validate_heatmap_line_width(args.heatmap_line_width)
 
-    def _get_line_transparencies_and_widths(self, bbox: s2sphere.sphere.LatLngRect) -> List[Tuple[float, float]]:
+    def get_line_transparencies_and_widths(self, bbox: s2sphere.sphere.LatLngRect) -> List[Tuple[float, float]]:
         if self._heatmap_line_width:
             return self._heatmap_line_width
         # automatic calculation of line transparencies and widths
@@ -157,7 +120,7 @@ class HeatmapDrawer(TracksDrawer):
     def _determine_bbox(self) -> s2sphere.LatLngRect:
         if self._center:
             log.info("Forcing heatmap center to %s", str(self._center))
-            dlat, dlng = 0, 0
+            dlat, dlng = 0.0, 0.0
             if self._radius:
                 er = 6378.1
                 quarter = er * math.pi / 2
@@ -186,7 +149,7 @@ class HeatmapDrawer(TracksDrawer):
     def draw(self, dr: svgwrite.Drawing, g: svgwrite.container.Group, size: XY, offset: XY) -> None:
         """Draw the heatmap based on tracks."""
         bbox = self._determine_bbox()
-        line_transparencies_and_widths = self._get_line_transparencies_and_widths(bbox)
+        line_transparencies_and_widths = self.get_line_transparencies_and_widths(bbox)
         year_groups: Dict[int, svgwrite.container.Group] = {}
         for tr in self.poster.tracks:
             year = tr.start_time().year
@@ -210,3 +173,51 @@ class HeatmapDrawer(TracksDrawer):
                             stroke_linecap="round",
                         )
                     )
+
+    def validate_heatmap_center(self, heatmap_center: str = None) -> s2sphere.LatLng:
+        if heatmap_center:
+            latlng_str = heatmap_center.split(",")
+            if len(latlng_str) != 2:
+                raise ParameterError(f"Not a valid LAT,LNG pair: {heatmap_center}")
+            try:
+                lat = float(latlng_str[0].strip())
+                lng = float(latlng_str[1].strip())
+            except ValueError as e:
+                raise ParameterError(f"Not a valid LAT,LNG pair: {heatmap_center}") from e
+            if not -90 <= lat <= 90 or not -180 <= lng <= 180:
+                raise ParameterError(f"Not a valid LAT,LNG pair: {heatmap_center}")
+            self._center = s2sphere.LatLng.from_degrees(lat, lng)
+        return self._center
+
+    def validate_heatmap_radius(self, heatmap_radius: float = None) -> Optional[float]:
+        if heatmap_radius:
+            if heatmap_radius <= 0:
+                raise ParameterError(f"Not a valid radius: {heatmap_radius} (must be > 0)")
+            if not self._center:
+                raise ParameterError("--heatmap-radius needs --heatmap-center")
+            self._radius = heatmap_radius
+        return self._radius
+
+    def validate_heatmap_line_width(self, heatmap_line_width: str = None) -> Optional[List[Tuple[float, float]]]:
+        if heatmap_line_width:
+            if heatmap_line_width.lower() == "automatic":
+                self._heatmap_line_width = None
+            else:
+                trans_width_str = heatmap_line_width.split(",")
+                if len(trans_width_str) != 6:
+                    raise ParameterError(f"Not three valid TRANSPARENCY,WIDTH pairs: {heatmap_line_width}")
+                try:
+                    self._heatmap_line_width = []
+                    for value in range(0, 5, 2):
+                        transparency = float(trans_width_str[value].strip())
+                        width = float(trans_width_str[value + 1].strip())
+                        if transparency < 0 or transparency > 1:
+                            raise ParameterError(
+                                f"Not a valid TRANSPARENCY value (0 < value < 1): {transparency} in "
+                                f"{heatmap_line_width}"
+                            )
+                        self._heatmap_line_width.append((transparency, width))
+                except ValueError as e:
+                    raise ParameterError(f"Not three valid TRANSPARENCY,WIDTH pairs: {heatmap_line_width}") from e
+            return self._heatmap_line_width
+        return None
