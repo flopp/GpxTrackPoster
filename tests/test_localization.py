@@ -21,33 +21,34 @@ class TestCase(unittest.TestCase):
         """method with invalid value returns False"""
         invalid_days_of_week = [-1, 7]
         for invalid_day in invalid_days_of_week:
-            with self.assertRaises(AssertionError):
-                self.assertFalse(localized_day_of_week_name(invalid_day, True))
-                self.assertFalse(localized_day_of_week_name(invalid_day, False))
+            with self.subTest(f"{invalid_day}"):
+                with self.assertRaises(AssertionError):
+                    self.assertFalse(localized_day_of_week_name(invalid_day, True))
+                    self.assertFalse(localized_day_of_week_name(invalid_day, False))
 
     def test_localized_returns_expected_value(self) -> None:
         """method with valid values returns expected value"""
         locale.setlocale(category=locale.LC_ALL, locale=["de_DE", "UTF-8"])
-        self.assertEqual(localized_day_of_week_name(0, False), "Montag")
-        self.assertEqual(localized_day_of_week_name(5, False), "Samstag")
-        self.assertEqual(localized_day_of_week_name(6, False), "Sonntag")
-        self.assertEqual(localized_day_of_week_name(0, True), "M")
-        self.assertEqual(localized_day_of_week_name(5, True), "S")
-        self.assertEqual(localized_day_of_week_name(6, True), "S")
+        self.assertEqual("Montag", localized_day_of_week_name(0, False))
+        self.assertEqual("Samstag", localized_day_of_week_name(5, False))
+        self.assertEqual("Sonntag", localized_day_of_week_name(6, False))
+        self.assertEqual("M", localized_day_of_week_name(0, True))
+        self.assertEqual("S", localized_day_of_week_name(5, True))
+        self.assertEqual("S", localized_day_of_week_name(6, True))
         locale.setlocale(category=locale.LC_ALL, locale=["en_US", "UTF-8"])
-        self.assertEqual(localized_day_of_week_name(0, False), "Monday")
-        self.assertEqual(localized_day_of_week_name(5, False), "Saturday")
-        self.assertEqual(localized_day_of_week_name(6, False), "Sunday")
-        self.assertEqual(localized_day_of_week_name(0, True), "M")
-        self.assertEqual(localized_day_of_week_name(5, True), "S")
-        self.assertEqual(localized_day_of_week_name(6, True), "S")
+        self.assertEqual("Monday", localized_day_of_week_name(0, False))
+        self.assertEqual("Saturday", localized_day_of_week_name(5, False))
+        self.assertEqual("Sunday", localized_day_of_week_name(6, False))
+        self.assertEqual("M", localized_day_of_week_name(0, True))
+        self.assertEqual("S", localized_day_of_week_name(5, True))
+        self.assertEqual("S", localized_day_of_week_name(6, True))
         locale.setlocale(category=locale.LC_ALL, locale=["zh_CN", "UTF-8"])
-        self.assertEqual(localized_day_of_week_name(0, False), "星期一")
-        self.assertEqual(localized_day_of_week_name(5, False), "星期六")
-        self.assertEqual(localized_day_of_week_name(6, False), "星期日")
-        self.assertEqual(localized_day_of_week_name(0, True), "一")
-        self.assertEqual(localized_day_of_week_name(5, True), "六")
-        self.assertEqual(localized_day_of_week_name(6, True), "日")
+        self.assertEqual("星期一", localized_day_of_week_name(0, False))
+        self.assertEqual("星期六", localized_day_of_week_name(5, False))
+        self.assertEqual("星期日", localized_day_of_week_name(6, False))
+        self.assertEqual("一", localized_day_of_week_name(0, True))
+        self.assertEqual("六", localized_day_of_week_name(5, True))
+        self.assertEqual("日", localized_day_of_week_name(6, True))
 
 
 if __name__ == "__main__":
