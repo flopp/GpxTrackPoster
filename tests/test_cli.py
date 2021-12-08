@@ -7,15 +7,22 @@ Several tests for entry point cli.py
 # license that can be found in the LICENSE file.
 
 import argparse
+import datetime
 import logging
 import os
 import unittest
-from unittest.mock import patch
+from unittest.mock import MagicMock, patch
+
+import pytest
+from pytest_mock import MockerFixture
 
 from gpxtrackposter.cli import parse_args, create_parser, setup_logging, setup_loader, setup_poster
 from gpxtrackposter.exceptions import ParameterError
 from gpxtrackposter.poster import Poster
 from gpxtrackposter.track_loader import TrackLoader
+from gpxtrackposter.units import Units
+
+# from gpxtrackposter.year_range import YearRange
 
 
 class TestCase(unittest.TestCase):
@@ -26,6 +33,7 @@ class TestCase(unittest.TestCase):
     @classmethod
     def tearDownClass(cls) -> None:
         try:
+            os.remove("poster.svg")
             os.remove("logger.log")
         except FileNotFoundError:
             pass
@@ -39,20 +47,20 @@ class TestCase(unittest.TestCase):
                 self.assertIsNone(getattr(parsed, value))
             else:
                 self.assertIsNotNone(getattr(parsed, value))
-                self.assertEqual(getattr(parsed, value), getattr(default_values, value))
+                self.assertEqual(getattr(default_values, value), getattr(parsed, value))
 
     def test_setup_logging_returns_instance_of_logger(self) -> None:
         """Test setup of logging"""
         logger = setup_logging()
         self.assertTrue(logger)
         self.assertIsInstance(logger, logging.Logger)
-        self.assertEqual(logger.getEffectiveLevel(), logging.ERROR)
+        self.assertEqual(logging.ERROR, logger.getEffectiveLevel())
 
     def test_setup_logging_verbose_sets_logger_level_info(self) -> None:
         """Test setup of logging"""
         logger = setup_logging(verbose=True)
         self.assertTrue(logger)
-        self.assertEqual(logger.getEffectiveLevel(), logging.INFO)
+        self.assertEqual(logging.INFO, logger.getEffectiveLevel())
 
     def test_setup_logging_logfile_sets_file_handler(self) -> None:
         """Test setup of logging"""
@@ -86,18 +94,50 @@ class TestCase(unittest.TestCase):
         with self.assertRaises(ParameterError):
             setup_loader(args)
 
-    def test_setup_poster_returns_instance_of_poster(self) -> None:
-        """Test setup of poster"""
-        with patch("gpxtrackposter.track_loader.Track") as patch_track_instance:
-            instance_track = patch_track_instance.return_value
-            instance_track.from_year.return_value = 2016
-            instance_track.to_year.return_value = 2018
-            with patch("gpxtrackposter.poster.Poster") as patch_poster:
-                instance_poster = patch_poster.return_value
-                instance_poster.set_tracks.return_value = None
-                poster = setup_poster(instance_poster, [instance_track], self.get_default_values())
-            self.assertTrue(poster)
-            self.assertIsInstance(poster, Poster)
+    @patch("gpxtrackposter.track_loader.Track", autospec=True)
+    @patch("gpxtrackposter.poster.Poster", autospec=True)
+    @pytest.mark.skip
+    def test_setup_poster_returns_instance_of_poster_with_default_size(
+        self, mock_poster: MagicMock, mock_track: MagicMock
+    ) -> None:
+        """Test setup of poster with default values from argparser"""
+        args = self.get_default_values()
+        mock_poster.set_tracks.return_value = None
+        poster = setup_poster(mock_poster, [mock_track], args)
+        self.assertTrue(poster)
+        self.assertIsInstance(poster, Poster)
+        # default height and width of poster
+        self.assertEqual(300, poster.height)
+        self.assertEqual(200, poster.width)
+
+    @patch("gpxtrackposter.track_loader.Track", autospec=True)
+    @pytest.mark.skip
+    def test_setup_poster_type_github_returns_instance_of_poster_with_modified_height(
+        self, mock_track: MagicMock
+    ) -> None:
+        """Test setup of poster with type github"""
+        args = TestCase.get_default_values()
+        args.type = "github"
+        year_count = 3
+        mock_track_1 = mock_track.return_value
+        mock_track_1.length.return_value = 1 * Units().km
+        mock_track_1.start_time.return_value = datetime.datetime(year=2016, month=1, day=1, hour=1, minute=1, second=1)
+        mock_track_1.end_time.return_value = datetime.datetime(year=2016, month=1, day=1, hour=2, minute=2, second=2)
+        mock_track_1.year = 2016
+        mock_track_2 = mock_track.return_value
+        mock_track_2.length.return_value = 2 * Units().km
+        mock_track_2.start_time.return_value = datetime.datetime(year=2018, month=1, day=1, hour=1, minute=1, second=1)
+        mock_track_2.end_time.return_value = datetime.datetime(year=2018, month=1, day=1, hour=2, minute=2, second=2)
+        mock_track_2.year = 2018
+        poster = setup_poster(Poster(), [mock_track, mock_track_2], args)
+        # return
+        self.assertTrue(poster)
+        self.assertIsInstance(poster, Poster)
+        self.assertEqual(poster.years.from_year, 2016)
+        self.assertEqual(year_count, poster.years.count())
+        # modified height of poster
+        self.assertEqual(55 + year_count * 43, poster.height)
+        self.assertEqual(200, poster.width)
 
     @staticmethod
     def get_default_values() -> argparse.Namespace:
@@ -130,6 +170,16 @@ class TestCase(unittest.TestCase):
             workers=None,
         )
         return args
+
+
+@pytest.fixture(name="mock_track_instance")
+def fixture_mock_track_instance(mocker: MockerFixture) -> MagicMock:
+    mock_track_class = mocker.patch("gpxtrackposter.track_loader.Track")
+    instance = mock_track_class.return_value
+    instance.length.return_value = 1 * Units().km
+    instance.start_time.return_value = datetime.datetime.now()
+    instance.end_time.return_value = datetime.datetime.now()
+    return instance
 
 
 if __name__ == "__main__":
