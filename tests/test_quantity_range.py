@@ -33,13 +33,15 @@ class TestCase(unittest.TestCase):
         """clear returns invalid and empty instance of QuantityRange"""
         float_pairs = [(0.0, 0.0), (0.0, 1.0), (-1.0, 0.0)]
         for float_1, float_2 in float_pairs:
-            quantity_range = QuantityRange.from_pair(Quantity(float_1), Quantity(float_2))
-            self.assertTrue(quantity_range.is_valid())
-            self.assertEqual(quantity_range.lower(), Quantity(float_1))
-            quantity_range.clear()
-            self.assertFalse(quantity_range.is_valid())
-            self.assertIsNone(quantity_range.lower())
-            self.assertIsNone(quantity_range.upper())
+            expected_value = Quantity(float_1)
+            with self.subTest(f"{float_1}, {float_2} -> {expected_value}"):
+                quantity_range = QuantityRange.from_pair(Quantity(float_1), Quantity(float_2))
+                self.assertTrue(quantity_range.is_valid())
+                self.assertEqual(expected_value, quantity_range.lower())
+                quantity_range.clear()
+                self.assertFalse(quantity_range.is_valid())
+                self.assertIsNone(quantity_range.lower())
+                self.assertIsNone(quantity_range.upper())
 
     def test_lower_returns_lower_value(self) -> None:
         """lower returns a Quantity instance of the lower value"""
@@ -52,10 +54,11 @@ class TestCase(unittest.TestCase):
             (-1.0, 1.0, -1.0),
         ]
         for float_1, float_2, lower in float_pairs:
-            quantity_range = QuantityRange.from_pair(Quantity(float_1), Quantity(float_2))
-            self.assertEqual(quantity_range.lower(), Quantity(min(float_1, float_2)))
-            self.assertEqual(quantity_range.lower(), Quantity(lower))
-            self.assertEqual(quantity_range.lower(), lower)
+            with self.subTest(f"{float_1}, {float_2} -> {lower}"):
+                quantity_range = QuantityRange.from_pair(Quantity(float_1), Quantity(float_2))
+                self.assertEqual(Quantity(min(float_1, float_2)), quantity_range.lower())
+                self.assertEqual(Quantity(lower), quantity_range.lower())
+                self.assertEqual(lower, quantity_range.lower())
 
     def test_upper_returns_upper_value(self) -> None:
         """upper returns a Quantity instance of the lower value"""
@@ -68,10 +71,11 @@ class TestCase(unittest.TestCase):
             (-1.0, 1.0, 1.0),
         ]
         for float_1, float_2, upper in float_pairs:
-            quantity_range = QuantityRange.from_pair(Quantity(float_1), Quantity(float_2))
-            self.assertEqual(quantity_range.upper(), Quantity(max(float_1, float_2)))
-            self.assertEqual(quantity_range.upper(), Quantity(upper))
-            self.assertEqual(quantity_range.upper(), upper)
+            with self.subTest(f"{float_1}, {float_2} -> {upper}"):
+                quantity_range = QuantityRange.from_pair(Quantity(float_1), Quantity(float_2))
+                self.assertEqual(Quantity(max(float_1, float_2)), quantity_range.upper())
+                self.assertEqual(Quantity(upper), quantity_range.upper())
+                self.assertEqual(upper, quantity_range.upper())
 
     def test_diameter_returns_difference(self) -> None:
         """diameter returns a Quantity of the difference of upper and lower"""
@@ -84,9 +88,10 @@ class TestCase(unittest.TestCase):
             (-1.0, 1.0, 2.0),
         ]
         for float_1, float_2, difference in float_pairs:
-            quantity_range = QuantityRange.from_pair(Quantity(float_1), Quantity(float_2))
-            self.assertEqual(quantity_range.diameter(), Quantity(difference))
-            self.assertEqual(quantity_range.diameter(), difference)
+            with self.subTest(f"{float_1}, {float_2} -> {difference}"):
+                quantity_range = QuantityRange.from_pair(Quantity(float_1), Quantity(float_2))
+                self.assertEqual(Quantity(difference), quantity_range.diameter())
+                self.assertEqual(difference, quantity_range.diameter())
 
     def test_diameter_on_invalid_returns_zero(self) -> None:
         """diameter on invalid instance returns Quantity(0)"""
@@ -106,8 +111,9 @@ class TestCase(unittest.TestCase):
             (-1.0, 1.0, -1),
         ]
         for float_1, float_2, value in float_pairs:
-            quantity_range = QuantityRange.from_pair(Quantity(float_1), Quantity(float_2))
-            self.assertTrue(quantity_range.contains(Quantity(value)))
+            with self.subTest(f"{float_1}, {float_2}, {value}"):
+                quantity_range = QuantityRange.from_pair(Quantity(float_1), Quantity(float_2))
+                self.assertTrue(quantity_range.contains(Quantity(value)))
 
     def test_contains_returns_false(self) -> None:
         """contains returns False"""
@@ -120,8 +126,9 @@ class TestCase(unittest.TestCase):
             (-1.0, 1.0, -2),
         ]
         for float_1, float_2, value in float_pairs:
-            quantity_range = QuantityRange.from_pair(Quantity(float_1), Quantity(float_2))
-            self.assertFalse(quantity_range.contains(Quantity(value)))
+            with self.subTest(f"{float_1}, {float_2}, {value}"):
+                quantity_range = QuantityRange.from_pair(Quantity(float_1), Quantity(float_2))
+                self.assertFalse(quantity_range.contains(Quantity(value)))
 
     def test_contains_on_invalid_returns_false(self) -> None:
         """contains on invalid instance returns False"""
@@ -136,10 +143,10 @@ class TestCase(unittest.TestCase):
         self.assertFalse(quantity_range.is_valid())
         quantity_range.extend(Quantity(value))
         self.assertTrue(quantity_range.is_valid())
-        self.assertEqual(quantity_range.lower(), Quantity(value))
-        self.assertEqual(quantity_range.upper(), Quantity(value))
-        self.assertEqual(quantity_range.lower(), value)
-        self.assertEqual(quantity_range.upper(), value)
+        self.assertEqual(Quantity(value), quantity_range.lower())
+        self.assertEqual(Quantity(value), quantity_range.upper())
+        self.assertEqual(value, quantity_range.lower())
+        self.assertEqual(value, quantity_range.upper())
 
     def test_extend_returns_extended_quantity_range(self) -> None:
         """extend returns a QuantityRange with extended upper and/or lower"""
@@ -152,14 +159,15 @@ class TestCase(unittest.TestCase):
             (-1.0, 1.0, -2),
         ]
         for float_1, float_2, value in float_pairs:
-            quantity_range = QuantityRange.from_pair(Quantity(float_1), Quantity(float_2))
-            self.assertEqual(quantity_range.lower(), Quantity(min(float_1, float_2)))
-            self.assertEqual(quantity_range.upper(), Quantity(max(float_1, float_2)))
-            quantity_range.extend(Quantity(value))
-            self.assertEqual(quantity_range.lower(), Quantity(min(float_1, float_2, value)))
-            self.assertEqual(quantity_range.upper(), Quantity(max(float_1, float_2, value)))
-            self.assertEqual(quantity_range.lower(), min(float_1, float_2, value))
-            self.assertEqual(quantity_range.upper(), max(float_1, float_2, value))
+            with self.subTest(f"{float_1}, {float_2}, {value}"):
+                quantity_range = QuantityRange.from_pair(Quantity(float_1), Quantity(float_2))
+                self.assertEqual(Quantity(min(float_1, float_2)), quantity_range.lower())
+                self.assertEqual(Quantity(max(float_1, float_2)), quantity_range.upper())
+                quantity_range.extend(Quantity(value))
+                self.assertEqual(Quantity(min(float_1, float_2, value)), quantity_range.lower())
+                self.assertEqual(Quantity(max(float_1, float_2, value)), quantity_range.upper())
+                self.assertEqual(min(float_1, float_2, value), quantity_range.lower())
+                self.assertEqual(max(float_1, float_2, value), quantity_range.upper())
 
     def test_interpolate_on_invalid_instance_raises_exception(self) -> None:
         """interpolate on invalid instance raises exception"""
@@ -179,9 +187,10 @@ class TestCase(unittest.TestCase):
             (-1.0, 1.0, -2.0, -5.0),
         ]
         for float_1, float_2, value, expected in float_pairs:
-            quantity_range = QuantityRange.from_pair(Quantity(float_1), Quantity(float_2))
-            self.assertEqual(quantity_range.interpolate(value), Quantity(expected))
-            self.assertEqual(quantity_range.interpolate(value), expected)
+            with self.subTest(f"{float_1}, {float_2} -> {expected}"):
+                quantity_range = QuantityRange.from_pair(Quantity(float_1), Quantity(float_2))
+                self.assertEqual(Quantity(expected), quantity_range.interpolate(value))
+                self.assertEqual(expected, quantity_range.interpolate(value))
 
     def test_relative_position_on_invalid_instance_raises_exception(self) -> None:
         """relative_position on invalid instance raises exception"""
@@ -202,9 +211,10 @@ class TestCase(unittest.TestCase):
             (-1.0, 1.0, -0.5, 0.25),
         ]
         for float_1, float_2, value, expected in float_pairs:
-            quantity_range = QuantityRange.from_pair(Quantity(float_1), Quantity(float_2))
-            self.assertEqual(quantity_range.relative_position(Quantity(value)), Quantity(expected))
-            self.assertEqual(quantity_range.relative_position(Quantity(value)), expected)
+            with self.subTest(f"{float_1}, {float_2} -> {expected}"):
+                quantity_range = QuantityRange.from_pair(Quantity(float_1), Quantity(float_2))
+                self.assertEqual(Quantity(expected), quantity_range.relative_position(Quantity(value)))
+                self.assertEqual(expected, quantity_range.relative_position(Quantity(value)))
 
 
 if __name__ == "__main__":
