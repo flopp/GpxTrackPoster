@@ -30,54 +30,18 @@ class TestCase(unittest.TestCase):
         except FileNotFoundError:
             pass
 
-    def test_create_parser_without_args_sets_defaults(self) -> None:
+    def test_create_parser_without_args_sets_default_values(self) -> None:
         parser = create_parser()
         parsed = parse_args(parser, [])
-        self.assertTrue(parsed.gpx_dir)
-        self.assertEqual(parsed.gpx_dir, ".")
-        self.assertTrue(parsed.output)
-        self.assertEqual(parsed.output, "poster.svg")
-        self.assertFalse(parsed.language)
-        self.assertFalse(parsed.localedir)
-        self.assertTrue(parsed.year)
-        self.assertEqual(parsed.year, "all")
-        self.assertFalse(parsed.title)
-        self.assertTrue(parsed.athlete)
-        self.assertEqual(parsed.athlete, "John Doe")
-        self.assertFalse(parsed.special)
-        self.assertListEqual(parsed.special, [])
-        self.assertTrue(parsed.type)
-        self.assertEqual(parsed.type, "grid")
-        self.assertTrue(parsed.background_color)
-        self.assertEqual(parsed.background_color, "#222222")
-        self.assertTrue(parsed.track_color)
-        self.assertEqual(parsed.track_color, "#4DD2FF")
-        self.assertFalse(parsed.track_color2)
-        self.assertTrue(parsed.text_color)
-        self.assertEqual(parsed.text_color, "#FFFFFF")
-        self.assertTrue(parsed.special_color)
-        self.assertEqual(parsed.special_color, "#FFFF00")
-        self.assertFalse(parsed.special_color2)
-        self.assertTrue(parsed.units)
-        self.assertEqual(parsed.units, "metric")
-        self.assertFalse(parsed.clear_cache)
-        self.assertFalse(parsed.workers)
-        self.assertFalse(parsed.from_strava)
-        self.assertFalse(parsed.verbose)
-        self.assertFalse(parsed.logfile)
-        self.assertTrue(parsed.special_distance)
-        self.assertEqual(parsed.special_distance, 10.0)
-        self.assertTrue(parsed.special_distance2)
-        self.assertEqual(parsed.special_distance2, 20.0)
-        self.assertTrue(parsed.min_distance)
-        self.assertEqual(parsed.min_distance, 1.0)
-        self.assertTrue(parsed.activity_type)
-        self.assertEqual(parsed.activity_type, "all")
-        self.assertFalse(parsed.with_animation)
-        self.assertTrue(parsed.animation_time)
-        self.assertEqual(parsed.animation_time, 30)
+        default_values = self.get_default_values()
+        for value in vars(default_values):
+            if getattr(default_values, value) is None:
+                self.assertIsNone(getattr(parsed, value))
+            else:
+                self.assertIsNotNone(getattr(parsed, value))
+                self.assertEqual(getattr(parsed, value), getattr(default_values, value))
 
-    def test_setup_logging_returns_logger(self) -> None:
+    def test_setup_logging_returns_instance_of_logger(self) -> None:
         """Test setup of logging"""
         logger = setup_logging()
         self.assertTrue(logger)
@@ -97,7 +61,7 @@ class TestCase(unittest.TestCase):
         handler_names = [handler.__class__.__name__ for handler in logger.handlers]
         self.assertIn("FileHandler", handler_names)
 
-    def test_setup_loader_returns_track_loader(self) -> None:
+    def test_setup_loader_returns_instance_of_track_loader(self) -> None:
         """Test setup of track loader"""
         args = self.get_default_values()
         loader = setup_loader(args)
@@ -122,7 +86,7 @@ class TestCase(unittest.TestCase):
         with self.assertRaises(ParameterError):
             setup_loader(args)
 
-    def test_setup_poster_returns_poster(self) -> None:
+    def test_setup_poster_returns_instance_of_poster(self) -> None:
         """Test setup of poster"""
         with patch("gpxtrackposter.track_loader.Track") as patch_track_instance:
             instance_track = patch_track_instance.return_value
@@ -163,7 +127,7 @@ class TestCase(unittest.TestCase):
             activity_type="all",
             with_animation=False,
             animation_time=30,
-            workers=1,
+            workers=None,
         )
         return args
 
