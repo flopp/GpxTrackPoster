@@ -37,8 +37,9 @@ class TestCase(unittest.TestCase):
             (s2sphere.LatLng.from_degrees(40.711344, -74.005382), XY(0.5888589888888889, 0.2519722679166857)),
         ]
         for test_value, expected_result in test_values:
-            self.assertAlmostEqual(latlng2xy(test_value).x, expected_result.x, 12)
-            self.assertAlmostEqual(latlng2xy(test_value).y, expected_result.y, 12)
+            with self.subTest(f"{test_value} -> {expected_result}"):
+                self.assertAlmostEqual(expected_result.x, latlng2xy(test_value).x, 12)
+                self.assertAlmostEqual(expected_result.y, latlng2xy(test_value).y, 12)
 
     def test_lng2x(self) -> None:
         test_values = [
@@ -55,7 +56,8 @@ class TestCase(unittest.TestCase):
             (180, 2.0),
         ]
         for test_value, expected_result in test_values:
-            self.assertAlmostEqual(lng2x(test_value), expected_result, 12)
+            with self.subTest(f"{test_value} -> {expected_result}"):
+                self.assertAlmostEqual(expected_result, lng2x(test_value), 12)
 
     def test_lat2y(self) -> None:
         test_values = [
@@ -66,7 +68,8 @@ class TestCase(unittest.TestCase):
             (60, 0.08079928172101752),
         ]
         for test_value, expected_result in test_values:
-            self.assertAlmostEqual(lat2y(test_value), expected_result, 12)
+            with self.subTest(f"{test_value} -> {expected_result}"):
+                self.assertAlmostEqual(expected_result, lat2y(test_value), 12)
 
     def test_compute_bounds_xy(self) -> None:
         test_values = [
@@ -80,18 +83,19 @@ class TestCase(unittest.TestCase):
             ),
         ]
         for test_value, expected_result in test_values:
-            bounds_xy = compute_bounds_xy(test_value)
-            self.assertEqual(bounds_xy[0].lower(), expected_result[0].lower())
-            self.assertEqual(bounds_xy[0].upper(), expected_result[0].upper())
-            self.assertEqual(bounds_xy[1].lower(), expected_result[1].lower())
-            self.assertEqual(bounds_xy[1].upper(), expected_result[1].upper())
+            with self.subTest(f"{test_value} -> {expected_result}"):
+                bounds_xy = compute_bounds_xy(test_value)
+                self.assertEqual(expected_result[0].lower(), bounds_xy[0].lower())
+                self.assertEqual(expected_result[0].upper(), bounds_xy[0].upper())
+                self.assertEqual(expected_result[1].lower(), bounds_xy[1].lower())
+                self.assertEqual(expected_result[1].upper(), bounds_xy[1].upper())
 
     def test_interpolate_color(self) -> None:
-        self.assertEqual(interpolate_color("#000000", "#ffffff", 0), "#000000")
-        self.assertEqual(interpolate_color("#000000", "#ffffff", 1), "#ffffff")
-        self.assertEqual(interpolate_color("#000000", "#ffffff", 0.5), "#7f7f7f")
-        self.assertEqual(interpolate_color("#000000", "#ffffff", -100), "#000000")
-        self.assertEqual(interpolate_color("#000000", "#ffffff", 12345), "#ffffff")
+        self.assertEqual("#000000", interpolate_color("#000000", "#ffffff", 0))
+        self.assertEqual("#ffffff", interpolate_color("#000000", "#ffffff", 1))
+        self.assertEqual("#7f7f7f", interpolate_color("#000000", "#ffffff", 0.5))
+        self.assertEqual("#000000", interpolate_color("#000000", "#ffffff", -100))
+        self.assertEqual("#ffffff", interpolate_color("#000000", "#ffffff", 12345))
 
     def test_format_float(self) -> None:
         test_values = [
@@ -99,9 +103,10 @@ class TestCase(unittest.TestCase):
             (0.12, "0.1"),
             (0.56, "0.6"),
         ]
-        for value, expected_result in test_values:
-            self.assertEqual(format_float(value), expected_result)
-            self.assertAlmostEqual(float(format_float(value)), float(expected_result), 1)
+        for test_value, expected_result in test_values:
+            with self.subTest(f"{test_value} -> {expected_result}"):
+                self.assertEqual(expected_result, format_float(test_value))
+                self.assertAlmostEqual(float(expected_result), float(format_float(test_value)), 1)
 
     def test_make_key_times(self) -> None:
         test_values = [
@@ -109,8 +114,9 @@ class TestCase(unittest.TestCase):
             (5, ["0", "0.2", "0.4", "0.6", "0.8", "1"]),
             (10, ["0", "0.1", "0.2", "0.3", "0.4", "0.5", "0.6", "0.7", "0.8", "0.9", "1.0", "1"]),
         ]
-        for value, expected_result in test_values:
-            self.assertListEqual(make_key_times(value), expected_result)
+        for test_value, expected_result in test_values:
+            with self.subTest(f"{test_value} -> {expected_result}"):
+                self.assertListEqual(expected_result, make_key_times(test_value))
 
 
 if __name__ == "__main__":
