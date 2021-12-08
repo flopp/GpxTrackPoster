@@ -31,13 +31,14 @@ class TestCase(unittest.TestCase):
         """clear returns invalid and empty instance of ValueRange"""
         float_pairs = [(0.0, 0.0), (0.0, 1.0), (-1.0, 0.0)]
         for float_1, float_2 in float_pairs:
-            value_range = ValueRange.from_pair(float_1, float_2)
-            self.assertTrue(value_range.is_valid())
-            self.assertEqual(value_range.lower(), float_1)
-            value_range.clear()
-            self.assertFalse(value_range.is_valid())
-            self.assertIsNone(value_range.lower())
-            self.assertIsNone(value_range.upper())
+            with self.subTest(f"{float_1}, {float_2}"):
+                value_range = ValueRange.from_pair(float_1, float_2)
+                self.assertTrue(value_range.is_valid())
+                self.assertEqual(float_1, value_range.lower())
+                value_range.clear()
+                self.assertFalse(value_range.is_valid())
+                self.assertIsNone(value_range.lower())
+                self.assertIsNone(value_range.upper())
 
     def test_lower_returns_lower_value(self) -> None:
         """lower returns the lower value of ValueRange"""
@@ -50,9 +51,10 @@ class TestCase(unittest.TestCase):
             (-1.0, 1.0, -1.0),
         ]
         for float_1, float_2, lower in float_pairs:
-            value_range = ValueRange.from_pair(float_1, float_2)
-            self.assertEqual(value_range.lower(), min(float_1, float_2))
-            self.assertEqual(value_range.lower(), lower)
+            with self.subTest(f"{float_1}, {float_2} -> {lower}"):
+                value_range = ValueRange.from_pair(float_1, float_2)
+                self.assertEqual(min(float_1, float_2), value_range.lower())
+                self.assertEqual(lower, value_range.lower())
 
     def test_upper_returns_upper_value(self) -> None:
         """upper returns the lower value of ValueRange"""
@@ -65,9 +67,10 @@ class TestCase(unittest.TestCase):
             (-1.0, 1.0, 1.0),
         ]
         for float_1, float_2, upper in float_pairs:
-            value_range = ValueRange.from_pair(float_1, float_2)
-            self.assertEqual(value_range.upper(), max(float_1, float_2))
-            self.assertEqual(value_range.upper(), upper)
+            with self.subTest(f"{float_1}, {float_2} -> {upper}"):
+                value_range = ValueRange.from_pair(float_1, float_2)
+                self.assertEqual(max(float_1, float_2), value_range.upper())
+                self.assertEqual(upper, value_range.upper())
 
     def test_diameter_returns_difference(self) -> None:
         """diameter returns the difference of upper and lower"""
@@ -80,14 +83,15 @@ class TestCase(unittest.TestCase):
             (-1.0, 1.0, 2.0),
         ]
         for float_1, float_2, difference in float_pairs:
-            value_range = ValueRange.from_pair(float_1, float_2)
-            self.assertEqual(value_range.diameter(), difference)
+            with self.subTest(f"{float_1}, {float_2} -> {difference}"):
+                value_range = ValueRange.from_pair(float_1, float_2)
+                self.assertEqual(difference, value_range.diameter())
 
     def test_diameter_on_invalid_returns_zero(self) -> None:
         """diameter on invalid instance returns 0"""
         value_range = ValueRange()
         self.assertFalse(value_range.is_valid())
-        self.assertEqual(value_range.diameter(), 0.0)
+        self.assertEqual(0.0, value_range.diameter())
 
     def test_contains_returns_true(self) -> None:
         """contains returns True"""
@@ -100,8 +104,9 @@ class TestCase(unittest.TestCase):
             (-1.0, 1.0, -1),
         ]
         for float_1, float_2, value in float_pairs:
-            value_range = ValueRange.from_pair(float_1, float_2)
-            self.assertTrue(value_range.contains(value))
+            with self.subTest(f"{float_1}, {float_2}, {value}"):
+                value_range = ValueRange.from_pair(float_1, float_2)
+                self.assertTrue(value_range.contains(value))
 
     def test_contains_returns_false(self) -> None:
         """contains returns False"""
@@ -114,8 +119,9 @@ class TestCase(unittest.TestCase):
             (-1.0, 1.0, -2),
         ]
         for float_1, float_2, value in float_pairs:
-            value_range = ValueRange.from_pair(float_1, float_2)
-            self.assertFalse(value_range.contains(value))
+            with self.subTest(f"{float_1}, {float_2}, {value}"):
+                value_range = ValueRange.from_pair(float_1, float_2)
+                self.assertFalse(value_range.contains(value))
 
     def test_contains_on_invalid_returns_false(self) -> None:
         """contains on invalid instance returns False"""
@@ -130,8 +136,8 @@ class TestCase(unittest.TestCase):
         self.assertFalse(value_range.is_valid())
         value_range.extend(value)
         self.assertTrue(value_range.is_valid())
-        self.assertEqual(value_range.lower(), value)
-        self.assertEqual(value_range.upper(), value)
+        self.assertEqual(value, value_range.lower())
+        self.assertEqual(value, value_range.upper())
 
     def test_extend_returns_extended_value_range(self) -> None:
         """extend returns a ValueRange with extended upper and/or lower"""
@@ -144,12 +150,13 @@ class TestCase(unittest.TestCase):
             (-1.0, 1.0, -2),
         ]
         for float_1, float_2, value in float_pairs:
-            value_range = ValueRange.from_pair(float_1, float_2)
-            self.assertEqual(value_range.lower(), min(float_1, float_2))
-            self.assertEqual(value_range.upper(), max(float_1, float_2))
-            value_range.extend(value)
-            self.assertEqual(value_range.lower(), min(float_1, float_2, value))
-            self.assertEqual(value_range.upper(), max(float_1, float_2, value))
+            with self.subTest(f"{float_1}, {float_2}, {value}"):
+                value_range = ValueRange.from_pair(float_1, float_2)
+                self.assertEqual(min(float_1, float_2), value_range.lower())
+                self.assertEqual(max(float_1, float_2), value_range.upper())
+                value_range.extend(value)
+                self.assertEqual(min(float_1, float_2, value), value_range.lower())
+                self.assertEqual(max(float_1, float_2, value), value_range.upper())
 
     def test_interpolate_on_invalid_instance_raises_exception(self) -> None:
         """interpolate on invalid instance raises exception"""
@@ -169,8 +176,9 @@ class TestCase(unittest.TestCase):
             (-1.0, 1.0, -2.0, -5.0),
         ]
         for float_1, float_2, value, expected in float_pairs:
-            value_range = ValueRange.from_pair(float_1, float_2)
-            self.assertEqual(value_range.interpolate(value), expected)
+            with self.subTest(f"{float_1}, {float_2}, {value} -> {expected}"):
+                value_range = ValueRange.from_pair(float_1, float_2)
+                self.assertEqual(expected, value_range.interpolate(value))
 
     def test_relative_position_on_invalid_instance_raises_exception(self) -> None:
         """relative_position on invalid instance raises exception"""
@@ -191,8 +199,9 @@ class TestCase(unittest.TestCase):
             (-1.0, 1.0, -0.5, 0.25),
         ]
         for float_1, float_2, value, expected in float_pairs:
-            value_range = ValueRange.from_pair(float_1, float_2)
-            self.assertEqual(value_range.relative_position(value), expected)
+            with self.subTest(f"{float_1}, {float_2}, {value} -> {expected}"):
+                value_range = ValueRange.from_pair(float_1, float_2)
+                self.assertEqual(expected, value_range.relative_position(value))
 
 
 if __name__ == "__main__":
