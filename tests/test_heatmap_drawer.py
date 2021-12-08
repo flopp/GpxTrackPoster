@@ -29,20 +29,23 @@ class TestCase(unittest.TestCase):
     def test_validate_heatmap_center_with_invalid_center_string_raises_exception(self) -> None:
         invalid_centers = ["-10,0,10", "-10;10", "-10.10"]
         for invalid_center in invalid_centers:
-            with self.assertRaises(ParameterError):
-                self.heatmap_drawer.validate_heatmap_center(invalid_center)
+            with self.subTest(f"{invalid_center}"):
+                with self.assertRaises(ParameterError):
+                    self.heatmap_drawer.validate_heatmap_center(invalid_center)
 
     def test_validate_heatmap_center_with_invalid_center_type_raises_exception(self) -> None:
         invalid_centers = ["A,B", "A,10", "-10,B"]
         for invalid_center in invalid_centers:
-            with self.assertRaises(ParameterError):
-                self.heatmap_drawer.validate_heatmap_center(invalid_center)
+            with self.subTest(f"{invalid_center}"):
+                with self.assertRaises(ParameterError):
+                    self.heatmap_drawer.validate_heatmap_center(invalid_center)
 
     def test_validate_heatmap_center_with_invalid_center_values_raises_exception(self) -> None:
         invalid_centers = ["-91, 10", "-90, -181", "91, 10", "-91, 181", "-91, -181"]
         for invalid_center in invalid_centers:
-            with self.assertRaises(ParameterError):
-                self.heatmap_drawer.validate_heatmap_center(invalid_center)
+            with self.subTest(f"{invalid_center}"):
+                with self.assertRaises(ParameterError):
+                    self.heatmap_drawer.validate_heatmap_center(invalid_center)
 
     def test_validate_heatmap_center_with_valid_center_returns_center(self) -> None:
         valid_centers = [
@@ -54,7 +57,8 @@ class TestCase(unittest.TestCase):
             ("0, 0", s2sphere.LatLng.from_degrees(0, 0)),
         ]
         for valid_center, expected_result in valid_centers:
-            self.assertEqual(self.heatmap_drawer.validate_heatmap_center(valid_center), expected_result)
+            with self.subTest(f"{valid_center} -> {expected_result}"):
+                self.assertEqual(expected_result, self.heatmap_drawer.validate_heatmap_center(valid_center))
 
     def test_validate_heatmap_radius_with_invalid_value_raises_exception(self) -> None:
         with self.assertRaises(ParameterError):
@@ -68,8 +72,9 @@ class TestCase(unittest.TestCase):
     def test_validate_heatmap_radius_with_valid_radius_returns_radius(self) -> None:
         valid_radii = [(0.1, 0.1), (10.0, 10.0)]
         for valid_radius, expected_result in valid_radii:
-            self.heatmap_drawer.validate_heatmap_center("-10,10")
-            self.assertEqual(self.heatmap_drawer.validate_heatmap_radius(valid_radius), expected_result)
+            with self.subTest(f"{valid_radius} -> {expected_result}"):
+                self.heatmap_drawer.validate_heatmap_center("-10,10")
+                self.assertEqual(expected_result, self.heatmap_drawer.validate_heatmap_radius(valid_radius))
 
     def test_validate_heatmap_line_width_with_invalid_string_raises_exception(self) -> None:
         invalid_strings = [
@@ -77,8 +82,9 @@ class TestCase(unittest.TestCase):
             "0.1,5.0, 0.2,2.0, 1.0,0.3, 0.1, 0.3",
         ]
         for invalid_string in invalid_strings:
-            with self.assertRaises(ParameterError):
-                self.heatmap_drawer.validate_heatmap_line_width(invalid_string)
+            with self.subTest(f"{invalid_string}"):
+                with self.assertRaises(ParameterError):
+                    self.heatmap_drawer.validate_heatmap_line_width(invalid_string)
 
     def test_validate_heatmap_line_width_with_invalid_value_raises_exception(self) -> None:
         invalid_strings = [
@@ -87,8 +93,9 @@ class TestCase(unittest.TestCase):
             "0.1,5.0, 0.2,2.0, 1.1,0.3",
         ]
         for invalid_string in invalid_strings:
-            with self.assertRaises(ParameterError):
-                self.heatmap_drawer.validate_heatmap_line_width(invalid_string)
+            with self.subTest(f"{invalid_string}"):
+                with self.assertRaises(ParameterError):
+                    self.heatmap_drawer.validate_heatmap_line_width(invalid_string)
 
     def test_validate_heatmap_line_width_with_valid_value_returns_line_widths(self) -> None:
         valid_strings = [
@@ -97,7 +104,8 @@ class TestCase(unittest.TestCase):
             ("0.1,5.0, 0.2,2.0, 1.0,0.3", [(0.1, 5.0), (0.2, 2.0), (1.0, 0.3)]),
         ]
         for valid_string, expected_result in valid_strings:
-            self.assertEqual(self.heatmap_drawer.validate_heatmap_line_width(valid_string), expected_result)
+            with self.subTest(f"{valid_string} -> {expected_result}"):
+                self.assertEqual(expected_result, self.heatmap_drawer.validate_heatmap_line_width(valid_string))
 
     def test_validate_heatmap_line_width_without_value_returns_none(self) -> None:
         self.assertIsNone(self.heatmap_drawer.validate_heatmap_line_width())
@@ -110,7 +118,8 @@ class TestCase(unittest.TestCase):
             (" 0.1,5.0, 0.2,2.0, 1.0,0.3 ", [(0.1, 5.0), (0.2, 2.0), (1.0, 0.3)]),
         ]
         for valid_string, expected_result in valid_strings:
-            self.assertEqual(self.heatmap_drawer.validate_heatmap_line_width(valid_string), expected_result)
+            with self.subTest(f"{valid_string} -> {expected_result}"):
+                self.assertEqual(expected_result, self.heatmap_drawer.validate_heatmap_line_width(valid_string))
 
     def test_get_line_transparencies_and_widths_with_automatic_returns_calculated_values(self) -> None:
         test_values = {
@@ -159,7 +168,8 @@ class TestCase(unittest.TestCase):
             expected_result = test_value[2]
             for pair in [0, 2]:
                 for value in [0, 1]:
-                    self.assertAlmostEqual(result[pair][value], expected_result[pair][value], 4)
+                    with self.subTest(f"{pair}|{value} -> {expected_result[pair][value]}"):
+                        self.assertAlmostEqual(expected_result[pair][value], result[pair][value], 4)
 
     def test_parser_with_type_heatmap_sets_type(self) -> None:
         self.heatmap_drawer.create_args(self.parser)
@@ -224,12 +234,13 @@ class TestCase(unittest.TestCase):
                 s2sphere.LatLng.from_degrees(test_value[0][0], test_value[0][1]),
                 s2sphere.LatLng.from_degrees(test_value[1][0], test_value[1][1]),
             )
-            self.assertTrue(parsed.heatmap_line_width)
-            self.assertEqual(parsed.heatmap_line_width, line_width)
-            self.assertEqual(self.heatmap_drawer.get_line_transparencies_and_widths(bbox), expected_line_width)
-            self.assertEqual(
-                self.heatmap_drawer._heatmap_line_width, expected_line_width  # pylint: disable=protected-access
-            )
+            with self.subTest(f"{line_width} -> {expected_line_width}"):
+                self.assertTrue(parsed.heatmap_line_width)
+                self.assertEqual(line_width, parsed.heatmap_line_width)
+                self.assertEqual(expected_line_width, self.heatmap_drawer.get_line_transparencies_and_widths(bbox))
+                self.assertEqual(
+                    expected_line_width, self.heatmap_drawer._heatmap_line_width  # pylint: disable=protected-access
+                )
 
 
 if __name__ == "__main__":
