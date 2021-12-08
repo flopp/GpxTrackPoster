@@ -311,7 +311,7 @@ def setup_poster(pstr: poster.Poster, tracks: List[track_loader.Track], args: ar
     if args.type == "github":
         pstr.height = 55 + pstr.years.count() * 43
     pstr.draw(drawers[args.type], args.output)
-    return p
+    return pstr
 
 
 if __name__ == "__main__":
