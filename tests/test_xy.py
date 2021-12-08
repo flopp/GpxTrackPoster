@@ -27,8 +27,9 @@ class TestCase(unittest.TestCase):
             (XY(-10.0, 5.0), (-500.0, 500.0)),
             (XY(0.5, -5.0), (25.0, -500.0)),
         ]
-        for other, result in test_values:
-            self.assertEqual((test_object * other).tuple(), result)
+        for other, expected in test_values:
+            with self.subTest(f"{other} -> {expected}"):
+                self.assertEqual(expected, (test_object * other).tuple())
 
     def test_division(self) -> None:
         test_object: XY = XY(50.0, 100.0)
@@ -41,8 +42,9 @@ class TestCase(unittest.TestCase):
             (XY(-10.0, 5.0), (-5.0, 20.0)),
             (XY(0.5, -5.0), (100.0, -20.0)),
         ]
-        for other, result in test_values:
-            self.assertEqual((test_object / other).tuple(), result)
+        for other, expected in test_values:
+            with self.subTest(f"{other} -> {expected}"):
+                self.assertEqual(expected, (test_object / other).tuple())
 
     def test_addition(self) -> None:
         test_object: XY = XY(50.0, 100.0)
@@ -55,8 +57,9 @@ class TestCase(unittest.TestCase):
             (XY(-10.0, 5.0), (40.0, 105.0)),
             (XY(0.5, -5.0), (50.5, 95.0)),
         ]
-        for other, result in test_values:
-            self.assertEqual((test_object + other).tuple(), result)
+        for other, expected in test_values:
+            with self.subTest(f"{other} -> {expected}"):
+                self.assertEqual(expected, (test_object + other).tuple())
 
     def test_subtraction(self) -> None:
         test_object: XY = XY(50.0, 100.0)
@@ -69,20 +72,21 @@ class TestCase(unittest.TestCase):
             (XY(-10.0, 5.0), (60.0, 95.0)),
             (XY(0.5, -5.0), (49.5, 105.0)),
         ]
-        for other, result in test_values:
-            self.assertEqual((test_object - other).tuple(), result)
+        for other, expected in test_values:
+            with self.subTest(f"{other} -> {expected}"):
+                self.assertEqual(expected, (test_object - other).tuple())
 
     def test_representation(self) -> None:
         test_object: XY = XY(50.0, 100.0)
-        self.assertEqual(str(test_object), "XY: 50.0/100.0")
+        self.assertEqual("XY: 50.0/100.0", str(test_object))
 
     def test_tuple(self) -> None:
         test_object: XY = XY(50.0, 100.0)
-        self.assertEqual(test_object.tuple(), (50.0, 100.0))
+        self.assertEqual((50.0, 100.0), test_object.tuple())
 
     def test_to_int(self) -> None:
         test_object: XY = XY(50.12345, 100.98765)
-        self.assertEqual(test_object.to_int().tuple(), (50, 100))
+        self.assertEqual((50, 100), test_object.to_int().tuple())
 
     def test_round(self) -> None:
         test_object: XY = XY(50.12345, 100.98765)
@@ -95,8 +99,9 @@ class TestCase(unittest.TestCase):
             (5, (50.12345, 100.98765)),
             (None, (50.0, 101.0)),
         ]
-        for n, result in test_values:
-            self.assertEqual(test_object.round(n).tuple(), result)
+        for n, expected in test_values:
+            with self.subTest(f"{n} -> {expected}"):
+                self.assertEqual(expected, test_object.round(n).tuple())
 
     def test_get_max(self) -> None:
         test_values: List[Tuple[XY, Union[int, float]]] = [
@@ -107,8 +112,9 @@ class TestCase(unittest.TestCase):
             (XY(12, 25), 25),
             (XY(25, 12), 25),
         ]
-        for test_object, result in test_values:
-            self.assertEqual(test_object.get_max(), result)
+        for test_object, expected in test_values:
+            with self.subTest(f"{test_object} -> {expected}"):
+                self.assertEqual(expected, test_object.get_max())
 
     def test_get_min(self) -> None:
         test_values: List[Tuple[XY, Union[int, float]]] = [
@@ -119,8 +125,9 @@ class TestCase(unittest.TestCase):
             (XY(12, 25), 12),
             (XY(25, 12), 12),
         ]
-        for test_object, result in test_values:
-            self.assertEqual(test_object.get_min(), result)
+        for test_object, expected in test_values:
+            with self.subTest(f"{test_object} -> {expected}"):
+                self.assertEqual(expected, test_object.get_min())
 
     def test_scale_to_max_value(self) -> None:
         test_object: XY = XY(50.0, 100.0)
@@ -135,11 +142,13 @@ class TestCase(unittest.TestCase):
             (-50.0, (25.0, -50.0)),
             (-50.0, (-25.0, 50.0)),
         ]
-        for max_value, result in good_values:
-            self.assertEqual(test_object.scale_to_max_value(max_value).tuple(), result)
+        for max_value, expected in good_values:
+            with self.subTest(f"{test_object} -> {expected}"):
+                self.assertEqual(expected, test_object.scale_to_max_value(max_value).tuple())
 
-        for max_value, result in bad_values:
-            self.assertNotEqual(test_object.scale_to_max_value(max_value).tuple(), result)
+        for max_value, expected in bad_values:
+            with self.subTest(f"{test_object} -> {expected}"):
+                self.assertNotEqual(expected, test_object.scale_to_max_value(max_value).tuple())
 
     def test_scale_to_max_value_with_x_gt_y(self) -> None:
         test_object: XY = XY(100.0, 50.0)
@@ -154,11 +163,13 @@ class TestCase(unittest.TestCase):
             (-50.0, (50.0, -25.0)),
             (-50.0, (-50.0, 25.0)),
         ]
-        for max_value, result in good_values:
-            self.assertEqual(test_object.scale_to_max_value(max_value).tuple(), result)
+        for max_value, expected in good_values:
+            with self.subTest(f"{test_object} -> {expected}"):
+                self.assertEqual(expected, test_object.scale_to_max_value(max_value).tuple())
 
-        for max_value, result in bad_values:
-            self.assertNotEqual(test_object.scale_to_max_value(max_value).tuple(), result)
+        for max_value, expected in bad_values:
+            with self.subTest(f"{test_object} -> {expected}"):
+                self.assertNotEqual(expected, test_object.scale_to_max_value(max_value).tuple())
 
 
 if __name__ == "__main__":
