@@ -66,7 +66,7 @@ def main() -> None:
         return
 
     # setup poster
-    setup_poster(p, tracks, args)
+    setup_poster(tracks, args)
 
 
 def parse_args(args_parser: argparse.ArgumentParser, args: list) -> argparse.Namespace:
@@ -285,8 +285,9 @@ def setup_loader(args: argparse.Namespace) -> track_loader.TrackLoader:
     return loader
 
 
-def setup_poster(pstr: poster.Poster, tracks: List[track_loader.Track], args: argparse.Namespace) -> poster.Poster:
+def setup_poster(tracks: List[track_loader.Track], args: argparse.Namespace) -> poster.Poster:
     print(f"Creating poster of type {args.type} with {len(tracks)} tracks and storing it in file {args.output}...")
+    pstr = poster.Poster()
     pstr.set_language(args.language, args.localedir)
     pstr.set_athlete(args.athlete)
     pstr.set_title(args.title if args.title else p.translate("MY TRACKS"))
