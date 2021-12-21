@@ -35,11 +35,17 @@ class TestCase(unittest.TestCase):
 
     def test_parse_with_invalid_strings_returns_false(self) -> None:
         """parse with invalid strings returns False"""
-        valid_strings = ["20xx", "20xx-2018", "2016:2018"]
-        for string in valid_strings:
+        invalid_strings = ["20xx", "20xx-2018", "2016:2018"]
+        for string in invalid_strings:
             with self.subTest(f"{string}"):
                 year_range = YearRange()
                 self.assertFalse(year_range.parse(string))
+
+    def test_parse_with_wrong_order_returns_false(self) -> None:
+        """parse with wrong order of years returns False"""
+        invalid_string = "2018-2016"
+        year_range = YearRange()
+        self.assertFalse(year_range.parse(invalid_string))
 
     def test_clear_returns_empty_instance(self) -> None:
         """clear returns empty instance of YearRange"""
