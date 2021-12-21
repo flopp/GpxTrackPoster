@@ -31,6 +31,21 @@ class TestCase(unittest.TestCase):
             with self.subTest(f"{other} -> {expected}"):
                 self.assertEqual(expected, (test_object * other).tuple())
 
+    def test_right_multiplication(self) -> None:
+        test_object: XY = XY(50.0, 100.0)
+        test_values: List[Union[Tuple[float, Tuple[float, float]], Tuple[XY, Tuple[float, float]]]] = [
+            (10.0, (500.0, 1000.0)),
+            (10, (500.0, 1000.0)),
+            (0.5, (25.0, 50.0)),
+            (-5.0, (-250.0, -500.0)),
+            (XY(10.0, 5.0), (500.0, 500.0)),
+            (XY(-10.0, 5.0), (-500.0, 500.0)),
+            (XY(0.5, -5.0), (25.0, -500.0)),
+        ]
+        for other, expected in test_values:
+            with self.subTest(f"{other} -> {expected}"):
+                self.assertEqual(expected, (other * test_object).tuple())
+
     def test_division(self) -> None:
         test_object: XY = XY(50.0, 100.0)
         test_values: List[Union[Tuple[float, Tuple[float, float]], Tuple[XY, Tuple[float, float]]]] = [
@@ -60,6 +75,21 @@ class TestCase(unittest.TestCase):
         for other, expected in test_values:
             with self.subTest(f"{other} -> {expected}"):
                 self.assertEqual(expected, (test_object + other).tuple())
+
+    def test_right_addition(self) -> None:
+        test_object: XY = XY(50.0, 100.0)
+        test_values: List[Union[Tuple[float, Tuple[float, float]], Tuple[XY, Tuple[float, float]]]] = [
+            (10.0, (60.0, 110.0)),
+            (10, (60.0, 110.0)),
+            (0.5, (50.5, 100.5)),
+            (-5.0, (45.0, 95.0)),
+            (XY(10.0, 5.0), (60.0, 105.0)),
+            (XY(-10.0, 5.0), (40.0, 105.0)),
+            (XY(0.5, -5.0), (50.5, 95.0)),
+        ]
+        for other, expected in test_values:
+            with self.subTest(f"{other} -> {expected}"):
+                self.assertEqual(expected, (other + test_object).tuple())
 
     def test_subtraction(self) -> None:
         test_object: XY = XY(50.0, 100.0)
