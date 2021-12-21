@@ -11,6 +11,7 @@ import unittest
 import s2sphere  # type: ignore
 
 from gpxtrackposter.utils import (
+    compute_grid,
     interpolate_color,
     format_float,
     make_key_times,
@@ -89,6 +90,19 @@ class TestCase(unittest.TestCase):
                 self.assertEqual(expected_result[0].upper(), bounds_xy[0].upper())
                 self.assertEqual(expected_result[1].lower(), bounds_xy[1].lower())
                 self.assertEqual(expected_result[1].upper(), bounds_xy[1].upper())
+
+    def test_compute_grid(self) -> None:
+        test_values = [
+            (1, XY(1, 1), 1.0, (1, 1)),
+            (2, XY(1, 1), 0.5, (1, 2)),
+            (3, XY(1, 1), 0.5, (2, 2)),
+            (4, XY(1, 1), 0.5, (2, 2)),
+            (10, XY(1, 1), 0.25, (3, 4)),
+            (99, XY(1, 1), 0.1, (10, 10)),
+        ]
+        for count, dimensions, expected_best_size, expected_best_counts in test_values:
+            with self.subTest(f"{count}_{str(dimensions)} -> {expected_best_size}_{expected_best_counts}"):
+                self.assertEqual((expected_best_size, expected_best_counts), compute_grid(count, dimensions))
 
     def test_interpolate_color(self) -> None:
         self.assertEqual("#000000", interpolate_color("#000000", "#ffffff", 0))
