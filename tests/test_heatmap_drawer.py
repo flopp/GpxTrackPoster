@@ -13,22 +13,9 @@ from typing import List, Optional
 import pytest
 import s2sphere  # type: ignore
 
-from gpxtrackposter.cli import create_parser, parse_args
+from gpxtrackposter.cli import parse_args
 from gpxtrackposter.exceptions import ParameterError
 from gpxtrackposter.heatmap_drawer import HeatmapDrawer
-from gpxtrackposter.poster import Poster
-
-
-@pytest.fixture(name="heatmap_drawer")
-def fixture_heatmap_drawer() -> HeatmapDrawer:
-    """Return a HeatmapDrawer"""
-    return HeatmapDrawer(Poster())
-
-
-@pytest.fixture(name="parser")
-def fixture_parser() -> ArgumentParser:
-    """Return an ArgParser"""
-    return create_parser()
 
 
 @pytest.mark.parametrize(

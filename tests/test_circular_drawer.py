@@ -8,24 +8,10 @@ Several tests for CircularDrawer
 
 from argparse import ArgumentParser
 
-import pytest
 from pint.quantity import Quantity  # type: ignore
 
 from gpxtrackposter.circular_drawer import CircularDrawer
-from gpxtrackposter.cli import create_parser, parse_args
-from gpxtrackposter.poster import Poster
-
-
-@pytest.fixture(name="circular_drawer")
-def fixture_circular_drawer() -> CircularDrawer:
-    """Return a CircularDrawer"""
-    return CircularDrawer(Poster())
-
-
-@pytest.fixture(name="parser")
-def fixture_parser() -> ArgumentParser:
-    """Return an ArgParser"""
-    return create_parser()
+from gpxtrackposter.cli import parse_args
 
 
 def test_parser_with_type_circular_sets_type(circular_drawer: CircularDrawer, parser: ArgumentParser) -> None:

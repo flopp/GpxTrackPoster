@@ -6,15 +6,23 @@ ConfTest
 # Use of this source code is governed by a MIT-style
 # license that can be found in the LICENSE file.
 
+import argparse
 import datetime
 import os
+from argparse import ArgumentParser
 from typing import Generator
-
-import argparse
 from unittest.mock import MagicMock
 
 import pytest
 from pytest_mock import MockerFixture
+
+from gpxtrackposter.cli import create_parser
+from gpxtrackposter.calendar_drawer import CalendarDrawer
+from gpxtrackposter.circular_drawer import CircularDrawer
+from gpxtrackposter.github_drawer import GithubDrawer
+from gpxtrackposter.grid_drawer import GridDrawer
+from gpxtrackposter.heatmap_drawer import HeatmapDrawer
+from gpxtrackposter.poster import Poster
 from gpxtrackposter.units import Units
 
 
@@ -93,3 +101,39 @@ def fixture_mock_track_instance_2(mocker: MockerFixture) -> MagicMock:
     instance.start_time.return_value = datetime.datetime.now()
     instance.end_time.return_value = datetime.datetime.now()
     return instance
+
+
+@pytest.fixture(name="parser")
+def fixture_parser() -> ArgumentParser:
+    """Return an ArgParser"""
+    return create_parser()
+
+
+@pytest.fixture(name="calendar_drawer")
+def fixture_calendar_drawer() -> CalendarDrawer:
+    """Return a CalendarDrawer"""
+    return CalendarDrawer(Poster())
+
+
+@pytest.fixture(name="circular_drawer")
+def fixture_circular_drawer() -> CircularDrawer:
+    """Return a CircularDrawer"""
+    return CircularDrawer(Poster())
+
+
+@pytest.fixture(name="github_drawer")
+def fixture_github_drawer() -> GithubDrawer:
+    """Return a GithubDrawer"""
+    return GithubDrawer(Poster())
+
+
+@pytest.fixture(name="grid_drawer")
+def fixture_grid_drawer() -> GridDrawer:
+    """Return a GridDrawer"""
+    return GridDrawer(Poster())
+
+
+@pytest.fixture(name="heatmap_drawer")
+def fixture_heatmap_drawer() -> HeatmapDrawer:
+    """Return a HeatmapDrawer"""
+    return HeatmapDrawer(Poster())
