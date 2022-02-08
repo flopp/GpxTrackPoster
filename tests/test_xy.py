@@ -6,7 +6,7 @@ Several tests for XY
 # Use of this source code is governed by a MIT-style
 # license that can be found in the LICENSE file.
 
-from typing import List, Tuple, Union
+from typing import Union
 
 import pytest
 
@@ -127,6 +127,31 @@ def test_representation() -> None:
     assert "XY: 50.0/100.0" == str(test_object)
 
 
+@pytest.mark.parametrize(
+    "this, other",
+    [
+        (XY(10.0, 10.0), XY(10, 10)),
+        (XY(10.54321, 10.12345), XY(10.5432100001, 10.1234500001)),
+    ],
+)
+def test_equality_returns_true(this: XY, other: XY) -> None:
+    """Test equality"""
+    assert this == other
+
+
+@pytest.mark.parametrize(
+    "this, other",
+    [
+        (XY(10.0, 10.0), 10.0),
+        (XY(10.0, 10.0), XY(11, 11)),
+        (XY(10.54321, 10.12345), XY(10.543215, 10.123455)),
+    ],
+)
+def test_equality_returns_false(this: XY, other: Union[float, XY]) -> None:
+    """Test equality"""
+    assert not this == other
+
+
 def test_tuple() -> None:
     """Test tuple"""
     test_object: XY = XY(50.0, 100.0)
@@ -189,50 +214,59 @@ def test_get_min(test_object: XY, expected: float) -> None:
     assert expected == test_object.get_min()
 
 
-test_values_good: List[Tuple[float, Tuple[float, float]]] = [
-    (25.0, (12.5, 25.0)),
-    (50.0, (25.0, 50.0)),
-    (200.0, (100.0, 200.0)),
-    (-50.0, (-25.0, -50.0)),
-]
-test_values_bad: List[Tuple[float, Tuple[float, float]]] = [
-    (25.0, (25.0, 12.5)),
-    (-50.0, (25.0, -50.0)),
-    (-50.0, (-25.0, 50.0)),
-]
-
-
-@pytest.fixture(params=[test_values_good, test_values_bad])
-def test_scale_to_max_value(good_values: list, bad_values: list) -> None:
+@pytest.mark.parametrize(
+    "max_value, expected",
+    [
+        (25.0, (12.5, 25.0)),
+        (50.0, (25.0, 50.0)),
+        (200.0, (100.0, 200.0)),
+        (-50.0, (-25.0, -50.0)),
+    ],
+)
+def test_scale_to_max_value_with_good_values(max_value: float, expected: XY) -> None:
     """Test scale_to_max_value"""
     test_object: XY = XY(50.0, 100.0)
-
-    for max_value, expected in good_values:
-        assert expected == test_object.scale_to_max_value(max_value).tuple()
-
-    for max_value, expected in bad_values:
-        assert not expected == test_object.scale_to_max_value(max_value).tuple()
+    assert expected == test_object.scale_to_max_value(max_value).tuple()
 
 
-test_values_with_good_x_gt_y: List[Tuple[float, Tuple[float, float]]] = [
-    (25.0, (25.0, 12.5)),
-    (50.0, (50.0, 25.0)),
-    (200.0, (200.0, 100.0)),
-    (-50.0, (-50.0, -25.0)),
-]
-test_values_with_bad_x_gt_y: List[Tuple[float, Tuple[float, float]]] = [
-    (25.0, (12.5, 25.0)),
-    (-50.0, (50.0, -25.0)),
-    (-50.0, (-50.0, 25.0)),
-]
+@pytest.mark.parametrize(
+    "max_value, expected",
+    [
+        (25.0, (25.0, 12.5)),
+        (-50.0, (25.0, -50.0)),
+        (-50.0, (-25.0, 50.0)),
+    ],
+)
+def test_scale_to_max_value_with_bad_values(max_value: float, expected: XY) -> None:
+    """Test scale_to_max_value"""
+    test_object: XY = XY(50.0, 100.0)
+    assert not expected == test_object.scale_to_max_value(max_value).tuple()
 
 
-@pytest.fixture(params=[test_values_with_good_x_gt_y, test_values_with_bad_x_gt_y])
-def test_scale_to_max_value_with_x_gt_y(good_values: list, bad_values: list) -> None:
+@pytest.mark.parametrize(
+    "max_value, expected",
+    [
+        (25.0, (25.0, 12.5)),
+        (50.0, (50.0, 25.0)),
+        (200.0, (200.0, 100.0)),
+        (-50.0, (-50.0, -25.0)),
+    ],
+)
+def test_scale_to_max_value_with_x_gt_y_with_good_values(max_value: float, expected: XY) -> None:
     """Test scale_to_max_value_with_x_gt_y"""
     test_object: XY = XY(100.0, 50.0)
-    for max_value, expected in good_values:
-        assert expected == test_object.scale_to_max_value(max_value).tuple()
+    assert expected == test_object.scale_to_max_value(max_value).tuple()
 
-    for max_value, expected in bad_values:
-        assert not expected == test_object.scale_to_max_value(max_value).tuple()
+
+@pytest.mark.parametrize(
+    "max_value, expected",
+    [
+        (25.0, (12.5, 25.0)),
+        (-50.0, (50.0, -25.0)),
+        (-50.0, (-50.0, 25.0)),
+    ],
+)
+def test_scale_to_max_value_with_x_gt_y_with_bad_values(max_value: float, expected: XY) -> None:
+    """Test scale_to_max_value_with_x_gt_y"""
+    test_object: XY = XY(100.0, 50.0)
+    assert not expected == test_object.scale_to_max_value(max_value).tuple()
