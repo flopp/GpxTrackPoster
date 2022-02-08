@@ -6,7 +6,6 @@ Several tests for TrackLoader
 # Use of this source code is governed by a MIT-style
 # license that can be found in the LICENSE file.
 
-import datetime
 import json
 from pathlib import Path
 from typing import Union, Dict, List
@@ -16,10 +15,10 @@ import pytest
 from pytest_mock import MockerFixture
 
 from gpxtrackposter.track_loader import TrackLoader
-from gpxtrackposter.units import Units
 
 
 def mock_activity(mocker: MockerFixture, activity_type: Union[str, list]) -> MagicMock:
+    """Mock Activity"""
     activity = mocker.MagicMock()
     activity.type = activity_type
     return activity
@@ -27,20 +26,24 @@ def mock_activity(mocker: MockerFixture, activity_type: Union[str, list]) -> Mag
 
 @pytest.fixture(name="mock_run_activity")
 def fixture_mock_run_activity(mocker: MockerFixture) -> MagicMock:
+    """Mock Run Activity"""
     return mock_activity(mocker, "Run")
 
 
 @pytest.fixture(name="mock_walk_activity")
 def fixture_mock_walk_activity(mocker: MockerFixture) -> MagicMock:
+    """Mock Walk Activity"""
     return mock_activity(mocker, "Walk")
 
 
 @pytest.fixture(name="mock_hike_activity")
 def fixture_mock_hike_activity(mocker: MockerFixture) -> MagicMock:
+    """Mock Hike Activity"""
     return mock_activity(mocker, "Hike")
 
 
 def strava_config(tmp_path: Path, activity_type: Union[str, List[str]] = None) -> str:
+    """Strava config"""
     config: Dict[str, Union[str, List[str]]] = {
         "client_id": "YOUR STRAVA API CLIENT ID",
         "client_secret": "YOUR STRAVA API CLIENT SECRET",
@@ -55,16 +58,19 @@ def strava_config(tmp_path: Path, activity_type: Union[str, List[str]] = None) -
 
 @pytest.fixture(name="strava_config_without_type_filter")
 def fixture_strava_config_without_type_filter(tmp_path: Path) -> str:
+    """Fixture Strava config without type filter"""
     return strava_config(tmp_path)
 
 
 @pytest.fixture(name="strava_config_with_run_type_filter")
 def fixture_strava_config_with_run_type_filter(tmp_path: Path) -> str:
+    """Fixture Strava config without run type filter"""
     return strava_config(tmp_path, "Run")
 
 
 @pytest.fixture(name="strava_config_with_walk_hike_type_filter")
 def fixture_strava_config_with_walk_hike_type_filter(tmp_path: Path) -> str:
+    """Fixture Strava config without walk and hike type filter"""
     return strava_config(tmp_path, ["Walk", "Hike"])
 
 
@@ -77,16 +83,6 @@ def fixture_loader(
     instance = mock_client_class.return_value
     instance.get_activities.return_value = [mock_run_activity, mock_walk_activity, mock_hike_activity]
     return TrackLoader(workers=None)
-
-
-@pytest.fixture(name="mock_track_instance")
-def fixture_mock_track_instance(mocker: MockerFixture) -> MagicMock:
-    mock_track_class = mocker.patch("gpxtrackposter.track_loader.Track")
-    instance = mock_track_class.return_value
-    instance.length.return_value = 1 * Units().km
-    instance.start_time.return_value = datetime.datetime.now()
-    instance.end_time.return_value = datetime.datetime.now()
-    return instance
 
 
 def test_load_strava_tracks_without_activity_type_filter(
