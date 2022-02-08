@@ -11,8 +11,8 @@ import typing
 
 import gpxpy  # type: ignore
 import pint  # type: ignore
-import s2sphere  # type: ignore
 import polyline  # type: ignore
+import s2sphere  # type: ignore
 from stravalib.model import Activity as StravaActivity  # type: ignore
 
 from gpxtrackposter.exceptions import TrackLoadError

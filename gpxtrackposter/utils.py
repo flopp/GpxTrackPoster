@@ -5,9 +5,9 @@
 # license that can be found in the LICENSE file.
 
 import locale
-from itertools import takewhile, count as itercount
 import math
 import typing
+from itertools import takewhile, count as itercount
 
 import colour  # type: ignore
 import s2sphere  # type: ignore

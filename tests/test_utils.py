@@ -7,6 +7,7 @@ Several tests for utils
 # license that can be found in the LICENSE file.
 
 import math
+
 import pytest
 import s2sphere  # type: ignore
 

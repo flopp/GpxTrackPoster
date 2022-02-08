@@ -16,9 +16,9 @@ from unittest.mock import MagicMock
 import pytest
 from pytest_mock import MockerFixture
 
-from gpxtrackposter.cli import create_parser
 from gpxtrackposter.calendar_drawer import CalendarDrawer
 from gpxtrackposter.circular_drawer import CircularDrawer
+from gpxtrackposter.cli import create_parser
 from gpxtrackposter.github_drawer import GithubDrawer
 from gpxtrackposter.grid_drawer import GridDrawer
 from gpxtrackposter.heatmap_drawer import HeatmapDrawer
