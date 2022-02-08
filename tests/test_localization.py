@@ -7,49 +7,43 @@ Several tests for Localization
 # license that can be found in the LICENSE file.
 
 import locale
-import unittest
+
+import pytest
 
 from gpxtrackposter.localization import localized_day_of_week_name
 
 
-class TestCase(unittest.TestCase):
-    """
-    Test class for Localization
-    """
-
-    def test_localized_with_invalid_raises_exception(self) -> None:
-        """method with invalid value returns False"""
-        invalid_days_of_week = [-1, 7]
-        for invalid_day in invalid_days_of_week:
-            with self.subTest(f"{invalid_day}"):
-                with self.assertRaises(AssertionError):
-                    self.assertFalse(localized_day_of_week_name(invalid_day, True))
-                    self.assertFalse(localized_day_of_week_name(invalid_day, False))
-
-    def test_localized_returns_expected_value(self) -> None:
-        """method with valid values returns expected value"""
-        locale.setlocale(category=locale.LC_ALL, locale=["de_DE", "UTF-8"])
-        self.assertEqual("Montag", localized_day_of_week_name(0, False))
-        self.assertEqual("Samstag", localized_day_of_week_name(5, False))
-        self.assertEqual("Sonntag", localized_day_of_week_name(6, False))
-        self.assertEqual("M", localized_day_of_week_name(0, True))
-        self.assertEqual("S", localized_day_of_week_name(5, True))
-        self.assertEqual("S", localized_day_of_week_name(6, True))
-        locale.setlocale(category=locale.LC_ALL, locale=["en_US", "UTF-8"])
-        self.assertEqual("Monday", localized_day_of_week_name(0, False))
-        self.assertEqual("Saturday", localized_day_of_week_name(5, False))
-        self.assertEqual("Sunday", localized_day_of_week_name(6, False))
-        self.assertEqual("M", localized_day_of_week_name(0, True))
-        self.assertEqual("S", localized_day_of_week_name(5, True))
-        self.assertEqual("S", localized_day_of_week_name(6, True))
-        locale.setlocale(category=locale.LC_ALL, locale=["zh_CN", "UTF-8"])
-        self.assertEqual("星期一", localized_day_of_week_name(0, False))
-        self.assertEqual("星期六", localized_day_of_week_name(5, False))
-        self.assertEqual("星期日", localized_day_of_week_name(6, False))
-        self.assertEqual("一", localized_day_of_week_name(0, True))
-        self.assertEqual("六", localized_day_of_week_name(5, True))
-        self.assertEqual("日", localized_day_of_week_name(6, True))
+@pytest.mark.parametrize(
+    "invalid_day",
+    [-10, -1, 7, 10],
+)
+def test_localized_with_invalid_raises_exception(invalid_day: int) -> None:
+    """method with invalid value returns False"""
+    with pytest.raises(AssertionError):
+        assert not localized_day_of_week_name(invalid_day, True)
+        assert not localized_day_of_week_name(invalid_day, False)
 
 
-if __name__ == "__main__":
-    unittest.main()
+def test_localized_returns_expected_value() -> None:
+    """method with valid values returns expected value"""
+    locale.setlocale(category=locale.LC_ALL, locale=["de_DE", "UTF-8"])
+    assert "Montag" == localized_day_of_week_name(0, False)
+    assert "Samstag" == localized_day_of_week_name(5, False)
+    assert "Sonntag" == localized_day_of_week_name(6, False)
+    assert "M" == localized_day_of_week_name(0, True)
+    assert "S" == localized_day_of_week_name(5, True)
+    assert "S" == localized_day_of_week_name(6, True)
+    locale.setlocale(category=locale.LC_ALL, locale=["en_US", "UTF-8"])
+    assert "Monday" == localized_day_of_week_name(0, False)
+    assert "Saturday" == localized_day_of_week_name(5, False)
+    assert "Sunday" == localized_day_of_week_name(6, False)
+    assert "M" == localized_day_of_week_name(0, True)
+    assert "S" == localized_day_of_week_name(5, True)
+    assert "S" == localized_day_of_week_name(6, True)
+    locale.setlocale(category=locale.LC_ALL, locale=["zh_CN", "UTF-8"])
+    assert "星期一" == localized_day_of_week_name(0, False)
+    assert "星期六" == localized_day_of_week_name(5, False)
+    assert "星期日" == localized_day_of_week_name(6, False)
+    assert "一" == localized_day_of_week_name(0, True)
+    assert "六" == localized_day_of_week_name(5, True)
+    assert "日" == localized_day_of_week_name(6, True)

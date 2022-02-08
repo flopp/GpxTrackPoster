@@ -4,6 +4,7 @@
 # Use of this source code is governed by a MIT-style
 # license that can be found in the LICENSE file.
 
+from math import isclose
 from typing import Optional, Tuple, Union
 
 
@@ -44,6 +45,9 @@ class XY:
 
     def __repr__(self) -> str:
         return f"XY: {self.x}/{self.y}"
+
+    def __eq__(self, other: object) -> bool:
+        return isinstance(other, XY) and isclose(self.x, other.x) and isclose(self.y, other.y)
 
     def tuple(self) -> Tuple[float, float]:
         """
