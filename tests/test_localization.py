@@ -24,26 +24,33 @@ def test_localized_with_invalid_raises_exception(invalid_day: int) -> None:
         assert not localized_day_of_week_name(invalid_day, False)
 
 
-def test_localized_returns_expected_value() -> None:
+@pytest.mark.parametrize(
+    "language, locale_lang, weekday_num, short, expected",
+    [
+        ("german", "de_DE", 0, False, "Montag"),
+        ("german", "de_DE", 5, False, "Samstag"),
+        ("german", "de_DE", 6, False, "Sonntag"),
+        ("german", "de_DE", 0, True, "M"),
+        ("german", "de_DE", 5, True, "S"),
+        ("german", "de_DE", 6, True, "S"),
+        ("english", "en_US", 0, False, "Monday"),
+        ("english", "en_US", 5, False, "Saturday"),
+        ("english", "en_US", 6, False, "Sunday"),
+        ("english", "en_US", 0, True, "M"),
+        ("english", "en_US", 5, True, "S"),
+        ("english", "en_US", 6, True, "S"),
+        ("chinese", "zh_CN", 0, False, "星期一"),
+        ("chinese", "zh_CN", 5, False, "星期六"),
+        ("chinese", "zh_CN", 6, False, "星期日"),
+        ("chinese", "zh_CN", 0, True, "一"),
+        ("chinese", "zh_CN", 5, True, "六"),
+        ("chinese", "zh_CN", 6, True, "日"),
+    ],
+)
+def test_localized_returns_expected_value(
+    language: str, locale_lang: str, weekday_num: int, short: bool, expected: str
+) -> None:
     """method with valid values returns expected value"""
-    locale.setlocale(category=locale.LC_ALL, locale=["de_DE", "UTF-8"])
-    assert "Montag" == localized_day_of_week_name(0, False)
-    assert "Samstag" == localized_day_of_week_name(5, False)
-    assert "Sonntag" == localized_day_of_week_name(6, False)
-    assert "M" == localized_day_of_week_name(0, True)
-    assert "S" == localized_day_of_week_name(5, True)
-    assert "S" == localized_day_of_week_name(6, True)
-    locale.setlocale(category=locale.LC_ALL, locale=["en_US", "UTF-8"])
-    assert "Monday" == localized_day_of_week_name(0, False)
-    assert "Saturday" == localized_day_of_week_name(5, False)
-    assert "Sunday" == localized_day_of_week_name(6, False)
-    assert "M" == localized_day_of_week_name(0, True)
-    assert "S" == localized_day_of_week_name(5, True)
-    assert "S" == localized_day_of_week_name(6, True)
-    locale.setlocale(category=locale.LC_ALL, locale=["zh_CN", "UTF-8"])
-    assert "星期一" == localized_day_of_week_name(0, False)
-    assert "星期六" == localized_day_of_week_name(5, False)
-    assert "星期日" == localized_day_of_week_name(6, False)
-    assert "一" == localized_day_of_week_name(0, True)
-    assert "六" == localized_day_of_week_name(5, True)
-    assert "日" == localized_day_of_week_name(6, True)
+    print(language)
+    locale.setlocale(category=locale.LC_ALL, locale=[locale_lang, "UTF-8"])
+    assert expected == localized_day_of_week_name(weekday_num, short)

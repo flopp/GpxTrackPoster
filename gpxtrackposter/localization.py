@@ -1,3 +1,4 @@
+"""Localization helpers."""
 # Copyright 2016-2021 Florian Pigorsch & Contributors. All rights reserved.
 #
 # Use of this source code is governed by a MIT-style
@@ -10,6 +11,13 @@ import locale
 # If short is False return the full day name, otherwise return the shortest
 # possible abbreviation (e.g. the first letter)
 def localized_day_of_week_name(day_of_week: int, short: bool) -> str:
+    """
+    Return a localized name gor a given weekday
+
+    day_of_week: integer representing the weekday (0-6)
+    short: if True, return short name
+    return: full or short localized name of weekday
+    """
     assert 0 <= day_of_week <= 6
 
     locale_name = locale.getlocale()[0]
