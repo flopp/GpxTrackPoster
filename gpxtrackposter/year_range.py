@@ -1,5 +1,5 @@
 """Represent a range of years, with ability to update based on a track"""
-# Copyright 2016-2021 Florian Pigorsch & Contributors. All rights reserved.
+# Copyright 2016-2022 Florian Pigorsch & Contributors. All rights reserved.
 #
 # Use of this source code is governed by a MIT-style
 # license that can be found in the LICENSE file.
@@ -27,6 +27,9 @@ class YearRange:
         """Inits YearRange with empty bounds -- to be built after init"""
         self.from_year: typing.Optional[int] = None
         self.to_year: typing.Optional[int] = None
+
+    def __eq__(self, other: object) -> bool:
+        return isinstance(other, YearRange) and self.from_year == other.from_year and self.to_year == other.to_year
 
     def parse(self, s: str) -> bool:
         """Parse a plaintext range of years into a pair of years

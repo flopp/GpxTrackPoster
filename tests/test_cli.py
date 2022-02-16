@@ -1,7 +1,7 @@
 """
 Several tests for entry point cli.py
 """
-# Copyright 2021-2021 Florian Pigorsch & Contributors. All rights reserved.
+# Copyright 2021-2022 Florian Pigorsch & Contributors. All rights reserved.
 #
 # Use of this source code is governed by a MIT-style
 # license that can be found in the LICENSE file.
@@ -82,13 +82,13 @@ def test_setup_loader_with_invalid_year_raises_parameter_error(default_values: a
 
 def test_setup_poster_returns_instance_of_poster_with_default_size(
     mocker: MockerFixture,
-    mock_track_instance_1: MagicMock,
-    mock_track_instance_2: MagicMock,
+    mock_track_instance_berlin_paris: MagicMock,
+    mock_track_instance_amsterdam_paris: MagicMock,
     default_values: argparse.Namespace,
 ) -> None:
     """Test setup of poster with default values from argparser"""
     mocker.patch("gpxtrackposter.poster.Poster.draw", return_value=None)
-    poster = setup_poster([mock_track_instance_1, mock_track_instance_2], default_values)
+    poster = setup_poster([mock_track_instance_berlin_paris, mock_track_instance_amsterdam_paris], default_values)
     assert poster
     assert isinstance(poster, Poster)
     # default height and width of poster
@@ -98,31 +98,31 @@ def test_setup_poster_returns_instance_of_poster_with_default_size(
 
 def test_setup_poster_type_github_returns_instance_of_poster_with_modified_height(
     mocker: MockerFixture,
-    mock_track_instance_1: MagicMock,
-    mock_track_instance_2: MagicMock,
+    mock_track_instance_berlin_paris: MagicMock,
+    mock_track_instance_amsterdam_paris: MagicMock,
     default_values: argparse.Namespace,
 ) -> None:
     """Test setup of poster with type GitHub"""
     mocker.patch("gpxtrackposter.poster.Poster.draw", return_value=None)
     default_values.type = "github"
     year_count = 3
-    mock_track_instance_1.length.return_value = 1 * Units().km
-    mock_track_instance_1.start_time.return_value = datetime.datetime(
+    mock_track_instance_berlin_paris.length.return_value = 1 * Units().km
+    mock_track_instance_berlin_paris.start_time.return_value = datetime.datetime(
         year=2016, month=1, day=1, hour=1, minute=1, second=1
     )
-    mock_track_instance_1.end_time.return_value = datetime.datetime(
+    mock_track_instance_berlin_paris.end_time.return_value = datetime.datetime(
         year=2016, month=1, day=1, hour=2, minute=2, second=2
     )
-    mock_track_instance_1.year = 2016
-    mock_track_instance_2.length.return_value = 2 * Units().km
-    mock_track_instance_2.start_time.return_value = datetime.datetime(
+    mock_track_instance_berlin_paris.year = 2016
+    mock_track_instance_amsterdam_paris.length.return_value = 2 * Units().km
+    mock_track_instance_amsterdam_paris.start_time.return_value = datetime.datetime(
         year=2018, month=1, day=1, hour=1, minute=1, second=1
     )
-    mock_track_instance_2.end_time.return_value = datetime.datetime(
+    mock_track_instance_amsterdam_paris.end_time.return_value = datetime.datetime(
         year=2018, month=1, day=1, hour=2, minute=2, second=2
     )
-    mock_track_instance_2.year = 2018
-    poster = setup_poster([mock_track_instance_1, mock_track_instance_2], default_values)
+    mock_track_instance_amsterdam_paris.year = 2018
+    poster = setup_poster([mock_track_instance_berlin_paris, mock_track_instance_amsterdam_paris], default_values)
 
     assert poster
     assert isinstance(poster, Poster)

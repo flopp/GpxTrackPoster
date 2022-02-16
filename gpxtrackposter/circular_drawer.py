@@ -1,5 +1,5 @@
 """Draw a circular Poster."""
-# Copyright 2016-2021 Florian Pigorsch & Contributors. All rights reserved.
+# Copyright 2016-2022 Florian Pigorsch & Contributors. All rights reserved.
 #
 # Use of this source code is governed by a MIT-style
 # license that can be found in the LICENSE file.
@@ -79,7 +79,7 @@ class CircularDrawer(TracksDrawer):
 
     def draw(self, dr: svgwrite.Drawing, g: svgwrite.container.Group, size: XY, offset: XY) -> None:
         """Draw the circular Poster using distances broken down by time"""
-        if self.poster.tracks is None:
+        if len(self.poster.tracks) == 0:
             raise PosterError("No tracks to draw.")
         if self.poster.length_range_by_date is None:
             return

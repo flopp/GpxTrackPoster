@@ -1,7 +1,7 @@
 """
 Several tests for HeatmapDrawer
 """
-# Copyright 2021-2021 Florian Pigorsch & Contributors. All rights reserved.
+# Copyright 2021-2022 Florian Pigorsch & Contributors. All rights reserved.
 #
 # Use of this source code is governed by a MIT-style
 # license that can be found in the LICENSE file.
@@ -9,13 +9,18 @@ Several tests for HeatmapDrawer
 import math
 from argparse import ArgumentParser
 from typing import List, Optional
+from unittest.mock import MagicMock
 
 import pytest
 import s2sphere  # type: ignore
+from pytest_mock import MockerFixture
 
 from gpxtrackposter.cli import parse_args
 from gpxtrackposter.exceptions import ParameterError
+from gpxtrackposter.exceptions import PosterError
 from gpxtrackposter.heatmap_drawer import HeatmapDrawer
+from gpxtrackposter.poster import Poster
+from gpxtrackposter.units import Units
 
 
 @pytest.mark.parametrize(
@@ -287,3 +292,60 @@ def test_get_line_transparencies_and_widths_with_predefined_values_returns_prede
     assert line_width == parsed.heatmap_line_width
     assert expected_line_width == heatmap_drawer.get_line_transparencies_and_widths(bbox)
     assert expected_line_width == heatmap_drawer._heatmap_line_width  # pylint: disable=protected-access
+
+
+@pytest.mark.full_run
+def test_run_drawer(
+    poster: Poster,
+    heatmap_drawer: HeatmapDrawer,
+    parser: ArgumentParser,
+    mock_track_instance_berlin_paris: MagicMock,
+    mock_track_instance_amsterdam_paris: MagicMock,
+    mocker: MockerFixture,
+) -> None:
+    mocker.patch("svgwrite.Drawing.save", return_value=True)
+
+    heatmap_drawer.create_args(parser)
+    args = parser.parse_args(["--type", "heatmap"])
+    heatmap_drawer.fetch_args(args)
+    heatmap_drawer.poster = poster
+    poster.set_title("HeatmapDrawer Test")
+    assert poster.tracks_drawer is None
+    poster.tracks_drawer = heatmap_drawer
+    assert isinstance(poster.tracks_drawer, HeatmapDrawer)
+    assert len(poster.tracks) == 0
+
+    # raises error without tracks
+    with pytest.raises(PosterError):
+        poster.draw(heatmap_drawer, args.output)
+
+    poster.set_tracks([mock_track_instance_berlin_paris, mock_track_instance_amsterdam_paris])
+    assert len(poster.tracks) != 0
+    assert poster.length_range.lower() == 431.4 * Units().km
+    assert poster.length_range.upper() == 884.0 * Units().km
+    poster.draw(heatmap_drawer, args.output)
+
+
+@pytest.mark.full_run
+def test_run_drawer_with_animation(
+    poster: Poster,
+    heatmap_drawer: HeatmapDrawer,
+    parser: ArgumentParser,
+    mock_track_instance_berlin_paris: MagicMock,
+    mock_track_instance_amsterdam_paris: MagicMock,
+    mocker: MockerFixture,
+) -> None:
+    mocker.patch("svgwrite.Drawing.save", return_value=True)
+
+    heatmap_drawer.create_args(parser)
+    args = parser.parse_args(["--type", "heatmap", "--with-animation"])
+    heatmap_drawer.fetch_args(args)
+    poster.set_title("HeatmapDrawer Test")
+    poster.tracks_drawer = heatmap_drawer
+    heatmap_drawer.poster = poster
+    assert not heatmap_drawer.poster.with_animation
+    poster.set_with_animation(args.with_animation)
+    assert heatmap_drawer.poster.with_animation
+    poster.set_tracks([mock_track_instance_berlin_paris, mock_track_instance_amsterdam_paris])
+    assert len(poster.tracks) != 0
+    poster.draw(heatmap_drawer, args.output)

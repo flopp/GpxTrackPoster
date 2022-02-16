@@ -1,5 +1,5 @@
 """Draw a grid poster."""
-# Copyright 2016-2021 Florian Pigorsch & Contributors. All rights reserved.
+# Copyright 2016-2022 Florian Pigorsch & Contributors. All rights reserved.
 #
 # Use of this source code is governed by a MIT-style
 # license that can be found in the LICENSE file.
@@ -28,7 +28,7 @@ class GridDrawer(TracksDrawer):
 
     def draw(self, dr: svgwrite.Drawing, g: svgwrite.container.Group, size: XY, offset: XY) -> None:
         """For each track, draw it on the poster."""
-        if self.poster.tracks is None:
+        if len(self.poster.tracks) == 0:
             raise PosterError("No tracks to draw.")
         cell_size, counts = utils.compute_grid(len(self.poster.tracks), size)
         if cell_size is None or counts is None:

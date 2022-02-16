@@ -48,6 +48,10 @@ test:
 
 .PHONY: coverage
 coverage:
+	.env/bin/pytest --cov=gpxtrackposter --cov-branch --cov-report=term --cov-report=html tests -m "not full_run"
+
+.PHONY: coverage_with_full_run
+coverage_with_full_run:
 	.env/bin/pytest --cov=gpxtrackposter --cov-branch --cov-report=term --cov-report=html tests
 
 .PHONY: extract-messages

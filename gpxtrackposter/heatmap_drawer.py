@@ -1,5 +1,5 @@
 """Draw a heatmap poster."""
-# Copyright 2016-2021 Florian Pigorsch & Contributors. All rights reserved.
+# Copyright 2016-2022 Florian Pigorsch & Contributors. All rights reserved.
 #
 # Use of this source code is governed by a MIT-style
 # license that can be found in the LICENSE file.
@@ -14,7 +14,7 @@ import svgwrite  # type: ignore
 from geopy.distance import distance  # type: ignore
 
 from gpxtrackposter import utils
-from gpxtrackposter.exceptions import ParameterError
+from gpxtrackposter.exceptions import ParameterError, PosterError
 from gpxtrackposter.poster import Poster
 from gpxtrackposter.tracks_drawer import TracksDrawer
 from gpxtrackposter.xy import XY
@@ -47,6 +47,7 @@ class HeatmapDrawer(TracksDrawer):
         self._heatmap_line_width: Optional[List[Tuple[float, float]]] = None
 
     def create_args(self, args_parser: argparse.ArgumentParser) -> None:
+        """Add arguments to the parser"""
         group = args_parser.add_argument_group("Heatmap Type Options")
         group.add_argument(
             "--heatmap-center",
@@ -87,6 +88,7 @@ class HeatmapDrawer(TracksDrawer):
         self._heatmap_line_width = self.validate_heatmap_line_width(args.heatmap_line_width)
 
     def get_line_transparencies_and_widths(self, bbox: s2sphere.sphere.LatLngRect) -> List[Tuple[float, float]]:
+        """Get a tuple of line widths and transparencies"""
         if self._heatmap_line_width:
             return self._heatmap_line_width
         # automatic calculation of line transparencies and widths
@@ -148,6 +150,8 @@ class HeatmapDrawer(TracksDrawer):
 
     def draw(self, dr: svgwrite.Drawing, g: svgwrite.container.Group, size: XY, offset: XY) -> None:
         """Draw the heatmap based on tracks."""
+        if len(self.poster.tracks) == 0:
+            raise PosterError("No tracks to draw.")
         bbox = self._determine_bbox()
         line_transparencies_and_widths = self.get_line_transparencies_and_widths(bbox)
         year_groups: Dict[int, svgwrite.container.Group] = {}
@@ -175,6 +179,7 @@ class HeatmapDrawer(TracksDrawer):
                     )
 
     def validate_heatmap_center(self, heatmap_center: str = None) -> s2sphere.LatLng:
+        """Validate and return the Heatmap center."""
         if heatmap_center:
             latlng_str = heatmap_center.split(",")
             if len(latlng_str) != 2:
@@ -190,6 +195,7 @@ class HeatmapDrawer(TracksDrawer):
         return self._center
 
     def validate_heatmap_radius(self, heatmap_radius: float = None) -> Optional[float]:
+        """Validate and return the Heatmap radius."""
         if heatmap_radius:
             if heatmap_radius <= 0:
                 raise ParameterError(f"Not a valid radius: {heatmap_radius} (must be > 0)")
@@ -199,6 +205,7 @@ class HeatmapDrawer(TracksDrawer):
         return self._radius
 
     def validate_heatmap_line_width(self, heatmap_line_width: str = None) -> Optional[List[Tuple[float, float]]]:
+        """Validate and return a tuple of the Heatmap line widths."""
         if heatmap_line_width:
             if heatmap_line_width.lower() == "automatic":
                 self._heatmap_line_width = None
