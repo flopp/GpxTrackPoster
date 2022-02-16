@@ -249,6 +249,6 @@ E.g. use [Poedit](https://poedit.net/) or [Localise Online Editor](https://local
 `msgfmt gpxposter.po -o gpxposter.mo`
 
 ## License
-[MIT](https://github.com/flopp/GpxTrackPoster/blob/master/LICENSE) &copy; 2016-2021 Florian Pigorsch
+[MIT](https://github.com/flopp/GpxTrackPoster/blob/master/LICENSE) &copy; 2016-2022 Florian Pigorsch
 
 [strava-activity-type]: https://developers.strava.com/docs/reference/#api-models-ActivityType
