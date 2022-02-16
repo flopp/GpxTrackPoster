@@ -281,8 +281,8 @@ class Poster:
             assert min_length is not None
             assert max_length is not None
         else:
-            min_length = 0.0 * Units().meter
-            max_length = 0.0 * Units().meter
+            min_length = pint.quantity.Quantity(0.0, "meter")
+            max_length = pint.quantity.Quantity(0.0, "meter")
         g.add(
             d.text(
                 self.translate("Min") + ": " + self.format_distance(min_length),
