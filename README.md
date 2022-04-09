@@ -172,32 +172,32 @@ The *Grid Poster* layouts all tracks in a grid, starting with the earliest track
 *Special tracks* are drawn with the selected *special color*.
 *Special distance tracks* are drawn with the selected *special color*.
 
-![Example Grid Poster](https://github.com/flopp/GpxTrackPoster/blob/master/examples/example_grid.png)
-[svg](https://github.com/flopp/GpxTrackPoster/blob/master/examples/example_grid.svg)
+![Example Grid Poster](examples/example_grid.png)
+[svg](examples/example_grid.svg)
 
 ### Calendar Poster (`--type calendar`)
 The *Calendar Poster* draws one square for each day, each row of squares corresponds to specific month. If a track was recorded of a day the corresponding square is colored with the *track color* or with the *special color* if the track is marked as special. A day's total track length in kilometers is printed below each square.
 
-![Example Calendar Poster](https://github.com/flopp/GpxTrackPoster/blob/master/examples/example_calendar.png)
-[svg](https://github.com/flopp/GpxTrackPoster/blob/master/examples/example_calendar.svg)
+![Example Calendar Poster](examples/example_calendar.png)
+[svg](examples/example_calendar.svg)
 
 ### Circular Poster (`--type circular`)
 The *Circular Poster* the year in a circle; each day corresponds to a circle segment. The length of each segment corresponds to the total track distance of that day.
 
-![Example Circular Poster](https://github.com/flopp/GpxTrackPoster/blob/master/examples/example_circular.png)
-[svg](https://github.com/flopp/GpxTrackPoster/blob/master/examples/example_circular.svg)
+![Example Circular Poster](examples/example_circular.png)
+[svg](examples/example_circular.svg)
 
 ### Heatmap Poster (`--type heatmap`)
 The *Heatmap Poster* displays all tracks within one "map". The more often a location has been "visited" on a track, the more colorful the corresponding location is on the map. *Special tracks* are drawn with the *special color*.
 
-![Example Heatmap Poster](https://github.com/flopp/GpxTrackPoster/blob/master/examples/example_heatmap.png)
-[svg](https://github.com/flopp/GpxTrackPoster/blob/master/examples/example_heatmap.svg)
+![Example Heatmap Poster](examples/example_heatmap.png)
+[svg](examples/example_heatmap.svg)
 
 ### Github Poster (`--type github`)
 The *Github Poster* displays all tracks like github profile. *Special distance* are drawn with the *special color*.
 
-![Example Github Poster](https://github.com/flopp/GpxTrackPoster/blob/master/examples/example_github.png)
-[svg](https://github.com/flopp/GpxTrackPoster/blob/master/examples/example_github.svg)
+![Example Github Poster](examples/example_github.png)
+[svg](examples/example_github.svg)
 
 
 
@@ -249,6 +249,6 @@ E.g. use [Poedit](https://poedit.net/) or [Localise Online Editor](https://local
 `msgfmt gpxposter.po -o gpxposter.mo`
 
 ## License
-[MIT](https://github.com/flopp/GpxTrackPoster/blob/master/LICENSE) &copy; 2016-2021 Florian Pigorsch
+[MIT](LICENSE) &copy; 2016-2021 Florian Pigorsch
 
 [strava-activity-type]: https://developers.strava.com/docs/reference/#api-models-ActivityType
