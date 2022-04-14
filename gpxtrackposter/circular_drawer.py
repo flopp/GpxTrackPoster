@@ -65,9 +65,9 @@ class CircularDrawer(TracksDrawer):
         group.add_argument(
             "--circular-ring-max-distance",
             dest="circular_ring_max_distance",
-            metavar="DISTANCE KM",
+            metavar="DISTANCE",
             type=float,
-            help="Maximum distance for scaling the track length.",
+            help="Maximum distance for scaling the track lengths (in given units).",
         )
 
     def fetch_args(self, args: argparse.Namespace) -> None:
@@ -75,7 +75,7 @@ class CircularDrawer(TracksDrawer):
         self._rings = args.circular_rings
         self._ring_color = args.circular_ring_color
         if args.circular_ring_max_distance:
-            self._max_distance = abs(args.circular_ring_max_distance) * Units().km
+            self._max_distance = self.poster.m2u(abs(args.circular_ring_max_distance))
 
     def draw(self, dr: svgwrite.Drawing, g: svgwrite.container.Group, size: XY, offset: XY) -> None:
         """Draw the circular Poster using distances broken down by time"""
