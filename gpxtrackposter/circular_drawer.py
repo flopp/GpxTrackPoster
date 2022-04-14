@@ -214,12 +214,11 @@ class CircularDrawer(TracksDrawer):
         length_range = self.poster.length_range_by_date
         if not length_range.is_valid():
             return
-        min_length = length_range.lower().to(self._unit)
-        max_length = length_range.upper().to(self._unit)
+        max_length = length_range.upper()
         if self._max_distance:
             max_length = self._max_distance
-        assert min_length is not None
         assert max_length is not None
+        max_length = max_length.to(self._unit)
         ring_distance = self._determine_ring_distance(max_length)
         if ring_distance is None:
             return
