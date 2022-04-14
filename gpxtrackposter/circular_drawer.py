@@ -44,6 +44,7 @@ class CircularDrawer(TracksDrawer):
         self._rings = False
         self._ring_color = "darkgrey"
         self._max_distance = None
+        self._unit = Units().km
 
     def create_args(self, args_parser: argparse.ArgumentParser) -> None:
         """Add arguments to the parser"""
@@ -75,7 +76,7 @@ class CircularDrawer(TracksDrawer):
         self._rings = args.circular_rings
         self._ring_color = args.circular_ring_color
         if args.circular_ring_max_distance:
-            self._max_distance = self.poster.m2u(abs(args.circular_ring_max_distance))
+            self._max_distance = abs(args.circular_ring_max_distance)
 
     def draw(self, dr: svgwrite.Drawing, g: svgwrite.container.Group, size: XY, offset: XY) -> None:
         """Draw the circular Poster using distances broken down by time"""
@@ -83,6 +84,11 @@ class CircularDrawer(TracksDrawer):
             raise PosterError("No tracks to draw.")
         if self.poster.length_range_by_date is None:
             return
+
+        if self.poster.units == "imperial":
+            self._unit = Units().mile
+        if self._max_distance:
+            self._max_distance = self._max_distance * self._unit
 
         years = self.poster.years.count()
         _, counts = utils.compute_grid(years, size)
