@@ -200,11 +200,7 @@ class CircularDrawer(TracksDrawer):
 
     def _determine_ring_distance(self, max_length: pint.quantity.Quantity) -> typing.Optional[pint.quantity.Quantity]:
         ring_distance = None
-        if self.poster.units == "metric":
-            unit = Units().km
-        else:
-            unit = Units().mile
-        for distance in [1.0 * unit, 5.0 * unit, 10.0 * unit, 50.0 * unit]:
+        for distance in [1.0 * self._unit, 5.0 * self._unit, 10.0 * self._unit, 50.0 * self._unit]:
             if max_length < distance:
                 continue
             ring_distance = distance
@@ -218,8 +214,8 @@ class CircularDrawer(TracksDrawer):
         length_range = self.poster.length_range_by_date
         if not length_range.is_valid():
             return
-        min_length = length_range.lower()
-        max_length = length_range.upper()
+        min_length = length_range.lower().to(self._unit)
+        max_length = length_range.upper().to(self._unit)
         if self._max_distance:
             max_length = self._max_distance
         assert min_length is not None
