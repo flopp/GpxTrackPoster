@@ -63,14 +63,57 @@ def test_parser_without_distance_keeps_none(circular_drawer: CircularDrawer, par
     assert circular_drawer._max_distance is None  # pylint: disable=protected-access
 
 
-def test_parser_with_distance_sets_quantity_value(circular_drawer: CircularDrawer, parser: ArgumentParser) -> None:
-    value = 10.0
-    expected_value = Quantity(value, "km")
+@pytest.mark.parametrize(
+    "units, value, expected_value",
+    [
+        ("imperial", 1.0, 1.0 / 1.609344 * Units().mi),
+        ("imperial", 5.0, 5.0 / 1.609344 * Units().mi),
+        ("imperial", 10.0, 10.0 / 1.609344 * Units().mi),
+        ("imperial", 50.0, 50.0 / 1.609344 * Units().mi),
+        ("metric", 1.0, 1.0 * Units().km),
+        ("metric", 5.0, 5.0 * Units().km),
+        ("metric", 10.0, 10.0 * Units().km),
+        ("metric", 50.0, 50.0 * Units().km),
+    ],
+)
+def test_parser_with_distance_sets_quantity_value(
+    units: str, value: float, expected_value: Quantity, circular_drawer: CircularDrawer, parser: ArgumentParser
+) -> None:
     circular_drawer.create_args(parser)
-    parsed = parser.parse_args(["--type", "circular", "--circular-ring-max-distance", str(value)])
+    parsed = parser.parse_args(["--type", "circular", "--circular-ring-max-distance", str(value), "--unit", units])
     circular_drawer.fetch_args(parsed)
     assert parsed.circular_ring_max_distance
-    assert circular_drawer._max_distance == expected_value  # pylint: disable=protected-access
+    assert circular_drawer._max_distance == expected_value.to("mi")  # pylint: disable=protected-access
+    assert circular_drawer._max_distance == expected_value.to("km")  # pylint: disable=protected-access
+
+
+@pytest.mark.parametrize(
+    "units, value, expected_value",
+    [
+        ("imperial", 0.9 * Units().mi, None),
+        ("imperial", 1.1 * Units().mi, 1.0 * Units().mi),
+        ("imperial", 4.9 * Units().mi, 1.0 * Units().mi),
+        ("imperial", 5.1 * Units().mi, 5.0 * Units().mi),
+        ("imperial", 9.9 * Units().mi, 5.0 * Units().mi),
+        ("imperial", 10.1 * Units().mi, 5.0 * Units().mi),
+        ("imperial", 49.9 * Units().mi, 10.0 * Units().mi),
+        ("imperial", 50.1 * Units().mi, 50.0 * Units().mi),
+        ("metric", 0.9 * Units().km, None),
+        ("metric", 1.1 * Units().km, 1.0 * Units().km),
+        ("metric", 4.9 * Units().km, 1.0 * Units().km),
+        ("metric", 5.1 * Units().km, 5.0 * Units().km),
+        ("metric", 9.9 * Units().km, 5.0 * Units().km),
+        ("metric", 10.1 * Units().km, 5.0 * Units().km),
+        ("metric", 49.9 * Units().km, 10.0 * Units().km),
+        ("metric", 50.1 * Units().km, 50.0 * Units().km),
+    ],
+)
+def test_determine_ring_distance(
+    units: str, value: Quantity, expected_value: Quantity, circular_drawer: CircularDrawer
+) -> None:
+    circular_drawer.poster.units = units
+    # pylint: disable=protected-access
+    assert expected_value == circular_drawer._determine_ring_distance(value)
 
 
 @pytest.mark.full_run
