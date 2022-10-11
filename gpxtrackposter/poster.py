@@ -155,7 +155,7 @@ class Poster:
             self.tracks_by_date[text_date].append(track)
             self.length_range.extend(track.length())
         for date_tracks in self.tracks_by_date.values():
-            length = pint.quantity.Quantity(sum([t.length() for t in date_tracks]))
+            length = pint.quantity.Quantity(sum(t.length() for t in date_tracks))
             self.length_range_by_date.extend(length)
 
     def draw(self, drawer: "TracksDrawer", output: str) -> None:

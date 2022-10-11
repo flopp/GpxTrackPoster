@@ -1,9 +1,10 @@
 COPYRIGHT_FILES = README.md LICENSE gpxtrackposter/*.py tests/*.py scripts/*.py
+PYTHON=python3
 
 .PHONY: setup
 setup:
-	python3 -m venv .env
-	.env/bin/pip install --upgrade pip
+	$(PYTHON) -m venv .env
+	.env/bin/pip install --upgrade pip wheel
 	.env/bin/pip install --upgrade -r requirements.txt
 	.env/bin/pip install --upgrade -r requirements-dev.txt
 	.env/bin/pip install .
