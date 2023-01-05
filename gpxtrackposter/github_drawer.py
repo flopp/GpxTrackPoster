@@ -40,7 +40,7 @@ class GithubDrawer(TracksDrawer):
             # Github profile the first day start from the last Monday of the last year or the first Monday of this year
             # It depends on if the first day of this year is Monday or not.
             github_rect_day = github_rect_first_day + datetime.timedelta(-start_date_weekday)
-            year_length = pint.quantity.Quantity(total_length_year_dict.get(year, 0))
+            year_length = pint.Quantity(total_length_year_dict.get(year, 0))
             year_length_str = utils.format_float(self.poster.m2u(year_length))
             month_names = [
                 locale.nl_langinfo(day)[:3]  # Get only first three letters
@@ -106,7 +106,7 @@ class GithubDrawer(TracksDrawer):
                     date_title = str(github_rect_day)
                     if date_title in self.poster.tracks_by_date:
                         tracks = self.poster.tracks_by_date[date_title]
-                        length = pint.quantity.Quantity(sum([t.length() for t in tracks]))
+                        length = pint.Quantity(sum([t.length() for t in tracks]))
                         distance1 = self.poster.special_distance["special_distance"]
                         distance2 = self.poster.special_distance["special_distance2"]
                         has_special = distance1 < length < distance2

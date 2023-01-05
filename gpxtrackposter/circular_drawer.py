@@ -192,7 +192,7 @@ class CircularDrawer(TracksDrawer):
             day += 1
             date += datetime.timedelta(1)
 
-    def _determine_ring_distance(self, max_length: pint.quantity.Quantity) -> typing.Optional[pint.quantity.Quantity]:
+    def _determine_ring_distance(self, max_length: pint.Quantity) -> typing.Optional[pint.Quantity]:
         ring_distance = None
         if self.poster.units == "metric":
             unit = Units().km
@@ -248,7 +248,7 @@ class CircularDrawer(TracksDrawer):
         values: str = "",
         key_times: str = "",
     ) -> None:
-        length = pint.quantity.Quantity(sum([t.length() for t in tracks]))
+        length = pint.Quantity(sum([t.length() for t in tracks]))
         has_special = len([t for t in tracks if t.special]) > 0
         color = self.color(self.poster.length_range_by_date, length, has_special)
         max_length = self.poster.length_range_by_date.upper()

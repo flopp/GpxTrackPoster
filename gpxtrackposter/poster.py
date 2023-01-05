@@ -59,7 +59,7 @@ class Poster:
         self.tracks: typing.List[Track] = []
         self.length_range = QuantityRange()
         self.length_range_by_date = QuantityRange()
-        self.total_length_year_dict: typing.Dict[int, pint.quantity.Quantity] = defaultdict(int)  # type: ignore
+        self.total_length_year_dict: typing.Dict[int, pint.Quantity] = defaultdict(int)  # type: ignore
         self.units = "metric"
         self.colors = {
             "background": "#222222",
@@ -155,7 +155,7 @@ class Poster:
             self.tracks_by_date[text_date].append(track)
             self.length_range.extend(track.length())
         for date_tracks in self.tracks_by_date.values():
-            length = pint.quantity.Quantity(sum([t.length() for t in date_tracks]))
+            length = pint.Quantity(sum([t.length() for t in date_tracks]))
             self.length_range_by_date.extend(length)
 
     def draw(self, drawer: "TracksDrawer", output: str) -> None:
@@ -169,7 +169,7 @@ class Poster:
         self._draw_tracks(d, XY(self.width - 20, self.height - 30 - 30), XY(10, 30))
         d.save()
 
-    def m2u(self, m: pint.quantity.Quantity) -> float:
+    def m2u(self, m: pint.Quantity) -> float:
         """Convert meters to kilometers or miles, according to units."""
         if self.units == "metric":
             return m.m_as(Units().km)
@@ -181,7 +181,7 @@ class Poster:
             return self.translate("km")
         return self.translate("mi")
 
-    def format_distance(self, d: pint.quantity.Quantity) -> str:
+    def format_distance(self, d: pint.Quantity) -> str:
         """Formats a distance using the locale specific float format and the selected unit."""
         return format_float(self.m2u(d)) + " " + self.u()
 
@@ -280,8 +280,8 @@ class Poster:
             assert min_length is not None
             assert max_length is not None
         else:
-            min_length = pint.quantity.Quantity(0.0)
-            max_length = pint.quantity.Quantity(0.0)
+            min_length = pint.Quantity(0.0)
+            max_length = pint.Quantity(0.0)
         g.add(
             d.text(
                 self.translate("Min") + ": " + self.format_distance(min_length),
@@ -301,7 +301,7 @@ class Poster:
 
     def _compute_track_statistics(
         self,
-    ) -> typing.Tuple[pint.quantity.Quantity, pint.quantity.Quantity, QuantityRange, int]:
+    ) -> typing.Tuple[pint.Quantity, pint.Quantity, QuantityRange, int]:
         length_range = QuantityRange()
         total_length = 0.0 * Units().meter
         self.total_length_year_dict.clear()

@@ -105,7 +105,7 @@ class CalendarDrawer(TracksDrawer):
                 text_date = date.strftime("%Y-%m-%d")
                 if text_date in self.poster.tracks_by_date:
                     tracks = self.poster.tracks_by_date[text_date]
-                    length = pint.quantity.Quantity(sum([t.length() for t in tracks]))
+                    length = pint.Quantity(sum([t.length() for t in tracks]))
                     has_special = len([t for t in tracks if t.special]) > 0
                     color = self.color(self.poster.length_range_by_date, length, has_special)
                     g.add(dr.rect(pos, dim, fill=color))
