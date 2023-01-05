@@ -14,9 +14,9 @@ import timezonefinder  # type: ignore
 class TimezoneAdjuster:
     _timezonefinder: typing.Optional[timezonefinder.TimezoneFinder] = None
 
-    def __init__(self) -> None:
-        if not TimezoneAdjuster._timezonefinder:
-            TimezoneAdjuster._timezonefinder = timezonefinder.TimezoneFinder()
+    def __new__(cls):
+        if not cls._timezonefinder:
+            cls._timezonefinder = timezonefinder.TimezoneFinder()
 
     @classmethod
     def adjust(cls, time: datetime.datetime, latlng: s2sphere.LatLng) -> datetime.datetime:
