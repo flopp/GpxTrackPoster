@@ -12,8 +12,8 @@ from unittest.mock import MagicMock
 import pytest
 from pytest_mock import MockerFixture
 
-from gpxtrackposter.grid_drawer import GridDrawer
 from gpxtrackposter.exceptions import PosterError
+from gpxtrackposter.grid_drawer import GridDrawer
 from gpxtrackposter.poster import Poster
 from gpxtrackposter.units import Units
 

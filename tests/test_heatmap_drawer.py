@@ -16,8 +16,7 @@ import s2sphere  # type: ignore
 from pytest_mock import MockerFixture
 
 from gpxtrackposter.cli import parse_args
-from gpxtrackposter.exceptions import ParameterError
-from gpxtrackposter.exceptions import PosterError
+from gpxtrackposter.exceptions import ParameterError, PosterError
 from gpxtrackposter.heatmap_drawer import HeatmapDrawer
 from gpxtrackposter.poster import Poster
 from gpxtrackposter.units import Units

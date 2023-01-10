@@ -9,10 +9,10 @@
 
 import os
 
-import setuptools
+import setuptools  # type: ignore
 
 
-def _read_reqs(relpath):
+def _read_reqs(relpath: str) -> list:
     """Read requirements"""
     fullpath = os.path.join(os.path.dirname(__file__), relpath)
     with open(fullpath, encoding="utf-8") as f:

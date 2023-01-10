@@ -8,12 +8,12 @@ import typing
 
 import svgwrite  # type: ignore
 
+from gpxtrackposter import utils
 from gpxtrackposter.exceptions import PosterError
 from gpxtrackposter.poster import Poster
 from gpxtrackposter.track import Track
 from gpxtrackposter.tracks_drawer import TracksDrawer
 from gpxtrackposter.xy import XY
-from gpxtrackposter import utils
 
 
 class GridDrawer(TracksDrawer):

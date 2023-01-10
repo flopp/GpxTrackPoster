@@ -22,7 +22,9 @@ from gpxtrackposter.year_range import YearRange
 
 if typing.TYPE_CHECKING:
     # avoid circlic import
-    from gpxtrackposter.tracks_drawer import TracksDrawer  # pylint: disable=cyclic-import
+    from gpxtrackposter.tracks_drawer import (
+        TracksDrawer,  # pylint: disable=cyclic-import
+    )
 
 log = logging.getLogger(__name__)
 

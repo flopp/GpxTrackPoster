@@ -15,12 +15,17 @@ from typing import List, Optional
 
 import appdirs  # type: ignore
 
-from gpxtrackposter import github_drawer, calendar_drawer
-from gpxtrackposter import grid_drawer, circular_drawer, heatmap_drawer
-from gpxtrackposter import poster, track_loader
+from gpxtrackposter import (
+    calendar_drawer,
+    circular_drawer,
+    github_drawer,
+    grid_drawer,
+    heatmap_drawer,
+    poster,
+    track_loader,
+)
 from gpxtrackposter.exceptions import ParameterError, PosterError
 from gpxtrackposter.units import Units
-
 
 __app_name__ = "create_poster"
 __app_author__ = "flopp.net"

@@ -7,7 +7,8 @@
 import locale
 import math
 import typing
-from itertools import takewhile, count as itercount
+from itertools import count as itercount
+from itertools import takewhile
 
 import colour  # type: ignore
 import s2sphere  # type: ignore

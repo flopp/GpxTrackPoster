@@ -12,14 +12,14 @@ import pytest
 import s2sphere  # type: ignore
 
 from gpxtrackposter.utils import (
-    compute_grid,
-    interpolate_color,
-    format_float,
-    make_key_times,
     compute_bounds_xy,
-    lng2x,
+    compute_grid,
+    format_float,
+    interpolate_color,
     lat2y,
     latlng2xy,
+    lng2x,
+    make_key_times,
 )
 from gpxtrackposter.value_range import ValueRange
 from gpxtrackposter.xy import XY

@@ -14,7 +14,13 @@ from unittest.mock import MagicMock, patch
 import pytest
 from pytest_mock import MockerFixture
 
-from gpxtrackposter.cli import parse_args, create_parser, setup_logging, setup_loader, setup_poster
+from gpxtrackposter.cli import (
+    create_parser,
+    parse_args,
+    setup_loader,
+    setup_logging,
+    setup_poster,
+)
 from gpxtrackposter.exceptions import ParameterError
 from gpxtrackposter.poster import Poster
 from gpxtrackposter.track_loader import TrackLoader
