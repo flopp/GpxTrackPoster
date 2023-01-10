@@ -161,9 +161,7 @@ def test_run_drawer_with_animation(
     mocker.patch("svgwrite.Drawing.save", return_value=True)
 
     circular_drawer.create_args(parser)
-    args = parser.parse_args(
-        ["--circular-rings", "--circular-ring-max-distance", "5.0", "--with-animation"]
-    )
+    args = parser.parse_args(["--circular-rings", "--circular-ring-max-distance", "5.0", "--with-animation"])
     circular_drawer.fetch_args(args)
     poster.set_title("CircularDrawer Test")
     poster.tracks_drawer = circular_drawer
