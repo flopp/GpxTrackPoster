@@ -28,17 +28,17 @@ format:
 
 .PHONY: lint
 lint:
+	.env/bin/black \
+	    --line-length 120 \
+	    --check \
+	    --diff \
+	    gpxtrackposter tests scripts
 	.env/bin/pylint \
 	    gpxtrackposter tests scripts
 	.env/bin/mypy \
 	    gpxtrackposter tests scripts
 	.env/bin/codespell  \
 	    README.md gpxtrackposter/*.py tests/*.py scripts/*.py
-	.env/bin/black \
-	    --line-length 120 \
-	    --check \
-	    --diff \
-	    gpxtrackposter tests scripts
 
 .PHONY: test
 test:
