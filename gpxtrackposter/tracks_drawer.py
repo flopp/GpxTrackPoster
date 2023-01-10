@@ -22,15 +22,16 @@ class TracksDrawer:
         self.poster = the_poster
 
     def create_args(self, args_parser: argparse.ArgumentParser) -> None:
-        pass
+        """Add arguments to the parser"""
 
     def fetch_args(self, args: argparse.Namespace) -> None:
-        pass
+        """Get arguments from the parser"""
 
     def draw(self, dr: svgwrite.Drawing, g: svgwrite.container.Group, size: XY, offset: XY) -> None:
-        pass
+        """Draw the circular Poster using distances broken down by time"""
 
     def color(self, length_range: QuantityRange, length: pint.Quantity, is_special: bool = False) -> str:
+        """Define special colors"""
         color1 = self.poster.colors["special"] if is_special else self.poster.colors["track"]
         color2 = self.poster.colors["special2"] if is_special else self.poster.colors["track2"]
         return utils.interpolate_color(color1, color2, length_range.relative_position(length))
