@@ -37,7 +37,7 @@ def fixture_mock_hike_activity(mocker: MockerFixture) -> MagicMock:
     return mock_activity(mocker, "Hike")
 
 
-def strava_config(tmp_path: Path, activity_type: Union[str, List[str]] = None) -> str:
+def strava_config(tmp_path: Path, activity_type: Union[str, List[str], None] = None) -> str:
     config: Dict[str, Union[str, List[str]]] = {
         "client_id": "YOUR STRAVA API CLIENT ID",
         "client_secret": "YOUR STRAVA API CLIENT SECRET",

@@ -2,7 +2,7 @@ appdirs>=1.4.0
 colour
 geopy
 gpxpy>=1.1.2
-pint
+pint>=0.20
 pytz
 s2sphere
 svgwrite>=1.1.9
