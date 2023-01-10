@@ -106,7 +106,7 @@ Circular Type Options:
                         Color of distance rings.
   --circular-ring-max-distance DISTANCE
                         Maximum distance for scaling the track lengths (in
-                        given units).
+                        unit system given with command line option --units).
 ```
 
 Example:
@@ -195,7 +195,7 @@ The *Heatmap Poster* displays all tracks within one "map". The more often a loca
 [svg](https://github.com/flopp/GpxTrackPoster/blob/master/examples/example_heatmap.svg)
 
 ### Github Poster (`--type github`)
-The *Github Poster* displays all tracks like github profile. *Special distance* are drawn with the *special color*.
+The *GitHub Poster* displays all tracks like GitHub profile. *Special distance* are drawn with the *special color*.
 
 ![Example Github Poster](https://raw.githubusercontent.com/flopp/GpxTrackPoster/main/examples/example_github.png)
 [svg](https://github.com/flopp/GpxTrackPoster/blob/master/examples/example_github.svg)
