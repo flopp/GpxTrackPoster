@@ -106,7 +106,7 @@ class GithubDrawer(TracksDrawer):
                     date_title = str(github_rect_day)
                     if date_title in self.poster.tracks_by_date:
                         tracks = self.poster.tracks_by_date[date_title]
-                        length = pint.quantity.Quantity(sum([t.length() for t in tracks]))
+                        length = pint.quantity.Quantity(sum(t.length() for t in tracks))
                         distance1 = self.poster.special_distance["special_distance"]
                         distance2 = self.poster.special_distance["special_distance2"]
                         has_special = distance1 < length < distance2
