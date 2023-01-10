@@ -30,6 +30,7 @@ venv*/
 # setuptools
 *.egg-info
 dist/
+build/
 # coverage.py
 .coverage
 htmlcov/
