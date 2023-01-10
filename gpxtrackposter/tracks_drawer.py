@@ -1,5 +1,5 @@
 """Contains the base class TracksDrawer, which other Drawers inherit from."""
-# Copyright 2016-2021 Florian Pigorsch & Contributors. All rights reserved.
+# Copyright 2016-2023 Florian Pigorsch & Contributors. All rights reserved.
 #
 # Use of this source code is governed by a MIT-style
 # license that can be found in the LICENSE file.
