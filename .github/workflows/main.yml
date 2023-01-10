@@ -11,13 +11,15 @@ jobs:
         os: [ubuntu-latest, macos-latest, windows-latest]
         python-version: ["3.8", "3.9", "3.10", "3.11"]
     steps:
-    - uses: actions/checkout@v2
+    - name: Git config
+      run: git config --global core.autocrlf input
+    - uses: actions/checkout@v3
     - name: Install system dependencies - ${{runner.os}}
       if: runner.os == 'Windows'
       run: |
         sed -i '/disable=/a \    no-member,' .pylintrc
     - name: Set up Python v${{matrix.python-version}} - ${{runner.os}}
-      uses: actions/setup-python@v2
+      uses: actions/setup-python@v4
       with:
         python-version: ${{matrix.python-version}}
         cache: pip
@@ -37,6 +39,7 @@ jobs:
     - name: Check spelling (codespell)
       run: codespell README.md gpxtrackposter/*.py tests/*.py scripts/*.py
     - name: Run tests (pytest) with coverage
+      if: runner.os == 'Linux'
       run: |
         sudo locale-gen --lang de_DE.UTF-8
         sudo locale-gen --lang en_US.UTF-8
