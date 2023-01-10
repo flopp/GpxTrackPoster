@@ -30,7 +30,7 @@ def test_run_drawer(
     mocker.patch("svgwrite.Drawing.save", return_value=True)
 
     github_drawer.create_args(parser)
-    args = parser.parse_args(["--type", "github"])
+    args = parser.parse_args([])
     github_drawer.fetch_args(args)
     github_drawer.poster = poster
     poster.set_title("GithubDrawer Test")
@@ -62,7 +62,7 @@ def test_run_drawer_with_animation(
     mocker.patch("svgwrite.Drawing.save", return_value=True)
 
     github_drawer.create_args(parser)
-    args = parser.parse_args(["--type", "github", "--with-animation"])
+    args = parser.parse_args(["--with-animation"])
     github_drawer.fetch_args(args)
     poster.set_title("GithubDrawer Test")
     poster.tracks_drawer = github_drawer

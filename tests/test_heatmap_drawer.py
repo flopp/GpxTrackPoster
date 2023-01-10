@@ -226,27 +226,27 @@ def test_parser_with_type_heatmap_sets_type(heatmap_drawer: HeatmapDrawer, parse
 
 def test_parser_without_center_sets_none(heatmap_drawer: HeatmapDrawer, parser: ArgumentParser) -> None:
     heatmap_drawer.create_args(parser)
-    parsed = parser.parse_args(["--type", "heatmap"])
+    parsed = parser.parse_args([])
     assert parsed.heatmap_center is None
 
 
 def test_parser_with_center_sets_float_value(heatmap_drawer: HeatmapDrawer, parser: ArgumentParser) -> None:
     heatmap_drawer.create_args(parser)
     lat_lng = "47.99472, 7.84972"
-    parsed = parser.parse_args(["--type", "heatmap", "--heatmap-center", lat_lng])
+    parsed = parser.parse_args(["--heatmap-center", lat_lng])
     assert parsed.heatmap_center
     assert parsed.heatmap_center == lat_lng
 
 
 def test_parser_without_radius_sets_none(heatmap_drawer: HeatmapDrawer, parser: ArgumentParser) -> None:
     heatmap_drawer.create_args(parser)
-    parsed = parser.parse_args(["--type", "heatmap"])
+    parsed = parser.parse_args([])
     assert parsed.heatmap_radius is None
 
 
 def test_parser_with_radius_sets_float_value(heatmap_drawer: HeatmapDrawer, parser: ArgumentParser) -> None:
     heatmap_drawer.create_args(parser)
-    parsed = parser.parse_args(["--type", "heatmap", "--heatmap-radius", "10.0"])
+    parsed = parser.parse_args(["--heatmap-radius", "10.0"])
     assert parsed.heatmap_radius
     assert parsed.heatmap_radius == 10.0
 
@@ -306,7 +306,7 @@ def test_run_drawer(
     mocker.patch("svgwrite.Drawing.save", return_value=True)
 
     heatmap_drawer.create_args(parser)
-    args = parser.parse_args(["--type", "heatmap"])
+    args = parser.parse_args([])
     heatmap_drawer.fetch_args(args)
     heatmap_drawer.poster = poster
     poster.set_title("HeatmapDrawer Test")
@@ -338,7 +338,7 @@ def test_run_drawer_with_animation(
     mocker.patch("svgwrite.Drawing.save", return_value=True)
 
     heatmap_drawer.create_args(parser)
-    args = parser.parse_args(["--type", "heatmap", "--with-animation"])
+    args = parser.parse_args(["--with-animation"])
     heatmap_drawer.fetch_args(args)
     poster.set_title("HeatmapDrawer Test")
     poster.tracks_drawer = heatmap_drawer

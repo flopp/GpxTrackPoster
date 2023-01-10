@@ -30,7 +30,7 @@ def test_run_drawer(
     mocker.patch("svgwrite.Drawing.save", return_value=True)
 
     calendar_drawer.create_args(parser)
-    args = parser.parse_args(["--type", "calendar"])
+    args = parser.parse_args([])
     calendar_drawer.fetch_args(args)
     calendar_drawer.poster = poster
     poster.set_title("CalendarDrawer Test")
@@ -62,7 +62,7 @@ def test_run_drawer_with_animation(
     mocker.patch("svgwrite.Drawing.save", return_value=True)
 
     calendar_drawer.create_args(parser)
-    args = parser.parse_args(["--type", "calendar", "--with-animation"])
+    args = parser.parse_args(["--with-animation"])
     calendar_drawer.fetch_args(args)
     poster.set_title("CalendarDrawer Test")
     poster.tracks_drawer = calendar_drawer

@@ -30,7 +30,7 @@ def test_run_drawer(
     mocker.patch("svgwrite.Drawing.save", return_value=True)
 
     grid_drawer.create_args(parser)
-    args = parser.parse_args(["--type", "grid"])
+    args = parser.parse_args([])
     grid_drawer.fetch_args(args)
     grid_drawer.poster = poster
     poster.set_title("GridDrawer Test")
@@ -62,7 +62,7 @@ def test_run_drawer_with_animation(
     mocker.patch("svgwrite.Drawing.save", return_value=True)
 
     grid_drawer.create_args(parser)
-    args = parser.parse_args(["--type", "grid", "--with-animation"])
+    args = parser.parse_args(["--with-animation"])
     grid_drawer.fetch_args(args)
     poster.set_title("GridDrawer Test")
     poster.tracks_drawer = grid_drawer

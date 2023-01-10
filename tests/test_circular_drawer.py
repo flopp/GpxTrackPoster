@@ -35,7 +35,7 @@ def test_parser_without_rings_sets_false(circular_drawer: CircularDrawer, parser
 
 def test_parser_with_rings_sets_true(circular_drawer: CircularDrawer, parser: ArgumentParser) -> None:
     circular_drawer.create_args(parser)
-    parsed = parser.parse_args(["--type", "circular", "--circular-rings"])
+    parsed = parser.parse_args(["--circular-rings"])
     assert parsed.circular_rings
 
 
@@ -49,7 +49,7 @@ def test_parser_without_color_sets_color_darkgrey(circular_drawer: CircularDrawe
 
 def test_parser_with_color_sets_value(circular_drawer: CircularDrawer, parser: ArgumentParser) -> None:
     circular_drawer.create_args(parser)
-    parsed = parser.parse_args(["--type", "circular", "--circular-ring-color", "red"])
+    parsed = parser.parse_args(["--circular-ring-color", "red"])
     circular_drawer.fetch_args(parsed)
     assert parsed.circular_ring_color
     assert circular_drawer._ring_color == "red"  # pylint: disable=protected-access
@@ -80,14 +80,13 @@ def test_parser_with_distance_sets_quantity_value(
     units: str, value: float, expected_value: Quantity, circular_drawer: CircularDrawer, parser: ArgumentParser
 ) -> None:
     circular_drawer.create_args(parser)
-    parsed = parser.parse_args(["--type", "circular", "--circular-ring-max-distance", str(value), "--unit", units])
+    parsed = parser.parse_args(["--circular-ring-max-distance", str(value), "--unit", units])
     circular_drawer.fetch_args(parsed)
     assert parsed.circular_ring_max_distance
     assert circular_drawer._max_distance == expected_value.to("mi")  # pylint: disable=protected-access
     assert circular_drawer._max_distance == expected_value.to("km")  # pylint: disable=protected-access
 
 
-@pytest.mark.debug
 @pytest.mark.parametrize(
     "units, value, expected_value",
     [
@@ -110,11 +109,12 @@ def test_parser_with_distance_sets_quantity_value(
     ],
 )
 def test_determine_ring_distance(
-    units: str, value: Quantity, expected_value: Quantity, circular_drawer: CircularDrawer
+    units: str, value: Quantity, expected_value: Quantity, circular_drawer: CircularDrawer, parser: ArgumentParser
 ) -> None:
     circular_drawer.poster.units = units
-    # pylint: disable=protected-access
-    assert expected_value == circular_drawer._determine_ring_distance(value)
+    circular_drawer.create_args(parser)
+    circular_drawer.fetch_args(parser.parse_args([]))
+    assert expected_value == circular_drawer._determine_ring_distance(value)  # pylint: disable=protected-access
 
 
 @pytest.mark.full_run
@@ -162,7 +162,7 @@ def test_run_drawer_with_animation(
 
     circular_drawer.create_args(parser)
     args = parser.parse_args(
-        ["--type", "circular", "--circular-rings", "--circular-ring-max-distance", "5.0", "--with-animation"]
+        ["--circular-rings", "--circular-ring-max-distance", "5.0", "--with-animation"]
     )
     circular_drawer.fetch_args(args)
     poster.set_title("CircularDrawer Test")
