@@ -11,7 +11,7 @@ import argparse
 import logging
 import os
 import sys
-from typing import List
+from typing import List, Optional
 
 import appdirs  # type: ignore
 
@@ -262,7 +262,7 @@ def create_parser() -> argparse.ArgumentParser:
     return args_parser
 
 
-def setup_logging(verbose: bool = False, logfile: str = None) -> logging.Logger:
+def setup_logging(verbose: bool = False, logfile: Optional[str] = None) -> logging.Logger:
     """Set up logging"""
     log = logging.getLogger("gpxtrackposter")
     log.setLevel(logging.INFO if verbose else logging.ERROR)

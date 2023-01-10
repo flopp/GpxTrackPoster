@@ -179,7 +179,7 @@ class HeatmapDrawer(TracksDrawer):
                         )
                     )
 
-    def validate_heatmap_center(self, heatmap_center: str = None) -> s2sphere.LatLng:
+    def validate_heatmap_center(self, heatmap_center: Optional[str] = None) -> s2sphere.LatLng:
         """Validate and return the Heatmap center."""
         if heatmap_center:
             latlng_str = heatmap_center.split(",")
@@ -195,7 +195,7 @@ class HeatmapDrawer(TracksDrawer):
             self._center = s2sphere.LatLng.from_degrees(lat, lng)
         return self._center
 
-    def validate_heatmap_radius(self, heatmap_radius: float = None) -> Optional[float]:
+    def validate_heatmap_radius(self, heatmap_radius: Optional[float] = None) -> Optional[float]:
         """Validate and return the Heatmap radius."""
         if heatmap_radius:
             if heatmap_radius <= 0:
@@ -205,7 +205,9 @@ class HeatmapDrawer(TracksDrawer):
             self._radius = heatmap_radius
         return self._radius
 
-    def validate_heatmap_line_width(self, heatmap_line_width: str = None) -> Optional[List[Tuple[float, float]]]:
+    def validate_heatmap_line_width(
+        self, heatmap_line_width: Optional[str] = None
+    ) -> Optional[List[Tuple[float, float]]]:
         """Validate and return a tuple of the Heatmap line widths."""
         if heatmap_line_width:
             if heatmap_line_width.lower() == "automatic":
