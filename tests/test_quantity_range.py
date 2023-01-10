@@ -7,7 +7,7 @@ Several tests for QuantityRange
 # license that can be found in the LICENSE file.
 
 import pytest
-from pint.quantity import Quantity  # type: ignore
+from pint import Quantity  # type: ignore
 
 from gpxtrackposter.quantity_range import QuantityRange
 

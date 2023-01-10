@@ -12,7 +12,7 @@ import re
 
 import pytest
 import s2sphere  # type: ignore
-from pint.quantity import Quantity  # type: ignore
+from pint import Quantity  # type: ignore
 
 from gpxtrackposter.exceptions import TrackLoadError
 from gpxtrackposter.track import Track

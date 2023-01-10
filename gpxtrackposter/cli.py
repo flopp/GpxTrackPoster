@@ -1,5 +1,7 @@
 #!/usr/bin/env python
-
+"""
+Entry point - cli.py
+"""
 # Copyright 2016-2023 Florian Pigorsch & Contributors. All rights reserved.
 #
 # Use of this source code is governed by a MIT-style
@@ -283,15 +285,11 @@ def setup_loader(args: argparse.Namespace) -> track_loader.TrackLoader:
     if args.clear_cache:
         print("Clearing cache...")
         loader.clear_cache()
-    if args.from_strava:
-        tracks = loader.load_strava_tracks(args.from_strava)
-    else:
-        tracks = loader.load_tracks(args.gpx_dir)
-    if not tracks:
-        if not args.clear_cache:
-            print("No tracks found.")
-        return
+    return loader
 
+
+def setup_poster(tracks: List[track_loader.Track], args: argparse.Namespace) -> poster.Poster:
+    """Set up the poster"""
     print(f"Creating poster of type {args.type} with {len(tracks)} tracks and storing it in file {args.output}...")
     pstr = poster.Poster()
     pstr.set_language(args.language, args.localedir)
