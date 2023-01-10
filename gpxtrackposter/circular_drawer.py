@@ -68,7 +68,8 @@ class CircularDrawer(TracksDrawer):
             dest="circular_ring_max_distance",
             metavar="DISTANCE",
             type=float,
-            help="Maximum distance for scaling the track lengths (in given units).",
+            help="Maximum distance for scaling the track lengths "
+            "(in unit system given with command line option --units).",
         )
 
     def fetch_args(self, args: argparse.Namespace) -> None:
@@ -78,17 +79,17 @@ class CircularDrawer(TracksDrawer):
         if args.circular_ring_max_distance:
             self._max_distance = abs(args.circular_ring_max_distance)
 
+        if self.poster.units == "imperial":
+            self._unit = Units().mile
+        if self._max_distance:
+            self._max_distance = self._max_distance * self._unit
+
     def draw(self, dr: svgwrite.Drawing, g: svgwrite.container.Group, size: XY, offset: XY) -> None:
         """Draw the circular Poster using distances broken down by time"""
         if len(self.poster.tracks) == 0:
             raise PosterError("No tracks to draw.")
         if self.poster.length_range_by_date is None:
             return
-
-        if self.poster.units == "imperial":
-            self._unit = Units().mile
-        if self._max_distance:
-            self._max_distance = self._max_distance * self._unit
 
         years = self.poster.years.count()
         _, counts = utils.compute_grid(years, size)
