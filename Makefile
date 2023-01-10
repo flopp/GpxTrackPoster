@@ -1,8 +1,9 @@
 COPYRIGHT_FILES = README.md LICENSE gpxtrackposter/*.py tests/*.py scripts/*.py
+PYTHON=python3
 
 .PHONY: setup
 setup:
-	python3 -m venv .env
+	$(PYTHON) -m venv .env
 	.env/bin/pip install --upgrade pip wheel
 	.env/bin/pip install --upgrade -r requirements.txt
 	.env/bin/pip install --upgrade -r requirements-dev.txt
@@ -33,6 +34,8 @@ lint:
 	    --check \
 	    --diff \
 	    gpxtrackposter tests scripts
+	.env/bin/flake8 \
+	    gpxtrackposter tests scripts
 	.env/bin/pylint \
 	    gpxtrackposter tests scripts
 	.env/bin/mypy \
@@ -43,6 +46,14 @@ lint:
 .PHONY: test
 test:
 	.env/bin/pytest tests
+
+.PHONY: coverage
+coverage:
+	.env/bin/pytest --cov=gpxtrackposter --cov-branch --cov-report=term --cov-report=html tests -m "not full_run"
+
+.PHONY: coverage_with_full_run
+coverage_with_full_run:
+	.env/bin/pytest --cov=gpxtrackposter --cov-branch --cov-report=term --cov-report=html tests
 
 .PHONY: extract-messages
 extract-messages:

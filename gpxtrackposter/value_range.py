@@ -22,7 +22,8 @@ class ValueRange:
         diameter: Return difference between upper and lower bounds if valid, else 0.
         contains: Returns True if the range contains value.
         extend: Adjust the range to include value.
-
+        interpolate: Return interpolated value.
+        relative_position: Return relative position of value with respect to lower and upper of ValueRange
     """
 
     def __init__(self) -> None:
@@ -83,7 +84,7 @@ class ValueRange:
 
     def relative_position(self, value: float) -> float:
         if not self.is_valid():
-            raise ValueError("Cannot get relaitive_position for invalid ValueRange")
+            raise ValueError("Cannot get relative_position for invalid ValueRange")
         assert self._lower is not None
         assert self._upper is not None
         if value <= self._lower:

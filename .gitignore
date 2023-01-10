@@ -54,7 +54,7 @@ dist
 sdist
 .tox
 # mypy
-.mypy_cache
+.mypy_cache/*
 
 # Project specific
 gpx_dir/*

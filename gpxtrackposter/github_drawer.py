@@ -1,3 +1,4 @@
+"""Draw a GitHub style poster."""
 # Copyright 2020-2023 Florian Pigorsch & Contributors. All rights reserved.
 #
 # Use of this source code is governed by a MIT-style
@@ -24,8 +25,9 @@ class GithubDrawer(TracksDrawer):
         super().__init__(the_poster)
 
     def draw(self, dr: svgwrite.Drawing, g: svgwrite.container.Group, size: XY, offset: XY) -> None:
-        if self.poster.tracks is None:
-            raise PosterError("No tracks to draw")
+        """Iterate through the Poster's years, creating a calendar for each."""
+        if len(self.poster.tracks) == 0:
+            raise PosterError("No tracks to draw.")
         year_size = 200 * 4.0 / 80.0
         year_style = f"font-size:{year_size}px; font-family:Arial;"
         year_length_style = f"font-size:{110 * 3.0 / 80.0}px; font-family:Arial;"
@@ -37,7 +39,7 @@ class GithubDrawer(TracksDrawer):
 
             start_date_weekday, _ = calendar.monthrange(year, 1)
             github_rect_first_day = datetime.date(year, 1, 1)
-            # Github profile the first day start from the last Monday of the last year or the first Monday of this year
+            # GitHub profile the first day start from the last Monday of the last year or the first Monday of this year
             # It depends on if the first day of this year is Monday or not.
             github_rect_day = github_rect_first_day + datetime.timedelta(-start_date_weekday)
             year_length = pint.Quantity(total_length_year_dict.get(year, 0))

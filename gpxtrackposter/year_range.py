@@ -28,6 +28,9 @@ class YearRange:
         self.from_year: typing.Optional[int] = None
         self.to_year: typing.Optional[int] = None
 
+    def __eq__(self, other: object) -> bool:
+        return isinstance(other, YearRange) and self.from_year == other.from_year and self.to_year == other.to_year
+
     def parse(self, s: str) -> bool:
         """Parse a plaintext range of years into a pair of years
 

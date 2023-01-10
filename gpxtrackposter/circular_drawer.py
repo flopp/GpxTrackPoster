@@ -13,6 +13,7 @@ import typing
 import pint  # type: ignore
 import svgwrite  # type: ignore
 
+from gpxtrackposter import utils
 from gpxtrackposter.exceptions import PosterError
 from gpxtrackposter.poster import Poster
 from gpxtrackposter.track import Track
@@ -20,7 +21,6 @@ from gpxtrackposter.tracks_drawer import TracksDrawer
 from gpxtrackposter.units import Units
 from gpxtrackposter.value_range import ValueRange
 from gpxtrackposter.xy import XY
-from gpxtrackposter import utils
 
 
 class CircularDrawer(TracksDrawer):
@@ -80,7 +80,7 @@ class CircularDrawer(TracksDrawer):
 
     def draw(self, dr: svgwrite.Drawing, g: svgwrite.container.Group, size: XY, offset: XY) -> None:
         """Draw the circular Poster using distances broken down by time"""
-        if self.poster.tracks is None:
+        if len(self.poster.tracks) == 0:
             raise PosterError("No tracks to draw.")
         if self.poster.length_range_by_date is None:
             return
