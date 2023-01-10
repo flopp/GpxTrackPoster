@@ -1,7 +1,7 @@
 """
 Several tests for CircularDrawer
 """
-# Copyright 2021-2022 Florian Pigorsch & Contributors. All rights reserved.
+# Copyright 2021-2023 Florian Pigorsch & Contributors. All rights reserved.
 #
 # Use of this source code is governed by a MIT-style
 # license that can be found in the LICENSE file.
@@ -87,6 +87,7 @@ def test_parser_with_distance_sets_quantity_value(
     assert circular_drawer._max_distance == expected_value.to("km")  # pylint: disable=protected-access
 
 
+@pytest.mark.debug
 @pytest.mark.parametrize(
     "units, value, expected_value",
     [
