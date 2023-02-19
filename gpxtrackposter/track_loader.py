@@ -264,7 +264,7 @@ class TrackLoader:
             return
 
         log.info("Storing %d track(s) to cache...", len(tracks))
-        for (file_name, t) in tracks.items():
+        for file_name, t in tracks.items():
             try:
                 t.store_cache(self._get_cache_file_name(file_name))
             except Exception as e:
