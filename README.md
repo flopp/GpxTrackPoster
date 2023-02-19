@@ -36,7 +36,7 @@ usage: create_poster [-h] [--gpx-dir DIR] [--output FILE]
                      [--heatmap-center LAT,LNG] [--heatmap-radius RADIUS_KM]
                      [--heatmap-line-transparency-width TRANSP_1,WIDTH_1, TRANSP_2,WIDTH_2, TRANSP_3,WIDTH_3]
                      [--circular-rings] [--circular-ring-color COLOR]
-                     [--circular-ring-max-distance DISTANCE KM]
+                     [--circular-ring-max-distance DISTANCE]
 
 optional arguments:
   -h, --help            show this help message and exit
@@ -104,8 +104,9 @@ Circular Type Options:
   --circular-rings      Draw distance rings.
   --circular-ring-color COLOR
                         Color of distance rings.
-  --circular-ring-max-distance DISTANCE KM
-                        Maximum distance for scaling the track length.
+  --circular-ring-max-distance DISTANCE
+                        Maximum distance for scaling the track lengths (in
+                        given units).
 ```
 
 Example:
@@ -249,6 +250,6 @@ E.g. use [Poedit](https://poedit.net/) or [Localise Online Editor](https://local
 `msgfmt gpxposter.po -o gpxposter.mo`
 
 ## License
-[MIT](https://github.com/flopp/GpxTrackPoster/blob/master/LICENSE) &copy; 2016-2021 Florian Pigorsch
+[MIT](https://github.com/flopp/GpxTrackPoster/blob/master/LICENSE) &copy; 2016-2022 Florian Pigorsch
 
 [strava-activity-type]: https://developers.strava.com/docs/reference/#api-models-ActivityType
