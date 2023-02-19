@@ -114,7 +114,7 @@ class Track:
     def length_meters(self, value: float) -> None:
         self._length_meters = value
 
-    def length(self) -> pint.quantity.Quantity:
+    def length(self) -> pint.Quantity:
         return self._length_meters * Units().meter
 
     def bbox(self) -> s2sphere.LatLngRect:
