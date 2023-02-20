@@ -1,7 +1,7 @@
 """Handle parsing of GPX files and writing/loading of cached data"""
 
 
-# Copyright 2016-2021 Florian Pigorsch & Contributors. All rights reserved.
+# Copyright 2016-2023 Florian Pigorsch & Contributors. All rights reserved.
 #
 # Use of this source code is governed by a MIT-style
 # license that can be found in the LICENSE file.
@@ -66,7 +66,7 @@ class TrackLoader:
 
     def __init__(self, workers: typing.Optional[int]) -> None:
         self._workers = workers
-        self._min_length: pint.quantity.Quantity = 1 * Units().km
+        self._min_length: pint.Quantity = 1 * Units().km
         self.special_file_names: typing.List[str] = []
         self.year_range = YearRange()
         self.cache_dir: typing.Optional[str] = None
@@ -86,7 +86,7 @@ class TrackLoader:
             except OSError as e:
                 log.error("Failed: %s", str(e))
 
-    def set_min_length(self, min_length: pint.quantity.Quantity) -> None:
+    def set_min_length(self, min_length: pint.Quantity) -> None:
         self._min_length = min_length
 
     def set_activity(self, activity_type: str) -> None:
@@ -264,7 +264,7 @@ class TrackLoader:
             return
 
         log.info("Storing %d track(s) to cache...", len(tracks))
-        for (file_name, t) in tracks.items():
+        for file_name, t in tracks.items():
             try:
                 t.store_cache(self._get_cache_file_name(file_name))
             except Exception as e:

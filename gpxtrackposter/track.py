@@ -1,5 +1,5 @@
 """Create and maintain info about a given activity track (corresponding to one GPX file)."""
-# Copyright 2016-2021 Florian Pigorsch & Contributors. All rights reserved.
+# Copyright 2016-2023 Florian Pigorsch & Contributors. All rights reserved.
 #
 # Use of this source code is governed by a MIT-style
 # license that can be found in the LICENSE file.
@@ -114,7 +114,7 @@ class Track:
     def length_meters(self, value: float) -> None:
         self._length_meters = value
 
-    def length(self) -> pint.quantity.Quantity:
+    def length(self) -> pint.Quantity:
         return self._length_meters * Units().meter
 
     def bbox(self) -> s2sphere.LatLngRect:

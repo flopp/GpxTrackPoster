@@ -1,5 +1,5 @@
 """Draw a grid poster."""
-# Copyright 2016-2021 Florian Pigorsch & Contributors. All rights reserved.
+# Copyright 2016-2023 Florian Pigorsch & Contributors. All rights reserved.
 #
 # Use of this source code is governed by a MIT-style
 # license that can be found in the LICENSE file.
@@ -39,7 +39,7 @@ class GridDrawer(TracksDrawer):
         offset.x += (size.x - count_x * cell_size - (count_x - 1) * spacing_x) / 2
         offset.y += (size.y - count_y * cell_size - (count_y - 1) * spacing_y) / 2
         year_groups: typing.Dict[int, svgwrite.container.Group] = {}
-        for (index, tr) in enumerate(self.poster.tracks):
+        for index, tr in enumerate(self.poster.tracks):
             year = tr.start_time().year
             if year not in year_groups:
                 g_year = dr.g(id=f"year{year}")

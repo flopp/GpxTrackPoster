@@ -1,4 +1,4 @@
-# Copyright 2016-2021 Florian Pigorsch & Contributors. All rights reserved.
+# Copyright 2016-2023 Florian Pigorsch & Contributors. All rights reserved.
 #
 # Use of this source code is governed by a MIT-style
 # license that can be found in the LICENSE file.
@@ -10,11 +10,11 @@ import pint  # type: ignore
 
 class QuantityRange:
     def __init__(self) -> None:
-        self._lower: typing.Optional[pint.quantity.Quantity] = None
-        self._upper: typing.Optional[pint.quantity.Quantity] = None
+        self._lower: typing.Optional[pint.Quantity] = None
+        self._upper: typing.Optional[pint.Quantity] = None
 
     @classmethod
-    def from_pair(cls, value1: pint.quantity.Quantity, value2: pint.quantity.Quantity) -> "QuantityRange":
+    def from_pair(cls, value1: pint.Quantity, value2: pint.Quantity) -> "QuantityRange":
         r = cls()
         r.extend(value1)
         r.extend(value2)
@@ -27,20 +27,20 @@ class QuantityRange:
     def is_valid(self) -> bool:
         return self._lower is not None
 
-    def lower(self) -> typing.Optional[pint.quantity.Quantity]:
+    def lower(self) -> typing.Optional[pint.Quantity]:
         return self._lower
 
-    def upper(self) -> typing.Optional[pint.quantity.Quantity]:
+    def upper(self) -> typing.Optional[pint.Quantity]:
         return self._upper
 
-    def diameter(self) -> pint.quantity.Quantity:
+    def diameter(self) -> pint.Quantity:
         if self.is_valid():
             assert self._upper is not None
             assert self._lower is not None
             return self._upper - self._lower
-        return pint.quantity.Quantity(0)
+        return pint.Quantity(0)
 
-    def contains(self, value: pint.quantity.Quantity) -> bool:
+    def contains(self, value: pint.Quantity) -> bool:
         if not self.is_valid():
             return False
 
@@ -48,7 +48,7 @@ class QuantityRange:
         assert self._lower is not None
         return self._lower <= value <= self._upper
 
-    def extend(self, value: pint.quantity.Quantity) -> None:
+    def extend(self, value: pint.Quantity) -> None:
         if not self.is_valid():
             self._lower = value
             self._upper = value
@@ -58,14 +58,14 @@ class QuantityRange:
             self._lower = min(self._lower, value)
             self._upper = max(self._upper, value)
 
-    def interpolate(self, relative: float) -> pint.quantity.Quantity:
+    def interpolate(self, relative: float) -> pint.Quantity:
         if not self.is_valid():
             raise ValueError("Cannot interpolate invalid QuantityRange")
         assert self._lower is not None
         assert self._upper is not None
         return self._lower + relative * (self._upper - self._lower)
 
-    def relative_position(self, value: pint.quantity.Quantity) -> float:
+    def relative_position(self, value: pint.Quantity) -> float:
         if not self.is_valid():
             raise ValueError("Cannot get relative_position for invalid QuantityRange")
         assert self._lower is not None
