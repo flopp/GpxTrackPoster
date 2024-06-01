@@ -5,6 +5,15 @@
 # GpxTrackPoster
 Create a visually appealing poster from your GPX tracks - heavily inspired by https://www.instagram.com/p/Behppx9HCfx/
 
+## Setup
+1. Clone the repository: `git clone https://github.com/flopp/GpxTrackPoster.git`
+2. `cd GpxTrackPoster`
+3. Create virtualenv: `virtualenv -p /usr/bin/python3 venv` or `python -m venv venv`
+4. Activate virtualenv: `source venv/bin/activate`
+5. Install the package: `pip install .`
+6. Install development requirements (only if you want to contribute code!): `pip install -r requirements-dev.txt`
+7. Run `create_poster` (see above)
+8. Deactivate virtualenv: `deactivate`
 
 ## Usage
 First of all, you need directory with a bunch of GPX files (e.g. you can export all your tracks from Garmin Connect with the excellent tool [garmin-connect-export](https://github.com/kjkjava/garmin-connect-export), or use [StravaExportToGPX](https://github.com/flopp/StravaExportToGPX), or use [runtastic](https://github.com/yihong0618/Runtastic), or use [nrc-exporter](https://github.com/yasoob/nrc-exporter) to convert the activities in a Strava or Runtastic or `Nike Run Club` export zip file to GPX or GPX files).
@@ -212,17 +221,6 @@ We currently support
 - Chinese (`--language zh_CN`)
 - Russian (`--language ru_RU`)
 - Finnish (`--language fi_FI`)
-
-
-## Setup
-1. Clone the repository: `git clone https://github.com/flopp/GpxTrackPoster.git`
-2. `cd GpxTrackPoster`
-3. Create virtualenv: `virtualenv -p /usr/bin/python3 venv` or `python -m venv venv`
-4. Activate virtualenv: `source venv/bin/activate`
-5. Install the package: `pip install .`
-6. Install development requirements (only if you want to contribute code!): `pip install -r requirements-dev.txt`
-7. Run `create_poster` (see above)
-8. Deactivate virtualenv: `deactivate`
 
 ## Contributing
 If you have found a bug or have a feature request, please create a new issue. I'm always happy improve the implementation!
