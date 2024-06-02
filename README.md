@@ -6,6 +6,7 @@
 Create a visually appealing poster from your GPX tracks - heavily inspired by https://www.instagram.com/p/Behppx9HCfx/
 
 ## Setup
+### Local
 1. Clone the repository: `git clone https://github.com/flopp/GpxTrackPoster.git`
 2. `cd GpxTrackPoster`
 3. Create virtualenv: `virtualenv -p /usr/bin/python3 venv` or `python -m venv venv`
@@ -17,8 +18,19 @@ Create a visually appealing poster from your GPX tracks - heavily inspired by ht
 
 ### Container
 There is a Dockerfile in this repository, which you can use to run this software.
-1. Build the container: `podman build -f Dockerfile -t gpxtrackposter:latest`
-2. Run the container to build your poster: `podman run --rm -v /my/gpx/files:/gpx --name gpxtrackposter localhost/gpxtrackposter:latest  create_poster --gpx-dir /gpx --output /gpx/poster.svg`
+
+1. Build the container: `podman build -f Dockerfile -t gpxtrackposter:latest`.
+2. Run the container to build your poster:
+    ```
+    podman run --rm -v ./gpx/:/usr/src/app/gpx -v ./output:/usr/src/app/output \
+    --name gpxtrackposter localhost/gpxtrackposter:latest \
+    create_poster --gpx-dir /usr/src/app/gpx --output /usr/src/app/output/poster.svg
+    ```
+
+Alternatively you can use the included `docker-compose.yml`, which will do all the above for you.
+
+1. Copy the `.env.example` to `.env` and adapt it to your needs.
+2. Run `podman compose up` in the root of this directory.
 
 ## Usage
 First of all, you need directory with a bunch of GPX files (e.g. you can export all your tracks from Garmin Connect with the excellent tool [garmin-connect-export](https://github.com/kjkjava/garmin-connect-export), or use [StravaExportToGPX](https://github.com/flopp/StravaExportToGPX), or use [runtastic](https://github.com/yihong0618/Runtastic), or use [nrc-exporter](https://github.com/yasoob/nrc-exporter) to convert the activities in a Strava or Runtastic or `Nike Run Club` export zip file to GPX or GPX files).

@@ -1,8 +1,21 @@
-app:
-    build: .
-    env_file:
-        - .env
-    command: /usr/src/app/create_poster.py --type grid --gpx-dir /usr/src/app/gpx_dir --year $YEAR --title $TITLE --athlete $ATHLETE --units $UNITS $EXTRA_OPTIONS --output /usr/src/app/output/output.svg
-    volumes:
-        - ./output:/usr/src/app/output
-        - ./gpx_dir:/usr/src/app/gpx_dir
+name: gpxtrackposter
+
+services:
+    create:
+        build: ./
+        image: gpxtrackposter:latest
+        restart: "no"
+        env_file:
+            - .env
+        command: "/usr/local/bin/create_poster \
+            --type ${TYPE:-'grid'} \
+            --title ${TITLE:-'Running'} \
+            --year ${YEAR:-'2024'} \
+            --athlete ${ATHLETE:-'John Doe'} \
+            --units ${UNITS:-'metric'} \
+            --gpx-dir /usr/src/app/gpx \
+            ${EXTRA_OPTIONS:-'--verbose'} \
+            --output /usr/src/app/output/output.svg"
+        volumes:
+            - ./output:/usr/src/app/output
+            - ./gpx:/usr/src/app/gpx
