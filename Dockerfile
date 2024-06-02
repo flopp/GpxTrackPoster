@@ -4,18 +4,27 @@ WORKDIR /usr/src/app
 COPY requirements.txt ./
 COPY ./ /usr/src/app/
 
-RUN pip install --upgrade pip wheel && \
-    pip install --upgrade -r requirements.txt && \
+RUN pip install --no-cache-dir --upgrade pip wheel && \
+    pip install --no-cache-dir --upgrade -r requirements.txt && \
     pip install .
 
 RUN \
+    rm -rf /usr/share/man/* && \
+    rm -rf /root/.cache/pip/ && \
     rm -rf /usr/src/app/.git* && \
     rm -rf /usr/src/app/examples && \
     rm -rf /usr/src/app/venv
 
 RUN apt-get purge -y \
         make \
-        gcc &&\
+        git \
+        wget \
+        unzip \
+        perl \
+        gcc && \
     apt-get autoremove -y && \
     apt-get autoclean -y && \
     apt-get clean all
+
+
+CMD ["/bin/bash"]
