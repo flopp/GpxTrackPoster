@@ -57,7 +57,8 @@ sdist
 .mypy_cache
 
 # Project specific
-gpx_dir/*
+.env
+gpx/*
 output/*
 data
 *.svg
