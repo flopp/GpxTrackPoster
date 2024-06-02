@@ -15,6 +15,11 @@ Create a visually appealing poster from your GPX tracks - heavily inspired by ht
 7. Run `create_poster` (see above)
 8. Deactivate virtualenv: `deactivate`
 
+### Container
+There is a Dockerfile in this repository, which you can use to run this software.
+1. Build the container: `podman build -f Dockerfile -t gpxtrackposter:latest`
+2. Run the container to build your poster: `podman run --rm -v /my/gpx/files:/gpx --name gpxtrackposter localhost/gpxtrackposter:latest  create_poster --gpx-dir /gpx --output /gpx/poster.svg`
+
 ## Usage
 First of all, you need directory with a bunch of GPX files (e.g. you can export all your tracks from Garmin Connect with the excellent tool [garmin-connect-export](https://github.com/kjkjava/garmin-connect-export), or use [StravaExportToGPX](https://github.com/flopp/StravaExportToGPX), or use [runtastic](https://github.com/yihong0618/Runtastic), or use [nrc-exporter](https://github.com/yasoob/nrc-exporter) to convert the activities in a Strava or Runtastic or `Nike Run Club` export zip file to GPX or GPX files).
 
